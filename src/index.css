@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+@layer base {
+  /* This ensures the transition between light and dark is smooth */
+  *,
+  ::after,
+  ::before {
+    @apply transition-colors duration-200 border-gray-200 dark:border-gray-800;
+  }
+
+  body {
+    @apply bg-white text-gray-900 antialiased;
+  }
+}
+
+/* Force the browser's native elements to follow your toggle */
+:root {
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+html.dark body {
+  @apply bg-gray-950 text-gray-50;
+}
