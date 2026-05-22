@@ -1,35 +1,69 @@
-import  { createContext, useState, useContext } from 'react';
+/* eslint-disable react-refresh/only-export-components */
+import { createContext, useState, useContext } from "react";
 
 const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
+
+  const getProductId = (product) => product._id ?? product.id;
+
   const clearCart = () => {
-  setCart([]);
-};
+    setCart([]);
+  };
 
   const addToCart = (product) => {
+    const productId = getProductId(product);
+
     setCart((prevCart) => {
-      // Check if item already exists to increment quantity instead of duplicating
-      const existingItem = prevCart.find(item => item.id === product.id);
+      const existingItem = prevCart.find((item) => getProductId(item) === productId);
+
       if (existingItem) {
-        return prevCart.map(item =>
-          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+        return prevCart.map((item) =>
+          getProductId(item) === productId
+            ? { ...item, quantity: item.quantity + 1 }
+            : item,
         );
       }
+
       return [...prevCart, { ...product, quantity: 1 }];
     });
   };
 
-  // Calculate total items for the red badge
+  const removeFromCart = (productId) => {
+    setCart((prevCart) =>
+      prevCart
+        .map((item) =>
+          getProductId(item) === productId
+            ? { ...item, quantity: item.quantity - 1 }
+            : item,
+        )
+        .filter((item) => item.quantity > 0),
+    );
+  };
+
+  const deleteFromCart = (productId) => {
+    setCart((prevCart) =>
+      prevCart.filter((item) => getProductId(item) !== productId),
+    );
+  };
+
   const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
 
   return (
-    <CartContext.Provider value={{ cart, addToCart, cartCount ,clearCart}}>
+    <CartContext.Provider
+      value={{
+        cart,
+        addToCart,
+        removeFromCart,
+        deleteFromCart,
+        cartCount,
+        clearCart,
+      }}
+    >
       {children}
     </CartContext.Provider>
   );
 };
 
-// Custom hook for easy access
 export const useCart = () => useContext(CartContext);

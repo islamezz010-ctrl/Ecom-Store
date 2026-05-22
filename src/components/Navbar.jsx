@@ -1,59 +1,155 @@
-import { useCart } from "../context/CartContext";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import DarkModeToggle from "./DarkModeToggle";
-import Login from "../pages/Login";
-const Navbar = () => {
+import { useCart } from "../context/CartContext";
+import { ShoppingCart } from "lucide-react";
 
+const Navbar = () => {
   const { cartCount } = useCart();
   const location = useLocation();
+  const [user, setUser] = useState(() => {
+    const storedUser = localStorage.getItem("userInfo");
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
+
+  useEffect(() => {
+    const syncUser = () => {
+      const storedUser = localStorage.getItem("userInfo");
+      setUser(storedUser ? JSON.parse(storedUser) : null);
+    };
+
+    window.addEventListener("auth:changed", syncUser);
+    window.addEventListener("storage", syncUser);
+
+    return () => {
+      window.removeEventListener("auth:changed", syncUser);
+      window.removeEventListener("storage", syncUser);
+    };
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("userInfo");
+    setUser(null);
+    window.dispatchEvent(new Event("auth:changed"));
+  };
+
+  const displayName = user?.name || user?.email || "Account";
+  const initials = displayName
+    .split(/\s|@/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join("");
 
   return (
-    <nav className="sticky top-0 z-50 bg-mist-400  border-b border-gray-200 dark:border-gray-800 px-4 py-3 shadow-sm">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
-        {/* Logo Section */}
-        <div className="flex items-center gap-2">
-          <Link to="/">
-          <span className="self-start text-2xl font-bold bg-blue-600 text-white px-2 py-1 rounded">
-            E
-          </span>
-          <h1 className="text-xl font-extrabold tracking-tight text-gray-900 dark:text-gray-50 hidden md:block">
-            E-SHOP
-          </h1>
+    <header className="sticky top-0 z-50 border-b border-[#e5e1e9] bg-[#fcf8ff]/95 shadow-sm backdrop-blur">
+      <nav className="mx-auto flex h-20 w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-10">
+        <div className="flex items-center gap-8">
+          <Link
+            to="/"
+            className="brand-heading text-3xl font-bold tracking-tight text-[#1a146b]"
+          >
+            LUXE
+          </Link>
+
+          <div className="hidden items-center gap-6 md:flex">
+            <Link
+              to="/"
+              className={`pb-1 text-base font-semibold transition-colors ${
+                location.pathname === "/"
+                  ? "border-b-2 border-[#1a146b] text-[#1a146b]"
+                  : "text-[#474651] hover:text-[#1a146b]"
+              }`}
+            >
+              Shop
+            </Link>
+            <a
+              className="text-base text-[#474651] transition-colors hover:text-[#1a146b]"
+              href="#collections"
+            >
+              Categories
+            </a>
+            <a
+              className="text-base text-[#474651] transition-colors hover:text-[#1a146b]"
+              href="#products"
+            >
+              Deals
+            </a>
+            <a
+              className="text-base text-[#474651] transition-colors hover:text-[#1a146b]"
+              href="#products"
+            >
+              Orders
+            </a>
+          </div>
+        </div>
+
+        <div className="hidden flex-1 justify-center px-8 sm:flex">
+          <div className="relative w-full max-w-md">
+            <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm font-semibold text-[#777682]">
+              Search
+            </span>
+            <input
+              type="text"
+              aria-label="Search products"
+              className="w-full rounded-full border border-transparent bg-[#f6f2fa] py-3 pl-20 pr-4 text-sm outline-none transition focus:border-[#312e81] focus:ring-4 focus:ring-[#312e81]/10"
+              placeholder="Search products..."
+            />
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3">
+          {user ? (
+            <div className="relative">
+              {user.picture ? (
+                <img
+                  src={user.picture}
+                  alt={displayName}
+                  className="peer h-10 w-10 cursor-pointer rounded-full border-2 border-[#14b8a6] object-cover shadow-sm transition-transform hover:scale-105"
+                />
+              ) : (
+                <button className="peer flex h-10 w-10 items-center justify-center rounded-full border-2 border-[#14b8a6] bg-[#e2dfff] text-sm font-bold text-[#1a146b] shadow-sm transition-transform hover:scale-105">
+                  {initials || "U"}
+                </button>
+              )}
+              <div className="invisible absolute right-0 z-50 mt-3 w-52 rounded-xl border border-[#e5e1e9] bg-white opacity-0 shadow-xl transition-all peer-hover:visible peer-hover:opacity-100 hover:visible hover:opacity-100">
+                <div className="border-b border-[#e5e1e9] px-4 py-3">
+                  <p className="text-xs text-[#777682]">Signed in as</p>
+                  <p className="truncate text-sm font-bold text-[#1b1b21]">
+                    {displayName}
+                  </p>
+                </div>
+                <button
+                  onClick={handleLogout}
+                  className="w-full rounded-b-xl px-4 py-3 text-left text-sm font-semibold text-[#ba1a1a] transition-colors hover:bg-[#ffdad6]/40"
+                >
+                  Sign Out
+                </button>
+              </div>
+            </div>
+          ) : (
+            location.pathname !== "/login" && (
+              <Link
+                to="/login"
+                className="hidden rounded-lg border border-[#312e81] px-4 py-2 text-sm font-bold text-[#312e81] transition hover:bg-[#312e81]/5 sm:inline-flex"
+              >
+                Sign In
+              </Link>
+            )
+          )}
+
+          <Link
+            to="/cart"
+            className="relative inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-[#474651] transition hover:bg-[#f6f2fa] hover:text-[#1a146b] active:scale-95"
+          >
+            <ShoppingCart className="h-5 w-5" />
+            Cart
+            <span className="min-w-5 rounded-full bg-[#14b8a6] px-1.5 py-0.5 text-center text-[10px] font-bold text-white">
+              {cartCount}
+            </span>
           </Link>
         </div>
-        {/* Search Bar - Mockup */}
-        <div className="flex-1 max-w-md mx-8 hidden sm:block">
-          <input
-            type="text"
-            placeholder="Search products..."
-            className="w-full bg-gray-100 dark:bg-gray-800 border-none rounded-full px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none dark:text-gray-50 dark:placeholder-gray-400"
-          />
-        </div>
-        {/* Icons Section */}
-        <div className="flex items-center gap-6">
-            {location.pathname !== "/login" && (
-          <Link
-            to="/login"
-            className="text-blue-800 text-xl dark:text-gray-50 font-bold tracking-wide hover:text-blue-700 
-            hover:underline hover:scale-105 transition duration-200
-            dark:hover:text-blue-400 "
-          >
-            Sign In
-          </Link>)}
-
-          <div className="relative cursor-pointer hover:scale-105 transition duration-200">
-            <Link to="/cart" className="relative cursor-pointer group">
-              <span className="text-2xl">🛒</span>
-              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full transition-all duration-300 scale-110">
-                {cartCount}
-              </span>
-            </Link>
-          </div>
-
-            <DarkModeToggle />
-        </div>
-      </div>
-    </nav>
+      </nav>
+    </header>
   );
 };
 

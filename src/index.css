@@ -1,15 +1,23 @@
+@import url("https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
 
 @layer base {
-  /* This ensures the transition between light and dark is smooth */
   *,
   ::after,
   ::before {
-    @apply transition-colors duration-200 border-gray-200 dark:border-gray-800;
+    @apply border-gray-200;
   }
 
   body {
-    @apply bg-white text-gray-900 antialiased;
+    @apply bg-[#fcf8ff] text-[#1b1b21] antialiased;
+    font-family: "Inter", system-ui, sans-serif;
+  }
+
+  h1,
+  h2,
+  h3,
+  .brand-heading {
+    font-family: "Hanken Grotesk", system-ui, sans-serif;
   }
 }
 
@@ -23,5 +31,21 @@ html.dark {
 }
 
 html.dark body {
-  @apply bg-gray-950 text-gray-50;
+  @apply bg-[#111118] text-gray-50;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+.ambient-card {
+  box-shadow:
+    0 4px 12px rgba(26, 20, 107, 0.05),
+    0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.ambient-card:hover {
+  box-shadow:
+    0 14px 28px rgba(26, 20, 107, 0.1),
+    0 8px 14px rgba(0, 0, 0, 0.06);
 }

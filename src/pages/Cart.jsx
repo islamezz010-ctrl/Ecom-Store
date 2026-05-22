@@ -1,123 +1,213 @@
 import React from "react";
-import { useCart } from "../context/CartContext";
 import { Link } from "react-router-dom";
+import { useCart } from "../context/CartContext";
 
 const Cart = () => {
   const [loading, setLoading] = React.useState(false);
-  const { cart, cartCount } = useCart();
+  const { cart, cartCount, addToCart, removeFromCart, deleteFromCart } =
+    useCart();
 
+  const handleStripeCheckout = async () => {
+    setLoading(true);
+    try {
+      const checkoutItems = cart.map((item) => ({
+        id: item._id ?? item.id,
+        quantity: item.quantity,
+      }));
 
-
-/////////////////////////////////////////////////////
-
-        const handleStripeCheckout = async () => {
-       setLoading(true);
-      try {
-
-        const response = await fetch(
+      const response = await fetch(
         "http://localhost:5000/create-checkout-session",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ items: cart }),
+          body: JSON.stringify({ items: checkoutItems }),
+          credentials: "include",
         },
       );
 
-        const data = await response.json();
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Server error:", response.status, errorData);
+        alert("Checkout failed: " + (errorData.message || "Unknown error"));
+        setLoading(false);
+        return;
+      }
+
+      const data = await response.json();
 
       if (data.url) {
-        // This is the modern 2026 way: Just redirect to the session URL
         window.location.href = data.url;
-       } else {
+      } else {
         console.error("No checkout URL received from server");
-       }
-        } 
-        
-      catch (err) {
+        setLoading(false);
+      }
+    } catch (err) {
       console.error("Network/Code Error:", err);
       setLoading(false);
     }
   };
 
-  /////////////////////////////////////////////////////////////////////
-
-  // Calculate Total
-  const totalPrice = cart.reduce(
-    (acc, item) => acc + item.price * item.quantity,
+  const subtotal = cart.reduce(
+    (acc, item) => acc + Number(item.price) * item.quantity,
     0,
   );
+  const estimatedTax = subtotal * 0.08;
+  const totalPrice = subtotal + estimatedTax;
 
   if (cartCount === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-[70vh]">
-        <h2 className="text-2xl font-bold text-gray-400 dark:text-gray-600 text-center">
-          Your cart is empty... for now.
-        </h2>
+      <main className="mx-auto flex min-h-[70vh] max-w-4xl flex-col items-center justify-center px-4 text-center">
+        <span className="mb-4 rounded-full bg-[#e2dfff] px-4 py-2 text-xs font-bold uppercase tracking-widest text-[#1a146b]">
+          Your Bag
+        </span>
+        <h1 className="brand-heading text-4xl font-bold text-[#1a146b]">
+          Your cart is empty.
+        </h1>
+        <p className="mt-3 max-w-md text-[#474651]">
+          Build your selection from the premium utility collection.
+        </p>
         <Link
           to="/"
-          className="mt-4 text-blue-600 dark:text-blue-400 font-semibold hover:underline"
+          className="mt-8 rounded-lg bg-[#1a146b] px-8 py-4 text-sm font-bold text-white transition hover:bg-[#312e81]"
         >
-          Go back to shopping
+          Continue Shopping
         </Link>
-      </div>
+      </main>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <h2 className="text-3xl font-black mb-8 dark:text-gray-50">Your Bag</h2>
+    <main className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-10">
+      <div className="mb-10">
+        <h1 className="brand-heading text-5xl font-bold text-[#1a146b]">
+          Your Bag
+        </h1>
+        <p className="mt-2 text-lg text-[#474651]">
+          Review and manage the exquisite items in your selection.
+        </p>
+      </div>
 
-      <div className="space-y-4">
-        {cart.map((item) => (
-          <div
-            key={item.id}
-            className="flex items-center gap-4 bg-white dark:bg-gray-900 p-4 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm"
+      <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-12">
+        <section className="space-y-6 lg:col-span-8">
+          {cart.map((item) => {
+            const itemId = item._id ?? item.id;
+
+            return (
+              <article
+                key={itemId}
+                className="ambient-card flex flex-col gap-6 rounded-2xl border border-[#f0ecf4] bg-white p-5 transition-all sm:flex-row"
+              >
+                <div className="h-44 w-full overflow-hidden rounded-xl bg-[#f0ecf4] sm:w-44">
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+
+                <div className="flex flex-1 flex-col justify-between gap-6">
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <h2 className="brand-heading text-2xl font-semibold text-[#1b1b21]">
+                        {item.name}
+                      </h2>
+                      <p className="mt-2 text-[#474651]">
+                        Premium Utility / Quantity {item.quantity}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => deleteFromCart(itemId)}
+                      className="rounded-full px-3 py-2 text-sm font-bold text-[#ba1a1a] transition hover:bg-[#ffdad6]/40"
+                    >
+                      Remove
+                    </button>
+                  </div>
+
+                  <div className="flex flex-wrap items-center justify-between gap-4">
+                    <div className="flex items-center gap-3 rounded-full border border-[#c8c5d3] bg-[#f6f2fa] px-4 py-2">
+                      <button
+                        onClick={() => removeFromCart(itemId)}
+                        className="flex h-8 w-8 items-center justify-center rounded-full text-xl font-bold text-[#474651] transition hover:bg-white hover:text-[#ba1a1a]"
+                        aria-label={`Remove one ${item.name}`}
+                      >
+                        -
+                      </button>
+                      <span className="w-8 text-center text-sm font-bold text-[#1b1b21]">
+                        {item.quantity}
+                      </span>
+                      <button
+                        onClick={() => addToCart(item)}
+                        className="flex h-8 w-8 items-center justify-center rounded-full text-xl font-bold text-[#474651] transition hover:bg-white hover:text-[#1a146b]"
+                        aria-label={`Add one ${item.name}`}
+                      >
+                        +
+                      </button>
+                    </div>
+                    <span className="brand-heading text-2xl font-semibold text-[#006b5f]">
+                      ${(Number(item.price) * item.quantity).toFixed(2)}
+                    </span>
+                  </div>
+                </div>
+              </article>
+            );
+          })}
+
+          <Link
+            to="/"
+            className="inline-flex font-semibold text-[#006b5f] transition hover:-translate-x-1"
           >
-            <img
-              src={item.image}
-              alt={item.name}
-              className="w-20 h-20 object-cover rounded-lg"
-            />
-            <div className="flex-1">
-              <h3 className="font-bold text-gray-800 dark:text-gray-100">
-                {item.name}
-              </h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                ${item.price} x {item.quantity}
-              </p>
+            Back to shopping
+          </Link>
+        </section>
+
+        <aside className="lg:sticky lg:top-28 lg:col-span-4">
+          <div className="rounded-2xl border border-[#c8c5d3] bg-[#eae7ef] p-8 shadow-md">
+            <h2 className="brand-heading text-2xl font-semibold text-[#1b1b21]">
+              Order Summary
+            </h2>
+
+            <div className="mt-6 space-y-4 text-[#474651]">
+              <div className="flex justify-between">
+                <span>Subtotal</span>
+                <span>${subtotal.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Estimated Shipping</span>
+                <span className="font-medium text-[#006f64]">Next step</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Estimated Tax</span>
+                <span>${estimatedTax.toFixed(2)}</span>
+              </div>
+              <div className="h-px bg-[#c8c5d3]" />
+              <div className="brand-heading flex justify-between text-2xl font-semibold text-[#1a146b]">
+                <span>Total</span>
+                <span>${totalPrice.toFixed(2)}</span>
+              </div>
             </div>
-            <p className="font-black text-blue-600 dark:text-blue-400">
-              ${(item.price * item.quantity).toFixed(2)}
+
+            <button
+              onClick={handleStripeCheckout}
+              disabled={loading}
+              className="mt-8 flex w-full items-center justify-center gap-3 rounded-lg bg-[#1a146b] px-6 py-4 text-sm font-bold text-white transition hover:bg-[#312e81] active:scale-[0.98] disabled:cursor-wait disabled:opacity-70"
+            >
+              {loading ? (
+                <>
+                  <span className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                  Processing...
+                </>
+              ) : (
+                "Pay with Stripe"
+              )}
+            </button>
+
+            <p className="mt-4 text-sm text-[#777682]">
+              Secure checkout powered by your existing Stripe endpoint.
             </p>
           </div>
-        ))}
+        </aside>
       </div>
-
-      <div className="mt-10 p-6 bg-gray-900 dark:bg-gray-800 text-white rounded-2xl flex justify-between items-center shadow-xl">
-        <div>
-          <p className="text-gray-400 text-sm">Total Amount</p>
-          <p className="text-3xl font-black">${totalPrice.toFixed(2)}</p>
-        </div>
-        <button className="bg-blue-600 px-8 py-3 rounded-xl font-bold hover:bg-blue-500 transition-colors">
-          Checkout Now
-        </button>
-
-        <button
-          onClick={handleStripeCheckout}
-          disabled={loading}
-          className="z-50 relative bg-blue-600 px-8 py-3 rounded-xl font-bold text-white cursor-pointer"
-        >
-          {loading ? (
-            <>
-              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-              Processing...
-            </>
-          ) : (
-            "Pay with Stripe"
-          )}
-        </button>
-      </div>
-    </div>
+    </main>
   );
 };
 
