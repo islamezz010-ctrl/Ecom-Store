@@ -7,7 +7,7 @@ const ProductSchema = new mongoose.Schema({
   image: String,
   category: String,
   stock: { type: Number, default: 1 }
-}, { timestamps: true }); // Automatically adds 'createdAt' and 'updatedAt'
+}, { timestamps: true }); 
 
 module.exports = mongoose.model('Product', ProductSchema);
 

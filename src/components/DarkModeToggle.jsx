@@ -12,7 +12,7 @@ const DarkModeToggle = () => {
     const root = window.document.documentElement;
     if (isDark) {
       root.classList.add('dark');
-      root.style.colorScheme = 'dark'; // v4 loves this for native inputs
+      root.style.colorScheme = 'dark'; 
       localStorage.setItem('theme', 'dark');
     } else {
       root.classList.remove('dark');

@@ -12,7 +12,7 @@ const UserSchema = new mongoose.Schema(
       unique: true,
       match: /^[^@\s]+@[^@\s]+\.[^@\s]+$/
     },
-    // Password required only for non‑Google accounts
+
     password: {
       type: String,
       required: function () {
@@ -24,7 +24,6 @@ const UserSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Encrypt password before saving (skip if no password)
 UserSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
   if (this.password) {
@@ -33,7 +32,6 @@ UserSchema.pre("save", async function (next) {
   next();
 });
 
-// Helper to compare candidate password with stored hash
 UserSchema.methods.comparePassword = function (candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
 };

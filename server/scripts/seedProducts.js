@@ -18,7 +18,6 @@ const seedProducts = async () => {
 
   await mongoose.connect(process.env.MONGO_URI);
 
-  // Fetch products from Fake API
   let fakeProducts = [];
   try {
     const response = await fetch("https://dummyjson.com/products?limit=20");
@@ -27,7 +26,7 @@ const seedProducts = async () => {
       name: item.title,
       description: item.description,
       price: item.price,
-      image: item.thumbnail, // dummyjson uses thumbnail for main image
+      image: item.thumbnail, 
       stock: item.stock || 50,
       category: item.category
     }));
