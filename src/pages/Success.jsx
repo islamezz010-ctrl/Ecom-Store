@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { API } from "../lib/api";
 
 const Success = () => {
-
   const { cart, clearCart } = useCart();
 
   useEffect(() => {
@@ -11,13 +11,11 @@ const Success = () => {
       // Only run if there are actually items in the cart
       if (cart.length > 0) {
         try {
-
-          await fetch("http://localhost:5000/api/products/reduce-stock", {
+          await fetch(`${API}/api/products/reduce-stock`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ items: cart }),
           });
-
 
           clearCart();
         } catch (error) {
@@ -27,7 +25,7 @@ const Success = () => {
     };
 
     finalizePurchase();
-  }, [cart, clearCart]); 
+  }, [cart, clearCart]);
 
   return (
     <div className="flex flex-col items-center justify-center h-[80vh] text-center px-4">

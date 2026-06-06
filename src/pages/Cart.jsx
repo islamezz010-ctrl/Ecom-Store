@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { API } from "../lib/api";
 
 const Cart = () => {
   const [loading, setLoading] = React.useState(false);
@@ -15,15 +16,12 @@ const Cart = () => {
         quantity: item.quantity,
       }));
 
-      const response = await fetch(
-        "http://localhost:5000/create-checkout-session",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ items: checkoutItems }),
-          credentials: "include",
-        },
-      );
+      const response = await fetch(`${API}/create-checkout-session`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ items: checkoutItems }),
+        credentials: "include",
+      });
 
       if (!response.ok) {
         const errorData = await response.json();

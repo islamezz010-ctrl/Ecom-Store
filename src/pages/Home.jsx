@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import ProductCard from "../components/ProductCard";
+import { API } from "../lib/api";
 
 const heroImage =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuCZmQc5B1XeBzqK-v0sywfyVyHSX_-iLyT0oJ0brUz2IWZvwfqc0aFMprdb4mid2nPhyWspvArWzsqZez0DbHNvmyb0BuU7I1CsWrV2LZV9tsIif9iYDfIl_rCf8JfsF_qbWnHI6l6-2UU2ciAedEENEz7qTmQ5qUC38DR8VirFDh5o2powr0Bh4EJAhnTmIMJs2UuNFb02cagllli_sQQy64xE2Hcm7_xONM5_Kf6MqauSEDyRSAbf1LHDvqB3BnAs5Guxh5ae3tAy";
@@ -32,7 +33,7 @@ const Home = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/products");
+        const response = await fetch(`${API}/api/products`);
         const data = await response.json();
         setProducts(data);
       } catch (error) {
@@ -88,7 +89,10 @@ const Home = () => {
         </div>
       </section>
 
-      <section id="collections" className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-10">
+      <section
+        id="collections"
+        className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-10"
+      >
         <div className="mb-10 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
           <div>
             <h2 className="brand-heading text-3xl font-semibold text-[#1b1b21]">
@@ -98,7 +102,10 @@ const Home = () => {
               Precision-engineered pieces for every facet of life.
             </p>
           </div>
-          <a className="font-semibold text-[#006b5f] hover:underline" href="#products">
+          <a
+            className="font-semibold text-[#006b5f] hover:underline"
+            href="#products"
+          >
             Explore all categories
           </a>
         </div>

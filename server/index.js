@@ -46,6 +46,15 @@ app.use(
   }),
 );
 
+// Cookie options used for auth token
+const cookieOptions = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+  path: "/",
+  maxAge: 30 * 24 * 60 * 60 * 1000,
+};
+
 // Health check
 app.get("/health", (req, res) => res.json({ status: "ok" }));
 
@@ -86,20 +95,12 @@ app.post("/api/auth/login", async (req, res, next) => {
           expiresIn: "30d",
         },
       );
-      res
-        .cookie("token", token, {
-          httpOnly: true,
-          secure: false,
-          sameSite: "lax",
-          path: "/",
-          maxAge: 30 * 24 * 60 * 60 * 1000,
-        })
-        .json({
-          _id: user._id,
-          email: user.email,
-          name: user.name,
-          picture: user.picture,
-        });
+      res.cookie("token", token, cookieOptions).json({
+        _id: user._id,
+        email: user.email,
+        name: user.name,
+        picture: user.picture,
+      });
       console.log("✅ Token cookie set for user:", user.email);
     } else {
       res.status(401).json({ message: "Invalid email or password" });
@@ -130,21 +131,13 @@ app.post("/api/auth/google", async (req, res, next) => {
         expiresIn: "30d",
       },
     );
-    res
-      .cookie("token", token, {
-        httpOnly: true,
-        secure: false,
-        sameSite: "lax",
-        path: "/",
-        maxAge: 30 * 24 * 60 * 60 * 1000,
-      })
-      .json({
-        _id: user._id,
-        email: user.email,
-        name: user.name,
-        picture: user.picture,
-        googleId: user.googleId,
-      });
+    res.cookie("token", token, cookieOptions).json({
+      _id: user._id,
+      email: user.email,
+      name: user.name,
+      picture: user.picture,
+      googleId: user.googleId,
+    });
     console.log("✅ Token cookie set for Google user:", email);
   } catch (err) {
     next(err);
@@ -200,13 +193,17 @@ app.post("/create-checkout-session", protect, async (req, res, next) => {
       };
     });
 
+    const clientUrl = (
+      process.env.CLIENT_URL || "http://localhost:5173"
+    ).replace(/\/$/, "");
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       line_items,
       mode: "payment",
       customer_email: req.user.email,
-      success_url: "http://localhost:5173/success",
-      cancel_url: "http://localhost:5173/cart",
+      success_url: `${clientUrl}/success`,
+      cancel_url: `${clientUrl}/cart`,
     });
 
     res.json({ url: session.url });
