@@ -39,6 +39,7 @@ Replace `main` with your branch name if different.
    - `NODE_ENV=production`
 
 Notes:
+
 - Ensure `CORS_ORIGIN` includes your Vercel URL (https, no trailing slash).
 - Render will provide a service URL like `https://your-service.onrender.com` — use that as the backend URL in Vercel's `VITE_API_URL`.
 
@@ -104,5 +105,6 @@ npm run build
 ---
 
 If you want, I can:
+
 - create a Git branch and prepare a clean commit message (I cannot push automatically), or
 - add a small CI workflow that runs lint and builds PRs before merge.
