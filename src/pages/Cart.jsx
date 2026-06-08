@@ -115,7 +115,7 @@ const Cart = () => {
                     </div>
                     <button
                       onClick={() => deleteFromCart(itemId)}
-                      className="rounded-full px-3 py-2 text-sm font-bold text-[#ba1a1a] transition hover:bg-[#ffdad6]/40"
+                      className="rounded-full cursor-pointer px-3 py-2 text-sm font-bold text-[#ba1a1a] transition hover:bg-[#ffdad6]/40"
                     >
                       Remove
                     </button>
@@ -125,7 +125,7 @@ const Cart = () => {
                     <div className="flex items-center gap-3 rounded-full border border-[#c8c5d3] bg-[#f6f2fa] px-4 py-2">
                       <button
                         onClick={() => removeFromCart(itemId)}
-                        className="flex h-8 w-8 items-center justify-center rounded-full text-xl font-bold text-[#474651] transition hover:bg-white hover:text-[#ba1a1a]"
+                        className="flex cursor-pointer h-8 w-8 items-center justify-center rounded-full text-xl font-bold text-[#474651] transition hover:bg-white hover:text-[#ba1a1a]"
                         aria-label={`Remove one ${item.name}`}
                       >
                         -
@@ -135,7 +135,7 @@ const Cart = () => {
                       </span>
                       <button
                         onClick={() => addToCart(item)}
-                        className="flex h-8 w-8 items-center justify-center rounded-full text-xl font-bold text-[#474651] transition hover:bg-white hover:text-[#1a146b]"
+                        className="flex cursor-pointer h-8 w-8 items-center justify-center rounded-full text-xl font-bold text-[#474651] transition hover:bg-white hover:text-[#1a146b]"
                         aria-label={`Add one ${item.name}`}
                       >
                         +

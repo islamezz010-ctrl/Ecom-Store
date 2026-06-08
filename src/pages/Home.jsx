@@ -48,14 +48,14 @@ const Home = () => {
 
   return (
     <main>
-      <section className="relative flex min-h-[620px] items-center overflow-hidden bg-[#f0ecf4]">
+      <section className="relative flex min-h-155 items-center overflow-hidden bg-[#f0ecf4]">
         <div className="absolute inset-0">
           <img
             className="h-full w-full object-cover opacity-90"
             src={heroImage}
             alt="Premium tech and lifestyle products in a minimalist showroom"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#fcf8ff] via-[#fcf8ff]/70 to-transparent" />
+          <div className="absolute inset-0 bg-linear-to-r from-[#fcf8ff] via-[#fcf8ff]/70 to-transparent" />
         </div>
 
         <div className="relative z-10 mx-auto w-full max-w-7xl px-4 py-24 sm:px-6 lg:px-10">
@@ -114,14 +114,14 @@ const Home = () => {
           {collections.map((collection) => (
             <article
               key={collection.title}
-              className="group relative aspect-[4/5] overflow-hidden rounded-2xl shadow-md transition-all hover:shadow-xl"
+              className="group relative aspect-4/5 overflow-hidden rounded-2xl shadow-md transition-all hover:shadow-xl"
             >
               <img
                 className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                 src={collection.image}
                 alt={collection.title}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#1a146b]/85 via-[#1a146b]/10 to-transparent" />
+              <div className="absolute inset-0 bg-linear-to-t from-[#1a146b]/85 via-[#1a146b]/10 to-transparent" />
               <div className="absolute bottom-0 left-0 p-8 text-white">
                 <h3 className="brand-heading text-2xl font-semibold">
                   {collection.title}

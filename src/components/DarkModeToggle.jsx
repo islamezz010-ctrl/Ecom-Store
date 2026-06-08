@@ -24,7 +24,7 @@ const DarkModeToggle = () => {
   return (
     <button
       onClick={() => setIsDark(!isDark)}
-      className="relative h-10 w-10 flex items-center justify-center rounded-xl bg-gray-100 dark:bg-gray-800 hover:ring-2 ring-blue-500 transition-all active:scale-90"
+      className="relative cursor-pointer h-10 w-10 flex items-center justify-center rounded-xl bg-gray-100 dark:bg-gray-800 hover:ring-2 ring-blue-500 transition-all active:scale-90"
       aria-label="Toggle Dark Mode"
     >
       <span className="text-xl">

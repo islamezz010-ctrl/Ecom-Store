@@ -44,7 +44,7 @@ const ProductCard = ({ product }) => {
         </h3>
 
         <div className="mt-6 flex items-center justify-between gap-4">
-          <span className="brand-heading text-2xl font-semibold text-[#006b5f]">
+          <span className="brand-heading text-2xl font-semibold text-[#1a146b]">
             ${Number(product.price).toFixed(2)}
           </span>
 
@@ -55,7 +55,7 @@ const ProductCard = ({ product }) => {
               className={`rounded-lg px-4 py-3 text-sm font-bold text-white transition-all active:scale-95 ${
                 isSoldOut
                   ? "cursor-not-allowed bg-[#777682]"
-                  : "bg-[#006b5f] hover:bg-[#005048]"
+                  : "cursor-pointer bg-[#1a146b] hover:bg-[#13104f]"
               }`}
             >
               Add
@@ -64,7 +64,7 @@ const ProductCard = ({ product }) => {
             <div className="flex items-center gap-2 rounded-full border border-[#c8c5d3] bg-[#f6f2fa] px-2 py-1">
               <button
                 onClick={() => removeFromCart(productId)}
-                className="flex h-8 w-8 items-center justify-center rounded-full text-lg font-bold text-[#474651] transition hover:bg-white hover:text-[#ba1a1a]"
+                className="flex cursor-pointer h-8 w-8 items-center justify-center rounded-full text-lg font-bold text-[#474651] transition hover:bg-white hover:text-[#ba1a1a]"
                 aria-label={`Remove one ${product.name}`}
               >
                 -
@@ -78,7 +78,7 @@ const ProductCard = ({ product }) => {
                 className={`flex h-8 w-8 items-center justify-center rounded-full text-lg font-bold transition ${
                   isAtMaxStock
                     ? "cursor-not-allowed text-[#c8c5d3]"
-                    : "text-[#474651] hover:bg-white hover:text-[#1a146b]"
+                    : "cursor-pointer text-[#474651] hover:bg-white hover:text-[#1a146b]"
                 }`}
                 aria-label={`Add one ${product.name}`}
               >

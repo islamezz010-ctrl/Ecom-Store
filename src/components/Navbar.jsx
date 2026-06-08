@@ -104,10 +104,10 @@ const Navbar = () => {
                 <img
                   src={user.picture}
                   alt={displayName}
-                  className="peer h-10 w-10 cursor-pointer rounded-full border-2 border-[#14b8a6] object-cover shadow-sm transition-transform hover:scale-105"
+                  className="peer h-10 w-10 cursor-pointer rounded-full border-2 border-[#001a4d] object-cover shadow-sm transition-transform hover:scale-105"
                 />
               ) : (
-                <button className="peer flex h-10 w-10 items-center justify-center rounded-full border-2 border-[#14b8a6] bg-[#e2dfff] text-sm font-bold text-[#1a146b] shadow-sm transition-transform hover:scale-105">
+                <button className="peer flex cursor-pointer h-10 w-10 items-center justify-center rounded-full border-2 border-[#001a4d] bg-[#e2dfff] text-sm font-bold text-[#1a146b] shadow-sm transition-transform hover:scale-105">
                   {initials || "U"}
                 </button>
               )}
@@ -120,7 +120,7 @@ const Navbar = () => {
                 </div>
                 <button
                   onClick={handleLogout}
-                  className="w-full rounded-b-xl px-4 py-3 text-left text-sm font-semibold text-[#ba1a1a] transition-colors hover:bg-[#ffdad6]/40"
+                  className="w-full cursor-pointer rounded-b-xl px-4 py-3 text-left text-sm font-semibold text-[#ba1a1a] transition-colors hover:bg-[#ffdad6]/40"
                 >
                   Sign Out
                 </button>
@@ -139,13 +139,17 @@ const Navbar = () => {
 
           <Link
             to="/cart"
-            className="relative inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-[#474651] transition hover:bg-[#f6f2fa] hover:text-[#1a146b] active:scale-95"
+            className="relative inline-flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-bold text-white bg-[#001a4d] transition hover:bg-[#003366] active:scale-95"
           >
-            <ShoppingCart className="h-5 w-5" />
+            <div className="relative inline-flex">
+              <ShoppingCart className="h-6 w-6" />
+              {cartCount > 0 && (
+                <span className="absolute -top-1 -right-1 inline-flex h-4 w-4 items-center justify-center rounded-full bg-[#ff8c42] text-[9px] font-bold text-white">
+                  {cartCount}
+                </span>
+              )}
+            </div>
             Cart
-            <span className="min-w-5 rounded-full bg-[#14b8a6] px-1.5 py-0.5 text-center text-[10px] font-bold text-white">
-              {cartCount}
-            </span>
           </Link>
         </div>
       </nav>

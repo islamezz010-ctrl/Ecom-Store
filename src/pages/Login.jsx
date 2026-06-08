@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
-import { Button } from "../components/ui/Button";
 import { API } from "../lib/api";
+import Button from "../components/Button";
 
 const Login = () => {
   const [email, setEmail] = useState("");
