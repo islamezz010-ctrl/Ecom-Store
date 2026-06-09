@@ -14,6 +14,7 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 const User = require("./models/User");
 const Product = require("./models/Product");
+const { getLocationById, getShippingCost } = require("./data/locations");
 
 const app = express();
 const allowedOrigins = (
@@ -165,12 +166,28 @@ app.post("/create-checkout-session", protect, async (req, res, next) => {
         }),
       )
       .required(),
+    location: Joi.object({
+      id: Joi.string().required(),
+      name: Joi.string().required(),
+      governorate: Joi.string().required(),
+    }).optional(),
+    address: Joi.object({
+      fullName: Joi.string().required(),
+      mobile: Joi.string().required(),
+      street: Joi.string().required(),
+      building: Joi.string().allow("").optional(),
+      cityArea: Joi.string().required(),
+      district: Joi.string().allow("").optional(),
+      governorate: Joi.string().required(),
+      landmark: Joi.string().allow("").optional(),
+      addressType: Joi.string().valid("home", "office").optional(),
+    }).optional(),
   });
   const { error, value } = schema.validate(req.body);
   if (error) return res.status(400).json({ message: error.details[0].message });
 
   try {
-    const { items } = value;
+    const { items, location: locationInput, address } = value;
     const productIds = items.map((item) => item.id);
     const storeItems = await Product.find({ _id: { $in: productIds } });
 
@@ -193,6 +210,29 @@ app.post("/create-checkout-session", protect, async (req, res, next) => {
       };
     });
 
+    const subtotal = items.reduce((acc, item) => {
+      const storeItem = storeItems.find((p) => p._id.toString() === item.id);
+      return acc + storeItem.price * item.quantity;
+    }, 0);
+
+    const deliveryLocation = locationInput
+      ? getLocationById(locationInput.id)
+      : getLocationById("cairo");
+    const shippingCost = getShippingCost(deliveryLocation, subtotal);
+
+    if (shippingCost > 0) {
+      line_items.push({
+        price_data: {
+          currency: "usd",
+          product_data: {
+            name: `Shipping to ${deliveryLocation.name}`,
+          },
+          unit_amount: Math.round(shippingCost * 100),
+        },
+        quantity: 1,
+      });
+    }
+
     const clientUrl = (
       process.env.CLIENT_URL || "http://localhost:5173"
     ).replace(/\/$/, "");
@@ -204,6 +244,17 @@ app.post("/create-checkout-session", protect, async (req, res, next) => {
       customer_email: req.user.email,
       success_url: `${clientUrl}/success`,
       cancel_url: `${clientUrl}/cart`,
+      metadata: {
+        deliveryCity: address?.cityArea || deliveryLocation.name,
+        deliveryGovernorate: address?.governorate || deliveryLocation.governorate,
+        deliveryName: address?.fullName || "",
+        deliveryMobile: address?.mobile || "",
+        deliveryStreet: address?.street || "",
+        deliveryBuilding: address?.building || "",
+        deliveryDistrict: address?.district || "",
+        deliveryLandmark: address?.landmark || "",
+        deliveryType: address?.addressType || "",
+      },
     });
 
     res.json({ url: session.url });

@@ -52,13 +52,13 @@ const ProductCard = ({ product }) => {
             <button
               disabled={isSoldOut}
               onClick={() => addToCart(product)}
-              className={`rounded-lg px-4 py-3 text-sm font-bold text-white transition-all active:scale-95 ${
+              className={`rounded-lg px-3 py-2 text-xs font-bold text-white transition-all active:scale-95 ${
                 isSoldOut
                   ? "cursor-not-allowed bg-[#777682]"
                   : "cursor-pointer bg-[#1a146b] hover:bg-[#13104f]"
               }`}
             >
-              Add
+              Add to Cart
             </button>
           ) : (
             <div className="flex items-center gap-2 rounded-full border border-[#c8c5d3] bg-[#f6f2fa] px-2 py-1">

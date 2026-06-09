@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { ShoppingCart } from "lucide-react";
+import LocationSelector from "./LocationSelector";
 
 const Navbar = () => {
   const { cartCount } = useCart();
@@ -62,28 +63,17 @@ const Navbar = () => {
             >
               Shop
             </Link>
-            <a
-              className="text-base text-[#474651] transition-colors hover:text-[#1a146b]"
-              href="#collections"
-            >
-              Categories
-            </a>
-            <a
-              className="text-base text-[#474651] transition-colors hover:text-[#1a146b]"
-              href="#products"
-            >
-              Deals
-            </a>
-            <a
-              className="text-base text-[#474651] transition-colors hover:text-[#1a146b]"
-              href="#products"
-            >
-              Orders
-            </a>
           </div>
         </div>
 
-        <div className="hidden flex-1 justify-center px-8 sm:flex">
+        <div className="flex items-center gap-1 sm:gap-2">
+          <span className="hidden text-xs font-semibold uppercase tracking-wide text-[#777682] lg:inline">
+            Deliver to
+          </span>
+          <LocationSelector />
+        </div>
+
+        <div className="hidden flex-1 justify-center px-8 lg:flex">
           <div className="relative w-full max-w-md">
             <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm font-semibold text-[#777682]">
               Search
@@ -150,6 +140,12 @@ const Navbar = () => {
               )}
             </div>
             Cart
+          </Link>
+          <Link
+            to="/orders"
+            className="hidden items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-semibold text-[#474651] transition hover:text-[#1a146b] sm:inline-flex"
+          >
+            Orders
           </Link>
         </div>
       </nav>

@@ -1,12 +1,17 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { useDeliveryLocation } from "../context/LocationContext";
+import DeliveryAddressCard from "../components/DeliveryAddressCard";
+import AddressFormModal from "../components/AddressFormModal";
 import { API } from "../lib/api";
 
 const Cart = () => {
   const [loading, setLoading] = React.useState(false);
+  const [addressModalOpen, setAddressModalOpen] = React.useState(false);
   const { cart, cartCount, addToCart, removeFromCart, deleteFromCart } =
     useCart();
+  const { location, selectedAddress, calculateShipping } = useDeliveryLocation();
 
   const handleStripeCheckout = async () => {
     setLoading(true);
@@ -19,7 +24,27 @@ const Cart = () => {
       const response = await fetch(`${API}/create-checkout-session`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items: checkoutItems }),
+        body: JSON.stringify({
+          items: checkoutItems,
+          location: {
+            id: location.id,
+            name: location.name,
+            governorate: location.governorate,
+          },
+          address: selectedAddress
+            ? {
+                fullName: selectedAddress.fullName,
+                mobile: selectedAddress.mobile,
+                street: selectedAddress.street,
+                building: selectedAddress.building,
+                cityArea: selectedAddress.cityArea,
+                district: selectedAddress.district,
+                governorate: selectedAddress.governorate,
+                landmark: selectedAddress.landmark,
+                addressType: selectedAddress.addressType,
+              }
+            : undefined,
+        }),
         credentials: "include",
       });
 
@@ -49,8 +74,13 @@ const Cart = () => {
     (acc, item) => acc + Number(item.price) * item.quantity,
     0,
   );
+  const shippingCost = calculateShipping(subtotal);
   const estimatedTax = subtotal * 0.08;
-  const totalPrice = subtotal + estimatedTax;
+  const totalPrice = subtotal + shippingCost + estimatedTax;
+  const shippingLabel =
+    shippingCost === 0
+      ? "Free"
+      : `$${shippingCost.toFixed(2)}`;
 
   if (cartCount === 0) {
     return (
@@ -164,15 +194,33 @@ const Cart = () => {
               Order Summary
             </h2>
 
+            <div className="mt-5">
+              <DeliveryAddressCard onAddAddress={() => setAddressModalOpen(true)} />
+            </div>
+
             <div className="mt-6 space-y-4 text-[#474651]">
               <div className="flex justify-between">
                 <span>Subtotal</span>
                 <span>${subtotal.toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
-                <span>Estimated Shipping</span>
-                <span className="font-medium text-[#006f64]">Next step</span>
+                <span>
+                  Shipping to{" "}
+                  {selectedAddress
+                    ? selectedAddress.cityArea
+                    : location.name}
+                </span>
+                <span className="font-medium text-[#006f64]">{shippingLabel}</span>
               </div>
+              {shippingCost > 0 && subtotal < location.freeShippingMin && (
+                <p className="text-sm text-[#006b5f]">
+                  Add ${(location.freeShippingMin - subtotal).toFixed(2)} more for
+                  free shipping to {location.name}.
+                </p>
+              )}
+              <p className="text-sm text-[#777682]">
+                Estimated delivery: {location.deliveryDays} business days
+              </p>
               <div className="flex justify-between">
                 <span>Estimated Tax</span>
                 <span>${estimatedTax.toFixed(2)}</span>
@@ -205,6 +253,11 @@ const Cart = () => {
           </div>
         </aside>
       </div>
+
+      <AddressFormModal
+        open={addressModalOpen}
+        onClose={() => setAddressModalOpen(false)}
+      />
     </main>
   );
 };

@@ -132,6 +132,30 @@ const Footer = () => {
           </div>
         </div>
 
+        {/* Payment Methods */}
+        <div className="my-8 rounded-lg bg-[#001a4d] p-6">
+          <h4 className="mb-4 text-center text-sm font-semibold text-white">
+            We accept
+          </h4>
+          <div className="flex flex-wrap items-center justify-center gap-6">
+            <div className="rounded-lg border border-[#e0e0e0] bg-white px-4 py-2">
+              <span className="text-xl font-bold text-blue-600">VISA</span>
+            </div>
+            <div className="rounded-lg border border-[#e0e0e0] bg-white px-4 py-2">
+              <span className="text-xl font-bold">💳 Mastercard</span>
+            </div>
+            <div className="rounded-lg border border-[#e0e0e0] bg-white px-4 py-2">
+              <span className="text-xl font-bold text-orange-500">⚡ Fawry</span>
+            </div>
+            <div className="rounded-lg border border-[#e0e0e0] bg-white px-4 py-2">
+              <span className="text-xl font-bold text-blue-500">AMEX</span>
+            </div>
+            <div className="rounded-lg border border-[#e0e0e0] bg-white px-4 py-2">
+              <span className="text-xl font-bold text-purple-600">🟣 OKay</span>
+            </div>
+          </div>
+        </div>
+
         {/* Divider */}
         <div className="my-8 border-t border-gray-600"></div>
 

@@ -4,9 +4,8 @@ import { useState } from "react";
 const CategoryBar = () => {
   const categories = [
     "Electronics",
-    "Women's Fashion",
-    "Men's Fashion",
-    "Kids' Fashion",
+    "Fashion",
+    "Grocery",
     "Beauty & Fragrance",
     "Home & Appliances",
     "Baby",
@@ -50,7 +49,7 @@ const CategoryBar = () => {
               {category}
             </a>
           ))}
-          <button className="ml-2 flex-shrink-0 cursor-pointer p-1 text-white hover:text-yellow-300 transition-transform hover:scale-110">
+          <button className="ml-2 shrink-0 cursor-pointer p-1 text-white hover:text-yellow-300 transition-transform hover:scale-110">
             <ChevronRight size={20} />
           </button>
         </div>

@@ -5,6 +5,7 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 
 import { StrictMode } from 'react'
 import { CartProvider } from './context/CartContext';
+import { LocationProvider } from './context/LocationContext';
 
 const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
@@ -13,9 +14,11 @@ const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <CartProvider>
-     <GoogleOAuthProvider clientId={googleClientId}>
-      <App />
-    </GoogleOAuthProvider>
+      <LocationProvider>
+        <GoogleOAuthProvider clientId={googleClientId}>
+          <App />
+        </GoogleOAuthProvider>
+      </LocationProvider>
     </CartProvider>
   </StrictMode>,
 )

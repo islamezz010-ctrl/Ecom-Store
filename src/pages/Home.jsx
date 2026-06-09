@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import ProductCard from "../components/ProductCard";
+import Carousel from "../components/Carousel";
 import { API } from "../lib/api";
 
 const heroImage =
@@ -48,46 +49,8 @@ const Home = () => {
 
   return (
     <main>
-      <section className="relative flex min-h-155 items-center overflow-hidden bg-[#f0ecf4]">
-        <div className="absolute inset-0">
-          <img
-            className="h-full w-full object-cover opacity-90"
-            src={heroImage}
-            alt="Premium tech and lifestyle products in a minimalist showroom"
-          />
-          <div className="absolute inset-0 bg-linear-to-r from-[#fcf8ff] via-[#fcf8ff]/70 to-transparent" />
-        </div>
-
-        <div className="relative z-10 mx-auto w-full max-w-7xl px-4 py-24 sm:px-6 lg:px-10">
-          <div className="max-w-2xl">
-            <span className="mb-4 block text-xs font-bold uppercase tracking-widest text-[#006b5f]">
-              Premium Utility
-            </span>
-            <h1 className="brand-heading text-5xl font-bold leading-tight text-[#1a146b] sm:text-6xl">
-              Redefining the Modern Essential.
-            </h1>
-            <p className="mt-6 max-w-xl text-lg leading-8 text-[#474651]">
-              Experience the intersection of high-performance technology and
-              everyday lifestyle aesthetics. Curated for the discerning
-              professional.
-            </p>
-            <div className="mt-10 flex flex-wrap gap-4">
-              <a
-                href="#products"
-                className="rounded-lg bg-[#1a146b] px-8 py-4 text-sm font-bold text-white shadow-lg transition hover:bg-[#312e81] active:scale-95"
-              >
-                Shop Now
-              </a>
-              <a
-                href="#collections"
-                className="rounded-lg border border-[#1a146b] px-8 py-4 text-sm font-bold text-[#1a146b] transition hover:bg-[#1a146b]/5 active:scale-95"
-              >
-                View Collections
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
+      <Carousel />
+      
 
       <section
         id="collections"
