@@ -1,31 +1,15 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
-import { API } from "../lib/api";
 
 const Success = () => {
-  const { cart, clearCart } = useCart();
+  const { clearCart } = useCart();
 
   useEffect(() => {
-    const finalizePurchase = async () => {
-      // Only run if there are actually items in the cart
-      if (cart.length > 0) {
-        try {
-          await fetch(`${API}/api/products/reduce-stock`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ items: cart }),
-          });
-
-          clearCart();
-        } catch (error) {
-          console.error("Failed to update inventory:", error);
-        }
-      }
-    };
-
-    finalizePurchase();
-  }, [cart, clearCart]);
+    // Clear the local cart — stock reduction is handled server-side
+    // by the Stripe webhook (checkout.session.completed)
+    clearCart();
+  }, [clearCart]);
 
   return (
     <div className="flex flex-col items-center justify-center h-[80vh] text-center px-4">
@@ -36,8 +20,8 @@ const Success = () => {
         Payment Received!
       </h1>
       <p className="text-xl text-gray-600 dark:text-gray-400 max-w-md">
-        Your order has been placed successfully. The items have been removed
-        from our live inventory.
+        Your order has been placed successfully. You will receive a confirmation
+        shortly.
       </p>
       <Link
         to="/"

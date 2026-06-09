@@ -36,7 +36,14 @@ const Home = () => {
       try {
         const response = await fetch(`${API}/api/products`);
         const data = await response.json();
-        setProducts(data);
+        // API may return either a raw array or a paginated object { products, page, pages, total }
+        if (Array.isArray(data)) {
+          setProducts(data);
+        } else if (data && Array.isArray(data.products)) {
+          setProducts(data.products);
+        } else {
+          setProducts([]);
+        }
       } catch (error) {
         console.error("Error fetching products:", error);
       } finally {
@@ -50,7 +57,6 @@ const Home = () => {
   return (
     <main>
       <Carousel />
-      
 
       <section
         id="collections"
