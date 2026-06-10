@@ -1,4 +1,4 @@
-import { createContext, useState, useContext } from "react";
+import { createContext, useState, useContext, useCallback } from "react";
 
 const CartContext = createContext();
 
@@ -7,11 +7,11 @@ export const CartProvider = ({ children }) => {
 
   const getProductId = (product) => product._id ?? product.id;
 
-  const clearCart = () => {
+  const clearCart = useCallback(() => {
     setCart([]);
-  };
+  }, []);
 
-  const addToCart = (product) => {
+  const addToCart = useCallback((product) => {
     const productId = getProductId(product);
 
     setCart((prevCart) => {
@@ -27,9 +27,9 @@ export const CartProvider = ({ children }) => {
 
       return [...prevCart, { ...product, quantity: 1 }];
     });
-  };
+  }, []);
 
-  const removeFromCart = (productId) => {
+  const removeFromCart = useCallback((productId) => {
     setCart((prevCart) =>
       prevCart
         .map((item) =>
@@ -39,13 +39,13 @@ export const CartProvider = ({ children }) => {
         )
         .filter((item) => item.quantity > 0),
     );
-  };
+  }, []);
 
-  const deleteFromCart = (productId) => {
+  const deleteFromCart = useCallback((productId) => {
     setCart((prevCart) =>
       prevCart.filter((item) => getProductId(item) !== productId),
     );
-  };
+  }, []);
 
   const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
 

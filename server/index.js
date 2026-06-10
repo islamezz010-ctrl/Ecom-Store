@@ -1,5 +1,3 @@
-// server/index.js — Application bootstrap
-// All business logic lives in controllers/ and routes/.
 require("dotenv").config();
 
 const express = require("express");
@@ -89,7 +87,7 @@ app.use("/api/admin/products", adminProductRoutes);
 app.use("/api/admin/orders", adminOrderRoutes);
 
 // ── Backward compatibility (old checkout path) ──
-// Remove this once the frontend is updated
+//    Remove this once the frontend is updated
 app.post("/create-checkout-session", (req, res, next) => {
   req.url = "/api/checkout/session";
   app.handle(req, res, next);

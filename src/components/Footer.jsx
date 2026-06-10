@@ -1,5 +1,33 @@
+import { createElement } from "react";
 import { Link } from "react-router-dom";
-import { Globe, MessageCircle, Image, Mail } from "lucide-react";
+import { FaEnvelope, FaFacebookF, FaInstagram } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
+import amexLogo from "payment-icons/min/flat/amex.svg";
+import mastercardLogo from "payment-icons/min/flat/mastercard.svg";
+import visaLogo from "payment-icons/min/flat/visa.svg";
+
+const socialLinks = [
+  { label: "Facebook", icon: FaFacebookF },
+  { label: "X", icon: FaXTwitter },
+  { label: "Instagram", icon: FaInstagram },
+  { label: "Email", icon: FaEnvelope },
+];
+
+const paymentMethods = [
+  { label: "Visa", logo: visaLogo },
+  { label: "Mastercard", logo: mastercardLogo },
+  { label: "American Express", logo: amexLogo },
+];
+
+const MeezaLogo = () => (
+  <span className="relative flex h-9 w-16 items-center justify-center overflow-hidden rounded bg-white">
+    <span className="absolute left-1.5 top-1 h-1.5 w-8 rounded-sm bg-[#c51d30]" />
+    <span className="absolute right-1.5 top-1 h-1.5 w-5 rounded-sm bg-[#ffcc33]" />
+    <span className="text-[15px] font-black italic leading-none text-[#30236f]">
+      meeza
+    </span>
+  </span>
+);
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -100,34 +128,16 @@ const Footer = () => {
           <div className="space-y-4">
             <h4 className="font-semibold text-white">Follow Us</h4>
             <div className="flex gap-4">
-              <a
-                href="#"
-                aria-label="Facebook"
-                className="text-gray-300 hover:text-white transition-colors"
-              >
-                <Globe size={20} />
-              </a>
-              <a
-                href="#"
-                aria-label="Twitter"
-                className="text-gray-300 hover:text-white transition-colors"
-              >
-                <MessageCircle size={20} />
-              </a>
-              <a
-                href="#"
-                aria-label="Instagram"
-                className="text-gray-300 hover:text-white transition-colors"
-              >
-                <Image size={20} />
-              </a>
-              <a
-                href="#"
-                aria-label="Email"
-                className="text-gray-300 hover:text-white transition-colors"
-              >
-                <Mail size={20} />
-              </a>
+              {socialLinks.map(({ label, icon }) => (
+                <a
+                  key={label}
+                  href="#"
+                  aria-label={label}
+                  className="text-gray-300 transition-colors hover:text-white"
+                >
+                  {createElement(icon, { size: 20, ariaHidden: true })}
+                </a>
+              ))}
             </div>
           </div>
         </div>
@@ -137,22 +147,28 @@ const Footer = () => {
           <h4 className="mb-4 text-center text-sm font-semibold text-white">
             We accept
           </h4>
-          <div className="flex flex-wrap items-center justify-center gap-6">
-            <div className="rounded-lg border border-[#e0e0e0] bg-white px-4 py-2">
-              <span className="text-xl font-bold text-blue-600">VISA</span>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <div
+              className="flex h-11 w-20 items-center justify-center rounded bg-white shadow-sm"
+              aria-label="Meeza"
+              role="img"
+            >
+              <MeezaLogo />
             </div>
-            <div className="rounded-lg border border-[#e0e0e0] bg-white px-4 py-2">
-              <span className="text-xl font-bold">💳 Mastercard</span>
-            </div>
-            <div className="rounded-lg border border-[#e0e0e0] bg-white px-4 py-2">
-              <span className="text-xl font-bold text-orange-500">⚡ Fawry</span>
-            </div>
-            <div className="rounded-lg border border-[#e0e0e0] bg-white px-4 py-2">
-              <span className="text-xl font-bold text-blue-500">AMEX</span>
-            </div>
-            <div className="rounded-lg border border-[#e0e0e0] bg-white px-4 py-2">
-              <span className="text-xl font-bold text-purple-600">🟣 OKay</span>
-            </div>
+            {paymentMethods.map(({ label, logo }) => (
+              <div
+                key={label}
+                className="flex h-11 w-20 items-center justify-center rounded bg-white px-2 shadow-sm"
+                aria-label={label}
+                role="img"
+              >
+                <img
+                  src={logo}
+                  alt=""
+                  className="max-h-8 max-w-16 object-contain"
+                />
+              </div>
+            ))}
           </div>
         </div>
 

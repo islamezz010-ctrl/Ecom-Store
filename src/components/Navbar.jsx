@@ -91,15 +91,25 @@ const Navbar = () => {
           {user ? (
             <div className="relative">
               {user.picture ? (
-                <img
-                  src={user.picture}
-                  alt={displayName}
-                  className="peer h-10 w-10 cursor-pointer rounded-full border-2 border-[#001a4d] object-cover shadow-sm transition-transform hover:scale-105"
-                />
+                <Link
+                  to="/account"
+                  aria-label="Your account"
+                  className="peer block h-10 w-10 rounded-full border-2 border-[#001a4d] shadow-sm transition-transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#312e81] focus:ring-offset-2"
+                >
+                  <img
+                    src={user.picture}
+                    alt={displayName}
+                    className="h-full w-full rounded-full object-cover"
+                  />
+                </Link>
               ) : (
-                <button className="peer flex cursor-pointer h-10 w-10 items-center justify-center rounded-full border-2 border-[#001a4d] bg-[#e2dfff] text-sm font-bold text-[#1a146b] shadow-sm transition-transform hover:scale-105">
+                <Link
+                  to="/account"
+                  aria-label="Your account"
+                  className="peer flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border-2 border-[#001a4d] bg-[#e2dfff] text-sm font-bold text-[#1a146b] shadow-sm transition-transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#312e81] focus:ring-offset-2"
+                >
                   {initials || "U"}
-                </button>
+                </Link>
               )}
               <div className="invisible absolute right-0 z-50 mt-3 w-52 rounded-xl border border-[#e5e1e9] bg-white opacity-0 shadow-xl transition-all peer-hover:visible peer-hover:opacity-100 hover:visible hover:opacity-100">
                 <div className="border-b border-[#e5e1e9] px-4 py-3">
@@ -108,6 +118,12 @@ const Navbar = () => {
                     {displayName}
                   </p>
                 </div>
+                <Link
+                  to="/account"
+                  className="block px-4 py-3 text-sm font-semibold text-[#1a146b] transition-colors hover:bg-[#f6f2fa]"
+                >
+                  Your Account
+                </Link>
                 <button
                   onClick={handleLogout}
                   className="w-full cursor-pointer rounded-b-xl px-4 py-3 text-left text-sm font-semibold text-[#ba1a1a] transition-colors hover:bg-[#ffdad6]/40"
