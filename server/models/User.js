@@ -10,19 +10,24 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      match: /^[^@\s]+@[^@\s]+\.[^@\s]+$/
+      match: /^[^@\s]+@[^@\s]+\.[^@\s]+$/,
     },
 
     password: {
       type: String,
       required: function () {
         return !this.googleId;
-      }
+      },
     },
-    isAdmin: { type: Boolean, default: false }
+    isAdmin: { type: Boolean, default: false },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
+
+// ── Database Indexes for Performance ─────────
+UserSchema.index({ email: 1 });
+UserSchema.index({ googleId: 1 });
+UserSchema.index({ isAdmin: 1 });
 
 UserSchema.pre("save", async function () {
   if (!this.isModified("password")) return;

@@ -9,8 +9,10 @@ const morgan = require("morgan");
 
 const connectDB = require("./config/db");
 const errorHandler = require("./middleware/errorHandler");
+const { isRedisConnected } = require("./middleware/cache");
 
 // ── Route modules ────────────────────────────
+
 const authRoutes = require("./routes/auth");
 const productRoutes = require("./routes/products");
 const checkoutRoutes = require("./routes/checkout");
@@ -47,7 +49,7 @@ app.use(
       callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
-  })
+  }),
 );
 
 // ── Webhook route MUST come before express.json() ──
@@ -64,7 +66,7 @@ app.use(
     max: 200,
     standardHeaders: true,
     legacyHeaders: false,
-  })
+  }),
 );
 
 // Request logging
@@ -103,8 +105,9 @@ if (process.env.NODE_ENV !== "test") {
   connectDB().then(() => {
     app.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);
+      console.log(`   Environment: ${process.env.NODE_ENV || "development"}`);
       console.log(
-        `   Environment: ${process.env.NODE_ENV || "development"}`
+        `   Cache: ${isRedisConnected() ? "✅ Redis enabled" : "⚠️  Redis disabled (no REDIS_URL set)"}`,
       );
     });
   });

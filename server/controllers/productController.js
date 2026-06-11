@@ -1,5 +1,6 @@
 // server/controllers/productController.js
 const Product = require("../models/Product");
+const { invalidateCache } = require("../middleware/cache");
 
 // ──────────────────────────────────────────────
 // GET /api/products
