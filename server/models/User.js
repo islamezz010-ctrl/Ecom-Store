@@ -25,7 +25,7 @@ const UserSchema = new mongoose.Schema(
 );
 
 // ── Database Indexes for Performance ─────────
-UserSchema.index({ email: 1 });
+// Note: email index is already created by unique: true constraint
 UserSchema.index({ googleId: 1 });
 UserSchema.index({ isAdmin: 1 });
 

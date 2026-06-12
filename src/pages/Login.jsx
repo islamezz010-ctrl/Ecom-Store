@@ -103,15 +103,14 @@ const Login = () => {
           className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-800 dark:text-white border-none focus:ring-2 focus:ring-blue-500"
           onChange={(e) => setPassword(e.target.value)}
         />
-        <Button
+        <input
           type="submit"
-          className="w-40 py-6 mt-7 bg-gray-900 dark:bg-blue-600 text-white font-bold rounded-xl hover:scale-[1.02] transition-transform"
-        >
-          Sign In
-        </Button>
+          value="Login"
+          className="w-full cursor-pointer bg-[#1a146b] text-white py-3 rounded-xl font-semibold hover:bg-[#1a146b]/90 transition"
+        />
 
         <div className="p-10 bg-white dark:bg-gray-900 rounded-3xl shadow-none w-full flex flex-col items-center">
-          <p className="text-gray-500 mb-4 font-medium">Or continue with</p>
+          <p className="text-gray-500 mb-4 font-medium">Or</p>
           <GoogleLogin
             onSuccess={handleSuccess}
             onError={() => {
@@ -120,8 +119,7 @@ const Login = () => {
             }}
             theme="outline"
             size="large"
-            text="signin_with"
-            shape="rectangular"
+            shape="circle"
           />
         </div>
       </form>

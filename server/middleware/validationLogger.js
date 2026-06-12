@@ -3,6 +3,7 @@
  * Logs all validation errors, invalid inputs, and suspicious patterns
  */
 
+
 const logger = {
   logValidationError: (req, errors, source = "body") => {
     const timestamp = new Date().toISOString();

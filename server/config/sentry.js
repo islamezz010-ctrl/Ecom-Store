@@ -6,7 +6,7 @@
  * in production and sends them to sentry.io for analysis.
  */
 
-const Sentry = require("sentry-node");
+const Sentry = require("@sentry/node");
 
 /**
  * Initialize Sentry error tracking

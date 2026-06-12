@@ -19,6 +19,13 @@
   .brand-heading {
     font-family: "Hanken Grotesk", system-ui, sans-serif;
   }
+
+  .luxe-font {
+    font-family: " cursive";
+    font-weight: bold;
+    letter-spacing: 0.05em;
+  }
+  }
 }
 
 :root {

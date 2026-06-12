@@ -44,26 +44,21 @@ const Navbar = () => {
   return (
     <header className="sticky top-0 z-50 border-b border-[#e5e1e9] bg-[#fcf8ff]/95 shadow-sm backdrop-blur">
       <nav className="mx-auto flex h-20 w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-10">
-        <div className="flex items-center gap-8">
+        <div className="flex items-center gap-3  bg-blue-100 rounded-lg mr-5 pr-3">
           <Link
             to="/"
-            className="brand-heading text-3xl font-bold tracking-tight text-[#1a146b]"
+            className="flex items-center gap-2 transition-transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#312e81] rounded-lg p-1"
+            aria-label="LUXE Home"
           >
-            LUXE
+            <img
+              src="/images/logo.svg"
+              alt="LUXE Logo"
+              className="h-10 w-10 object-contain"
+            />
+            <span className="luxe-font text-3xl text-[#1a146b] hidden sm:inline">
+              LUXE
+            </span>
           </Link>
-
-          <div className="hidden items-center gap-6 md:flex">
-            <Link
-              to="/"
-              className={`pb-1 text-base font-semibold transition-colors ${
-                location.pathname === "/"
-                  ? "border-b-2 border-[#1a146b] text-[#1a146b]"
-                  : "text-[#474651] hover:text-[#1a146b]"
-              }`}
-            >
-              Shop
-            </Link>
-          </div>
         </div>
 
         <div className="flex items-center gap-1 sm:gap-2">
