@@ -7,9 +7,17 @@ const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const morgan = require("morgan");
 
+// ── Sentry MUST be initialized first ────────
+const { initSentry, flush: sentrylush } = require("./config/sentry");
+
 const connectDB = require("./config/db");
 const errorHandler = require("./middleware/errorHandler");
 const { isRedisConnected } = require("./middleware/cache");
+const { metricsEndpoint } = require("./middleware/validationLogger");
+const {
+  healthCheckMiddleware,
+  deepHealthCheck,
+} = require("./middleware/healthCheck");
 
 // ── Route modules ────────────────────────────
 
@@ -32,6 +40,9 @@ for (const key of required) {
 }
 
 const app = express();
+
+// ── Initialize Sentry (must be before other middleware) ──
+initSentry(app);
 
 // ── CORS ─────────────────────────────────────
 const allowedOrigins = (
@@ -75,7 +86,28 @@ if (process.env.NODE_ENV !== "test") {
 }
 
 // ── Health check ─────────────────────────────
-app.get("/health", (_req, res) => res.json({ status: "ok" }));
+app.get("/health", healthCheckMiddleware);
+
+// ── Deep health check (for monitoring dashboards) ──
+app.get("/api/admin/health/deep", async (req, res) => {
+  // Optional: Add authentication check
+  // const token = req.cookies.token;
+  // if (!token) return res.status(401).json({ message: "Unauthorized" });
+  try {
+    const result = await deepHealthCheck();
+    res.status(result.status === "healthy" ? 200 : 503).json(result);
+  } catch (error) {
+    res.status(500).json({ status: "error", message: error.message });
+  }
+});
+
+// ── Validation metrics endpoint (admin only) ──
+app.get("/api/admin/metrics/validation", (req, res, next) => {
+  // Optional: Add authentication check
+  // const token = req.cookies.token;
+  // if (!token) return res.status(401).json({ message: "Unauthorized" });
+  metricsEndpoint(req, res);
+});
 
 // ── API routes ───────────────────────────────
 app.use("/api/auth", authRoutes);
@@ -114,8 +146,12 @@ if (process.env.NODE_ENV !== "test") {
 }
 
 // ── Graceful shutdown ────────────────────────
-const shutdown = (signal) => {
+const shutdown = async (signal) => {
   console.log(`\n${signal} received — shutting down gracefully…`);
+
+  // Flush Sentry events
+  await sentrylush(2000).catch(() => {});
+
   process.exit(0);
 };
 
