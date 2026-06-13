@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { MapPin, ChevronDown, Check, Loader2 } from "lucide-react";
 import { useDeliveryLocation } from "../context/LocationContext";
 import { DELIVERY_LOCATIONS } from "../data/locations";

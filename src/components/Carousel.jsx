@@ -75,8 +75,6 @@ const Carousel = () => {
     setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
   };
 
-  const slide = slides[currentSlide];
-
   return (
     <div className="relative w-full overflow-hidden bg-gray-100">
       {/* Slides Container */}

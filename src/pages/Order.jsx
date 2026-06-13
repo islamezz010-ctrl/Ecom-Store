@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { API } from "../lib/api";
 import { getCurrentUser, isAuthenticated } from "../lib/user";
-import { Package, ChevronRight } from "lucide-react";
+import { Package, ChevronRight, AlertCircle } from "lucide-react";
 import Login from "./Login";
 
 const Order = () => {
-  const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -14,16 +12,11 @@ const Order = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
   const user = getCurrentUser();
+  const authenticated = isAuthenticated();
 
-  // Redirect to login if not authenticated
-  if (!isAuthenticated()) {
-    return <Login heading="Sign in to see your orders" />;
-  }
-
-  // Fetch orders
   useEffect(() => {
     const fetchOrders = async () => {
-      if (!isAuthenticated()) return;
+      if (!authenticated) return;
 
       try {
         setLoading(true);
@@ -53,7 +46,11 @@ const Order = () => {
     };
 
     fetchOrders();
-  }, [page]);
+  }, [page, authenticated]);
+
+  if (!authenticated) {
+    return <Login heading="Sign in to see your orders" />;
+  }
 
   if (loading) {
     return (

@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
 import ProductCard from "../components/ProductCard";
 import Carousel from "../components/Carousel";
+import ProductFilters from "../components/ProductFilters";
 import { API } from "../lib/api";
-
-const heroImage =
-  "https://lh3.googleusercontent.com/aida-public/AB6AXuCZmQc5B1XeBzqK-v0sywfyVyHSX_-iLyT0oJ0brUz2IWZvwfqc0aFMprdb4mid2nPhyWspvArWzsqZez0DbHNvmyb0BuU7I1CsWrV2LZV9tsIif9iYDfIl_rCf8JfsF_qbWnHI6l6-2UU2ciAedEENEz7qTmQ5qUC38DR8VirFDh5o2powr0Bh4EJAhnTmIMJs2UuNFb02cagllli_sQQy64xE2Hcm7_xONM5_Kf6MqauSEDyRSAbf1LHDvqB3BnAs5Guxh5ae3tAy";
 
 const collections = [
   {
@@ -30,11 +28,39 @@ const collections = [
 const Home = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+  const [sort, setSort] = useState("newest");
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch(`${API}/api/products/categories`);
+        const data = await response.json();
+        if (Array.isArray(data)) setCategories(data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   useEffect(() => {
     const fetchProducts = async () => {
+      setLoading(true);
       try {
-        const response = await fetch(`${API}/api/products`);
+        const params = new URLSearchParams();
+        if (selectedCategory) params.append("category", selectedCategory);
+        if (minPrice) params.append("minPrice", minPrice);
+        if (maxPrice) params.append("maxPrice", maxPrice);
+        if (sort !== "newest") params.append("sort", sort);
+        
+        const queryString = params.toString();
+        const url = `${API}/api/products${queryString ? `?${queryString}` : ""}`;
+        
+        const response = await fetch(url);
         const data = await response.json();
         // API may return either a raw array or a paginated object { products, page, pages, total }
         if (Array.isArray(data)) {
@@ -51,8 +77,13 @@ const Home = () => {
       }
     };
 
-    fetchProducts();
-  }, []);
+    // Debounce fetch slightly to avoid spamming while typing prices
+    const delayDebounceFn = setTimeout(() => {
+      fetchProducts();
+    }, 300);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [selectedCategory, minPrice, maxPrice, sort]);
 
   return (
     <main>
@@ -132,10 +163,39 @@ const Home = () => {
               Loading New Arrivals...
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-              {products.map((item) => (
-                <ProductCard key={item._id ?? item.id} product={item} />
-              ))}
+            <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
+              <aside className="w-full lg:w-1/4 shrink-0">
+                <ProductFilters
+                  categories={categories}
+                  selectedCategory={selectedCategory}
+                  onCategoryChange={setSelectedCategory}
+                  minPrice={minPrice}
+                  onMinPriceChange={setMinPrice}
+                  maxPrice={maxPrice}
+                  onMaxPriceChange={setMaxPrice}
+                  sort={sort}
+                  onSortChange={setSort}
+                  onClearFilters={() => {
+                    setSelectedCategory("");
+                    setMinPrice("");
+                    setMaxPrice("");
+                    setSort("newest");
+                  }}
+                />
+              </aside>
+              <div className="flex-1">
+                {products.length === 0 ? (
+                  <div className="flex min-h-72 items-center justify-center rounded-2xl bg-white text-xl font-bold text-[#777682] shadow-sm border border-[#e5e1e9]">
+                    No products found matching your filters.
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 xl:grid-cols-3">
+                    {products.map((item) => (
+                      <ProductCard key={item._id ?? item.id} product={item} />
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </div>

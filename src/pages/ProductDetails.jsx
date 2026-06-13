@@ -7,7 +7,7 @@ import { ChevronLeft, Star, Truck, Shield, RotateCcw } from "lucide-react";
 const ProductDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { addToCart, removeFromCart, cart } = useCart();
+  const { addToCart } = useCart();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -80,10 +80,7 @@ const ProductDetails = () => {
     );
   }
 
-  const productId = product._id ?? product.id;
   const currentStock = product.stock ?? 3;
-  const cartItem = cart.find((item) => (item._id ?? item.id) === productId);
-  const quantityInCart = cartItem ? cartItem.quantity : 0;
   const isSoldOut = currentStock <= 0;
 
   const handleAddToCart = () => {

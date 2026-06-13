@@ -95,7 +95,11 @@ export const LocationProvider = ({ children }) => {
     if (alreadyPrompted || addresses.length > 0) return;
 
     sessionStorage.setItem(GEO_PROMPT_KEY, "1");
-    detectLocation();
+    const timer = window.setTimeout(() => {
+      detectLocation();
+    }, 0);
+
+    return () => window.clearTimeout(timer);
   }, [addresses.length, detectLocation]);
 
   const addAddress = useCallback((addressInput) => {

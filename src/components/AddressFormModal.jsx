@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { X, Loader2, Navigation } from "lucide-react";
 import {
   COUNTRIES,
@@ -21,7 +21,27 @@ const EMPTY_FORM = {
   isDefault: false,
 };
 
-const AddressFormModal = ({ open, onClose }) => {
+const applyGeoFields = (suggested) => {
+  const matched = matchLocationFromText({
+    cityArea: suggested.cityArea || "",
+    governorate: suggested.governorate || "",
+  });
+
+  return {
+    country: suggested.country || "Egypt",
+    cityArea: suggested.cityArea || "",
+    governorate: resolveGovernorate(suggested.governorate || matched.governorate),
+    district: suggested.district || matched.name,
+    street: suggested.street || "",
+  };
+};
+
+const buildInitialForm = (geoSuggestedAddress) => ({
+  ...EMPTY_FORM,
+  ...(geoSuggestedAddress ? applyGeoFields(geoSuggestedAddress) : {}),
+});
+
+const AddressFormModalContent = ({ onClose }) => {
   const {
     addAddress,
     detectLocation,
@@ -31,38 +51,9 @@ const AddressFormModal = ({ open, onClose }) => {
     clearGeoError,
   } = useDeliveryLocation();
 
-  const [form, setForm] = useState(EMPTY_FORM);
+  const [form, setForm] = useState(() => buildInitialForm(geoSuggestedAddress));
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState("");
-
-  useEffect(() => {
-    if (!open) return;
-
-    setForm((prev) => ({
-      ...prev,
-      ...EMPTY_FORM,
-      ...(geoSuggestedAddress ? applyGeoFields(geoSuggestedAddress) : {}),
-    }));
-    setFormError("");
-    clearGeoError();
-  }, [open, geoSuggestedAddress, clearGeoError]);
-
-  if (!open) return null;
-
-  const applyGeoFields = (suggested) => {
-    const matched = matchLocationFromText({
-      cityArea: suggested.cityArea || "",
-      governorate: suggested.governorate || "",
-    });
-
-    return {
-      country: suggested.country || "Egypt",
-      cityArea: suggested.cityArea || "",
-      governorate: resolveGovernorate(suggested.governorate || matched.governorate),
-      district: suggested.district || matched.name,
-      street: suggested.street || "",
-    };
-  };
 
   const updateField = (field, value) => {
     setForm((prev) => {
@@ -80,6 +71,7 @@ const AddressFormModal = ({ open, onClose }) => {
 
   const handleDetectLocation = async () => {
     setFormError("");
+    clearGeoError();
     const result = await detectLocation();
     if (!result?.suggestedAddress) return;
 
@@ -357,6 +349,12 @@ const AddressFormModal = ({ open, onClose }) => {
       </div>
     </div>
   );
+};
+
+const AddressFormModal = ({ open, onClose }) => {
+  if (!open) return null;
+
+  return <AddressFormModalContent onClose={onClose} />;
 };
 
 export default AddressFormModal;

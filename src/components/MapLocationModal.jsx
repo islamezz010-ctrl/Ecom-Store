@@ -1,7 +1,8 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { MapPin, Search, X, Loader2 } from "lucide-react";
 import { useDeliveryLocation } from "../context/LocationContext";
-import { DELIVERY_LOCATIONS } from "../data/locations";
+import { DELIVERY_LOCATIONS, findNearestLocation } from "../data/locations";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -17,48 +18,70 @@ L.Icon.Default.mergeOptions({
 });
 
 const MapLocationModal = ({ isOpen, onClose, onConfirm }) => {
-  const { location, geoDetecting } = useDeliveryLocation();
-  const [selectedLocation, setSelectedLocation] = useState(
-    location || DELIVERY_LOCATIONS[0],
-  );
+  const { location, geoDetecting, detectLocation } = useDeliveryLocation();
+  const [manualSelection, setManualSelection] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredLocations, setFilteredLocations] =
-    useState(DELIVERY_LOCATIONS);
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [userCoords, setUserCoords] = useState(null);
+  const [distanceKm, setDistanceKm] = useState(null);
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const markersRef = useRef({});
+  const pinRef = useRef(null);
 
-  // Location coordinates (Egypt locations)
-  const locationCoords = {
-    cairo: [30.0444, 31.2357],
-    giza: [30.0131, 31.2089],
-    alexandria: [31.2001, 29.9187],
-    helwan: [29.8625, 31.3386],
-    zagazig: [30.588, 31.5049],
+  const toRadians = (deg) => (deg * Math.PI) / 180;
+  const haversineKm = (lat1, lng1, lat2, lng2) => {
+    const earthRadius = 6371;
+    const dLat = toRadians(lat2 - lat1);
+    const dLng = toRadians(lng2 - lng1);
+    const a =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos(toRadians(lat1)) *
+        Math.cos(toRadians(lat2)) *
+        Math.sin(dLng / 2) ** 2;
+    return earthRadius * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   };
 
-  // Update selectedLocation when location context changes
-  useEffect(() => {
-    if (location) {
-      setSelectedLocation(location);
-    }
-  }, [location, isOpen]);
+  const selectedLocation = manualSelection ?? location ?? DELIVERY_LOCATIONS[0];
 
-  // Filter locations based on search query
   useEffect(() => {
     if (searchQuery.trim() === "") {
-      setFilteredLocations(DELIVERY_LOCATIONS);
-    } else {
-      const query = searchQuery.toLowerCase();
-      setFilteredLocations(
-        DELIVERY_LOCATIONS.filter(
-          (loc) =>
-            loc.name.toLowerCase().includes(query) ||
-            loc.governorate.toLowerCase().includes(query),
-        ),
-      );
+      setSearchResults([]);
+      return;
     }
+
+    const delayDebounceFn = setTimeout(async () => {
+      setIsSearching(true);
+      try {
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+            searchQuery
+          )}&countrycodes=eg`
+        );
+        const data = await response.json();
+        setSearchResults(data);
+      } catch (err) {
+        console.error("Geocoding error", err);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 600);
+
+    return () => clearTimeout(delayDebounceFn);
   }, [searchQuery]);
+
+  // Location coordinates (Egypt locations)
+  const locationCoords = useMemo(
+    () => ({
+      cairo: [30.0444, 31.2357],
+      giza: [30.0131, 31.2089],
+      alexandria: [31.2001, 29.9187],
+      helwan: [29.8625, 31.3386],
+      zagazig: [30.588, 31.5049],
+    }),
+    [],
+  );
 
   // Initialize map
   useEffect(() => {
@@ -78,8 +101,7 @@ const MapLocationModal = ({ isOpen, onClose, onConfirm }) => {
 
     // Add markers for all locations
     DELIVERY_LOCATIONS.forEach((loc) => {
-      const coordKey = loc.governorate.toLowerCase().replace(/\s+/g, "");
-      const coords = locationCoords[coordKey] || [30.0444, 31.2357]; // Default to Cairo
+      const coords = [loc.lat, loc.lng];
 
       const marker = L.marker(coords, {
         title: loc.name,
@@ -92,20 +114,47 @@ const MapLocationModal = ({ isOpen, onClose, onConfirm }) => {
         )
         .addTo(map)
         .on("click", () => {
-          setSelectedLocation(loc);
+          setManualSelection(loc);
         });
 
       markersRef.current[loc.id] = marker;
     });
 
+    const onMapClick = (e) => {
+      const { lat, lng } = e.latlng;
+      const nearest = findNearestLocation(lat, lng);
+      setManualSelection(nearest);
+
+      if (pinRef.current) {
+        pinRef.current.remove();
+      }
+
+      pinRef.current = L.marker([lat, lng], { title: "Selected location" })
+        .addTo(map)
+        .bindPopup(
+          "<div class='p-2'><strong>Your order will be delivered here</strong></div>",
+        )
+        .openPopup();
+
+      map.setView([lat, lng], map.getZoom());
+      if (userCoords) {
+        setDistanceKm(
+          haversineKm(userCoords.lat, userCoords.lng, lat, lng).toFixed(1),
+        );
+      }
+    };
+
+    map.on("click", onMapClick);
+
     // Clean up
     return () => {
       if (mapInstanceRef.current) {
+        mapInstanceRef.current.off("click", onMapClick);
         mapInstanceRef.current.remove();
         mapInstanceRef.current = null;
       }
     };
-  }, [isOpen]);
+  }, [isOpen, locationCoords]);
 
   // Update marker styles when selection changes
   useEffect(() => {
@@ -113,6 +162,7 @@ const MapLocationModal = ({ isOpen, onClose, onConfirm }) => {
 
     Object.entries(markersRef.current).forEach(([id, marker]) => {
       if (id === selectedLocation.id) {
+        marker.setZIndexOffset(1000);
         marker.setIcon(
           L.icon({
             iconUrl:
@@ -125,20 +175,82 @@ const MapLocationModal = ({ isOpen, onClose, onConfirm }) => {
             className: "leaflet-marker-selected",
           }),
         );
+        try {
+          marker.openPopup();
+        } catch {}
       } else {
-        marker.setIcon(L.icon.default());
+        marker.setIcon(new L.Icon.Default());
+        try {
+          marker.closePopup();
+        } catch {}
       }
     });
-  }, [selectedLocation]);
+
+    // ensure there's a pin at the selected location
+    if (mapInstanceRef.current && selectedLocation) {
+      if (pinRef.current) {
+        pinRef.current.setLatLng([selectedLocation.lat, selectedLocation.lng]);
+      } else {
+        pinRef.current = L.marker(
+          [selectedLocation.lat, selectedLocation.lng],
+          {
+            title: "Selected location",
+          },
+        )
+          .addTo(mapInstanceRef.current)
+          .bindPopup(
+            "<div class='p-2'><strong>Your order will be delivered here</strong></div>",
+          );
+      }
+    }
+
+    if (userCoords && selectedLocation) {
+      setDistanceKm(
+        haversineKm(
+          userCoords.lat,
+          userCoords.lng,
+          selectedLocation.lat,
+          selectedLocation.lng,
+        ).toFixed(1),
+      );
+    } else {
+      setDistanceKm(null);
+    }
+  }, [selectedLocation, userCoords]);
 
   const handleConfirm = () => {
     onConfirm(selectedLocation);
     onClose();
   };
 
+  const handleUseCurrentLocation = async () => {
+    try {
+      const result = await detectLocation();
+      if (!result) return;
+      const { coords, location: matched } = result;
+      setUserCoords(coords);
+      setManualSelection(matched);
+
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.setView([coords.lat, coords.lng], 13);
+        if (pinRef.current) pinRef.current.remove();
+        pinRef.current = L.marker([coords.lat, coords.lng], {
+          title: "Current Location",
+        })
+          .addTo(mapInstanceRef.current)
+          .bindPopup(
+            "<div class='p-2'><strong>Your order will be delivered here</strong></div>",
+          )
+          .openPopup();
+      }
+    } catch (err) {
+      console.error("Error detecting location:", err);
+    }
+  };
+
   if (!isOpen) return null;
 
-  return (
+  return createPortal(
     <>
       {/* Backdrop */}
       <div
@@ -147,11 +259,14 @@ const MapLocationModal = ({ isOpen, onClose, onConfirm }) => {
       />
 
       {/* Modal */}
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div className="relative w-full max-w-4xl max-h-[90vh] bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-2 md:p-4">
+        <div
+          className="relative w-full h-[90vh] bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col"
+          style={{ maxWidth: "1200px" }}
+        >
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-[#e5e1e9]">
-            <h2 className="text-2xl font-bold text-[#1a146b]">
+          <div className="flex items-center justify-between p-4 md:p-6 border-b border-[#e5e1e9] flex-shrink-0">
+            <h2 className="text-lg md:text-2xl font-bold text-[#1a146b]">
               Add new address
             </h2>
             <button
@@ -164,21 +279,21 @@ const MapLocationModal = ({ isOpen, onClose, onConfirm }) => {
           </div>
 
           {/* Content */}
-          <div className="flex-1 overflow-hidden flex gap-6 p-6">
+          <div className="flex-1 overflow-hidden flex gap-4 md:gap-6 p-4 md:p-6 flex-col md:flex-row">
             {/* Map Section */}
-            <div className="flex-1 flex flex-col gap-4">
+            <div className="flex-1 flex flex-col gap-4 min-w-0">
               {/* Search Input */}
               <div className="relative">
                 <Search
-                  size={20}
+                  size={18}
                   className="absolute left-4 top-1/2 -translate-y-1/2 text-[#777682]"
                 />
                 <input
                   type="text"
-                  placeholder="Search for your location..."
+                  placeholder="Search locations..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 rounded-full border border-[#e5e1e9] bg-[#f6f2fa] focus:border-[#1a146b] focus:ring-2 focus:ring-[#1a146b]/10 outline-none transition"
+                  className="w-full pl-12 pr-4 py-2 md:py-3 rounded-full border border-[#e5e1e9] bg-[#f6f2fa] text-sm md:text-base focus:border-[#1a146b] focus:ring-2 focus:ring-[#1a146b]/10 outline-none transition"
                 />
               </div>
 
@@ -186,13 +301,15 @@ const MapLocationModal = ({ isOpen, onClose, onConfirm }) => {
               <div
                 ref={mapRef}
                 className="flex-1 rounded-2xl border border-[#e5e1e9] overflow-hidden shadow-md"
-                style={{ minHeight: "400px" }}
+                style={{ minHeight: "300px" }}
               />
 
               {/* Use Current Location Button */}
               <button
+                type="button"
                 disabled={geoDetecting}
-                className="w-full flex items-center justify-center gap-2 py-3 rounded-lg bg-[#006b5f] text-white font-semibold hover:bg-[#005a52] transition disabled:opacity-70 disabled:cursor-wait"
+                onClick={handleUseCurrentLocation}
+                className="w-full flex items-center justify-center gap-2 py-2 md:py-3 px-4 rounded-lg bg-[#006b5f] text-white font-semibold text-sm md:text-base hover:bg-[#005a52] transition disabled:opacity-70 disabled:cursor-wait"
               >
                 {geoDetecting ? (
                   <>
@@ -209,67 +326,97 @@ const MapLocationModal = ({ isOpen, onClose, onConfirm }) => {
             </div>
 
             {/* Locations List Sidebar */}
-            <div className="w-80 flex flex-col gap-4">
-              <h3 className="text-sm font-semibold text-[#777682] uppercase">
-                Suggested Locations
+            <div className="w-full md:w-80 flex flex-col gap-4 border-t md:border-t-0 md:border-l border-[#e5e1e9] pt-4 md:pt-0 md:pl-6 flex-shrink-0">
+              <h3 className="text-xs md:text-sm font-semibold text-[#777682] uppercase flex items-center justify-between">
+                <span>{searchQuery.trim() === "" ? "Suggested Locations" : "Search Results"}</span>
+                {isSearching && <Loader2 size={14} className="animate-spin text-[#1a146b]" />}
               </h3>
-              <div className="space-y-2 flex-1 overflow-y-auto pr-2">
-                {filteredLocations.length > 0 ? (
-                  filteredLocations.map((loc) => (
+              <div className="space-y-2 flex-1 overflow-y-auto min-h-0 pr-2">
+                {searchQuery.trim() === "" ? (
+                  DELIVERY_LOCATIONS.map((loc) => (
                     <button
                       key={loc.id}
-                      onClick={() => setSelectedLocation(loc)}
-                      className={`w-full text-left p-4 rounded-lg border-2 transition ${
+                      onClick={() => {
+                        setManualSelection(loc);
+                        if (mapInstanceRef.current) {
+                          mapInstanceRef.current.setView([loc.lat, loc.lng], 12);
+                        }
+                      }}
+                      className={`w-full text-left p-2 md:p-3 rounded-lg border-2 transition hover:shadow-md text-sm md:text-base ${
                         selectedLocation.id === loc.id
                           ? "border-[#1a146b] bg-[#e2dfff]/40"
-                          : "border-[#e5e1e9] hover:border-[#1a146b]"
+                          : "border-[#e5e1e9] hover:border-[#1a146b] hover:bg-[#f9f7ff]"
                       }`}
                     >
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <p className="font-semibold text-[#1b1b21]">
-                            {loc.name}
-                          </p>
-                          <p className="text-sm text-[#474651]">
-                            {loc.governorate}
-                          </p>
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex-1 min-w-0">
+                          <p className="font-semibold text-[#1b1b21]">{loc.name}</p>
+                          <p className="text-xs md:text-sm text-[#474651]">{loc.governorate}</p>
                           <p className="text-xs text-[#777682] mt-1">
-                            {loc.shippingCost === 0
-                              ? "Free delivery"
-                              : `$${loc.shippingCost.toFixed(2)} shipping`}{" "}
-                            · {loc.deliveryDays} business days
+                            {loc.shippingCost === 0 ? "Free delivery" : `$${loc.shippingCost.toFixed(2)} shipping`} · {loc.deliveryDays}d
                           </p>
                         </div>
                         {selectedLocation.id === loc.id && (
-                          <div className="ml-2 h-5 w-5 rounded-full bg-[#1a146b] flex items-center justify-center text-white text-xs font-bold">
-                            ✓
-                          </div>
+                          <div className="ml-2 h-5 w-5 rounded-full bg-[#1a146b] flex items-center justify-center text-white text-xs font-bold flex-shrink-0">✓</div>
                         )}
                       </div>
                     </button>
                   ))
-                ) : (
+                ) : searchResults.length > 0 ? (
+                  searchResults.map((result, idx) => {
+                    const lat = parseFloat(result.lat);
+                    const lng = parseFloat(result.lon);
+                    const nearest = findNearestLocation(lat, lng);
+                    return (
+                      <button
+                        key={result.place_id || idx}
+                        onClick={() => {
+                          setManualSelection(nearest);
+                          if (mapInstanceRef.current) {
+                            if (pinRef.current) pinRef.current.remove();
+                            pinRef.current = L.marker([lat, lng], { title: result.name })
+                              .addTo(mapInstanceRef.current)
+                              .bindPopup("<div class='p-2'><strong>Your order will be delivered here</strong></div>")
+                              .openPopup();
+                            mapInstanceRef.current.setView([lat, lng], 14);
+                          }
+                        }}
+                        className={`w-full text-left p-2 md:p-3 rounded-lg border-2 transition hover:shadow-md text-sm md:text-base border-[#e5e1e9] hover:border-[#1a146b] hover:bg-[#f9f7ff]`}
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex-1 min-w-0">
+                            <p className="font-semibold text-[#1b1b21] truncate">{result.name || result.display_name.split(',')[0]}</p>
+                            <p className="text-xs md:text-sm text-[#474651] truncate mb-1">{result.display_name}</p>
+                            <p className="text-xs font-medium text-[#006b5f] bg-[#e2f5f3] inline-block px-2 py-0.5 rounded-full mt-1">
+                              Delivered via {nearest.name}
+                            </p>
+                          </div>
+                        </div>
+                      </button>
+                    )
+                  })
+                ) : !isSearching ? (
                   <div className="text-center py-8 text-[#777682]">
-                    No locations found for "{searchQuery}"
+                    No real locations found for "{searchQuery}"
                   </div>
-                )}
+                ) : null}
               </div>
             </div>
           </div>
 
           {/* Footer with Confirm Button */}
-          <div className="border-t border-[#e5e1e9] p-6 bg-[#f6f2fa]">
-            <div className="mb-4 pb-4 border-b border-[#e5e1e9]">
+          <div className="border-t border-[#e5e1e9] p-4 md:p-6 bg-[#f6f2fa] flex-shrink-0">
+            <div className="mb-3 md:mb-4 pb-3 md:pb-4 border-b border-[#e5e1e9]">
               <p className="text-xs font-semibold uppercase tracking-wide text-[#777682] mb-2">
-                CURRENT LOCATION
+                Selected Location
               </p>
-              <div className="flex items-start gap-2">
-                <MapPin size={18} className="text-[#1a146b] mt-0.5 shrink-0" />
-                <div>
-                  <p className="font-semibold text-[#1b1b21]">
+              <div className="flex items-center gap-3">
+                <MapPin size={20} className="text-[#1a146b] shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-[#1b1b21] truncate">
                     {selectedLocation.name}
                   </p>
-                  <p className="text-sm text-[#474651]">
+                  <p className="text-sm text-[#474651] truncate">
                     {selectedLocation.governorate}, Egypt
                   </p>
                 </div>
@@ -288,7 +435,8 @@ const MapLocationModal = ({ isOpen, onClose, onConfirm }) => {
           </div>
         </div>
       </div>
-    </>
+    </>,
+    document.body
   );
 };
 

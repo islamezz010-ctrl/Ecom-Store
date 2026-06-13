@@ -11,6 +11,7 @@ import Account from "./pages/Account";
 import Order from "./pages/Order";
 import ProductDetails from "./pages/ProductDetails";
 import Wishlist from "./pages/Wishlist";
+import CategoryPage from "./pages/CategoryPage";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
             <Route path="/success" element={<Success />} />
             <Route path="/orders" element={<Order />} />
             <Route path="/product/:id" element={<ProductDetails />} />
+            <Route path="/category/:id" element={<CategoryPage />} />
           </Routes>
         </main>
         <Footer />

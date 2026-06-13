@@ -5,7 +5,7 @@
   *,
   ::after,
   ::before {
-    @apply border-gray-200;
+    box-sizing: border-box;
   }
 
   body {
@@ -30,13 +30,13 @@
 :root {
   color-scheme: light;
 }
-
 html.dark {
   color-scheme: dark;
 }
 
 html.dark body {
-  @apply bg-[#111118] text-gray-50;
+  background-color: #111118;
+  color: #f9fafb;
 }
 
 ::-webkit-scrollbar {

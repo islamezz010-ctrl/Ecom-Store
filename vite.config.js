@@ -6,6 +6,14 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineConfig({
   plugins: [react(), tailwindcss()],
 
+  resolve: {
+    dedupe: ["react", "react-dom"],
+  },
+
+  optimizeDeps: {
+    include: ["react", "react-dom", "react/jsx-runtime", "react/jsx-dev-runtime"],
+  },
+
   // Build optimization
   build: {
     // Rollup options for code splitting
@@ -13,9 +21,10 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (
-            id.includes("node_modules/react") ||
-            id.includes("node_modules/react-dom") ||
-            id.includes("node_modules/react-router-dom")
+            id.includes("/node_modules/react-dom/") ||
+            id.includes("/node_modules/react/") ||
+            id.includes("/node_modules/react-router-dom/") ||
+            id.includes("/node_modules/react-router/")
           ) {
             return "vendor";
           }
@@ -35,8 +44,11 @@ export default defineConfig({
     cssCodeSplit: true,
   },
 
-  // Optimize static assets for CDN
   server: {
+    hmr: true,
+  },
+
+  preview: {
     headers: {
       "Cache-Control": "public, max-age=3600",
       "X-Content-Type-Options": "nosniff",

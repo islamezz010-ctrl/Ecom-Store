@@ -1,5 +1,6 @@
 import { ChevronRight } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const CategoryBar = () => {
   const categories = [
@@ -37,9 +38,9 @@ const CategoryBar = () => {
           }}
         >
           {categories.map((category, index) => (
-            <a
+            <Link
               key={category}
-              href="#"
+              to={`/category/${category.toLowerCase().replace(/ & /g, '-').replace(/\s+/g, '-')}`}
               onMouseEnter={() => setHoveredIndex(index)}
               onMouseLeave={() => setHoveredIndex(null)}
               style={{
@@ -47,10 +48,10 @@ const CategoryBar = () => {
                 transition: "transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",
                 transformOrigin: index === 0 ? "left center" : "center center",
               }}
-              className="whitespace-nowrap text-sm font-semibold text-white hover:text-yellow-300 hover:underline transition-colors"
+              className="whitespace-nowrap text-sm font-semibold text-white hover:text-yellow-300 hover:underline transition-colors block"
             >
               {category}
-            </a>
+            </Link>
           ))}
           <button className="ml-2 shrink-0 cursor-pointer p-1 text-white hover:text-yellow-300 transition-transform hover:scale-110">
             <ChevronRight size={20} />
