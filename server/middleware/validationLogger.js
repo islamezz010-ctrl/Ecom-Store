@@ -24,7 +24,7 @@ const logger = {
     });
   },
 
-  logValidationSuccess: (req, source = "body") => {
+  logValidationSuccess: (req, _source = "body") => {
     if (process.env.LOG_VALIDATION_SUCCESS === "true") {
       const timestamp = new Date().toISOString();
       console.log(

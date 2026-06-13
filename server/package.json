@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
+    "seed": "node scripts/seedProducts.js",
     "seed:products": "node scripts/seedProducts.js",
     "optimize:images": "node scripts/optimizeImages.js",
     "info:validation": "node scripts/validateLoggingInfo.js",
@@ -38,5 +39,12 @@
     "jest": "^30.0.4",
     "mongodb-memory-server": "^10.4.0",
     "supertest": "^7.1.0"
+  },
+  "jest": {
+    "testTimeout": 30000,
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "setup.js"
+    ]
   }
 }

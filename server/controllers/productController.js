@@ -1,12 +1,11 @@
 // server/controllers/productController.js
 const Product = require("../models/Product");
-const { invalidateCache } = require("../middleware/cache");
 
 // ──────────────────────────────────────────────
 // GET /api/products
 // ──────────────────────────────────────────────
 exports.getProducts = async (req, res) => {
-  const { category, search, sort, limit, page } = req.query;
+  const { category, search, sort, limit, page, minPrice, maxPrice } = req.query;
 
   const filter = { stock: { $gt: 0 } };
 
@@ -16,6 +15,12 @@ exports.getProducts = async (req, res) => {
 
   if (search) {
     filter.name = { $regex: search, $options: "i" };
+  }
+
+  if (minPrice !== undefined || maxPrice !== undefined) {
+    filter.price = {};
+    if (minPrice !== undefined) filter.price.$gte = Number(minPrice);
+    if (maxPrice !== undefined) filter.price.$lte = Number(maxPrice);
   }
 
   // Sorting
@@ -57,4 +62,12 @@ exports.getProductById = async (req, res) => {
     return res.status(404).json({ message: "Product not found" });
   }
   res.json(product);
+};
+
+// ──────────────────────────────────────────────
+// GET /api/products/categories
+// ──────────────────────────────────────────────
+exports.getCategories = async (req, res) => {
+  const categories = await Product.distinct("category");
+  res.json(categories.filter(Boolean)); // remove null/undefined
 };

@@ -102,7 +102,7 @@ app.get("/api/admin/health/deep", async (req, res) => {
 });
 
 // ── Validation metrics endpoint (admin only) ──
-app.get("/api/admin/metrics/validation", (req, res, next) => {
+app.get("/api/admin/metrics/validation", (req, res, _next) => {
   // Optional: Add authentication check
   // const token = req.cookies.token;
   // if (!token) return res.status(401).json({ message: "Unauthorized" });

@@ -35,7 +35,7 @@ describe("Checkout Endpoints", () => {
   let testProduct;
 
   beforeEach(async () => {
-    const user = await User.create({
+    await User.create({
       name: "Customer",
       email: "customer@example.com",
       password: "password123",

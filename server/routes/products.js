@@ -17,6 +17,13 @@ router.get(
   ctrl.getProducts,
 );
 
+// Cache categories for 1 hour (3600 seconds)
+router.get(
+  "/categories",
+  (req, res, next) => cacheMiddleware("products:categories", 3600)(req, res, next),
+  ctrl.getCategories
+);
+
 // Cache individual product for 10 minutes (600 seconds)
 router.get(
   "/:id",

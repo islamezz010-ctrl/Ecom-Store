@@ -73,8 +73,7 @@ describe("Auth Endpoints", () => {
   });
 
   test("GET /api/auth/me -> Should return user profile when authenticated", async () => {
-    const user = await User.create(testUser);
-    
+    await User.create(testUser);
     // Register or login to get cookie
     const loginRes = await request(app)
       .post("/api/auth/login")

@@ -6,7 +6,11 @@ let mongoServer;
 
 // Start memory database and connect mongoose
 const connect = async () => {
-  mongoServer = await MongoMemoryServer.create();
+  mongoServer = await MongoMemoryServer.create({
+    instance: {
+      launchTimeout: 60000,
+    },
+  });
   const uri = mongoServer.getUri();
   await mongoose.connect(uri);
 };
@@ -29,8 +33,3 @@ const clear = async () => {
 };
 
 module.exports = { connect, close, clear };
-
-// Prevent Jest from failing because of an empty test suite
-test("MongoDB memory server setup helper holds test placeholder", () => {
-  expect(true).toBe(true);
-});

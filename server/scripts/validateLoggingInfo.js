@@ -50,7 +50,7 @@ The following routes now automatically log validation events:
 2. Suspicious Inputs
    ├─ XSS attempts: <script>, javascript:, on* handlers
    ├─ SQL injection: SELECT, UNION, DROP, INSERT, UPDATE, DELETE
-   ├─ NoSQL injection: \$where, \$regex, ObjectId
+   ├─ NoSQL injection: $where, $regex, ObjectId
    └─ Path traversal: ../, //, etc/passwd
 
 3. Validation Metrics
@@ -132,7 +132,7 @@ grep "email.*must be" server.log
 
 ✓ Automatically detects XSS attempts
 ✓ Detects SQL injection patterns
-✓ Detects NoSQL injection (\$where, \$regex)
+✓ Detects NoSQL injection ($where, $regex)
 ✓ Detects path traversal attacks
 ✓ Never logs passwords or sensitive data
 ✓ IP-based tracking for attack patterns

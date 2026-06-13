@@ -119,6 +119,126 @@ const products = [
     category: "Electronics",
     stock: 13,
   },
+  // Grocery products
+  {
+    name: "Organic Brown Rice",
+    price: 12.99,
+    description:
+      "Premium organic brown rice, high in fiber and nutrients. Perfect for healthy meals.",
+    image:
+      "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=900&q=80",
+    category: "Grocery",
+    stock: 50,
+  },
+  {
+    name: "Extra Virgin Olive Oil",
+    price: 18.5,
+    description:
+      "Cold-pressed extra virgin olive oil from Mediterranean olives. 500ml bottle.",
+    image:
+      "https://images.unsplash.com/photo-1599599810694-b5ac4dd64b67?auto=format&fit=crop&w=900&q=80",
+    category: "Grocery",
+    stock: 30,
+  },
+  {
+    name: "Organic Whole Wheat Flour",
+    price: 8.99,
+    description:
+      "100% organic whole wheat flour, freshly milled. Great for baking bread and pastries.",
+    image:
+      "https://images.unsplash.com/photo-1571521651817-c076a6c4e48d?auto=format&fit=crop&w=900&q=80",
+    category: "Grocery",
+    stock: 45,
+  },
+  {
+    name: "Raw Organic Honey",
+    price: 16.99,
+    description:
+      "Raw unfiltered organic honey with live enzymes and probiotics. 500g jar.",
+    image:
+      "https://images.unsplash.com/photo-1587049633312-d628ae50b8b7?auto=format&fit=crop&w=900&q=80",
+    category: "Grocery",
+    stock: 40,
+  },
+  {
+    name: "Himalayan Pink Salt",
+    price: 9.99,
+    description:
+      "Pure Himalayan pink salt crystals. Rich in 84 trace minerals. 1kg.",
+    image:
+      "https://images.unsplash.com/photo-1559827260-dc66d52bef19?auto=format&fit=crop&w=900&q=80",
+    category: "Grocery",
+    stock: 60,
+  },
+  {
+    name: "Organic Almond Butter",
+    price: 14.99,
+    description:
+      "Creamy organic almond butter made from roasted almonds. No added sugar.",
+    image:
+      "https://images.unsplash.com/photo-1624206566897-f1d682642a69?auto=format&fit=crop&w=900&q=80",
+    category: "Grocery",
+    stock: 35,
+  },
+  {
+    name: "Organic Quinoa",
+    price: 11.99,
+    description:
+      "Premium organic quinoa seeds. Complete protein source with all 9 amino acids.",
+    image:
+      "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=900&q=80",
+    category: "Grocery",
+    stock: 25,
+  },
+  {
+    name: "Greek Yogurt",
+    price: 6.49,
+    description:
+      "Creamy Greek yogurt with probiotics. 500g container. Perfect for breakfast.",
+    image:
+      "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=900&q=80",
+    category: "Grocery",
+    stock: 55,
+  },
+  {
+    name: "Organic Chia Seeds",
+    price: 13.99,
+    description: "Raw organic chia seeds packed with omega-3s and fiber. 500g.",
+    image:
+      "https://images.unsplash.com/photo-1585707372406-e01b2b417141?auto=format&fit=crop&w=900&q=80",
+    category: "Grocery",
+    stock: 28,
+  },
+  {
+    name: "Organic Turmeric Powder",
+    price: 7.99,
+    description:
+      "Pure organic turmeric powder with curcumin. Anti-inflammatory spice. 100g.",
+    image:
+      "https://images.unsplash.com/photo-1596040994211-a64c3c1b5f4e?auto=format&fit=crop&w=900&q=80",
+    category: "Grocery",
+    stock: 42,
+  },
+  {
+    name: "Cold Brew Coffee Beans",
+    price: 15.99,
+    description:
+      "Premium cold brew coffee beans. Medium roast with smooth caramel notes. 250g.",
+    image:
+      "https://images.unsplash.com/photo-1559056199-641a0ac8b3f4?auto=format&fit=crop&w=900&q=80",
+    category: "Grocery",
+    stock: 38,
+  },
+  {
+    name: "Organic Coconut Oil",
+    price: 13.49,
+    description:
+      "Virgin coconut oil cold-pressed. Multi-purpose for cooking and skincare.",
+    image:
+      "https://images.unsplash.com/photo-1599599810694-b5ac4dd64b67?auto=format&fit=crop&w=900&q=80",
+    category: "Grocery",
+    stock: 44,
+  },
 ];
 
 module.exports = products;
