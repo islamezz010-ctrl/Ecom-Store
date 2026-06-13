@@ -1,6 +1,8 @@
+import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 
 const ProductCard = ({ product }) => {
+  const navigate = useNavigate();
   const { addToCart, removeFromCart, cart } = useCart();
   const productId = product._id ?? product.id;
   const currentStock = product.stock ?? 3;
@@ -11,9 +13,10 @@ const ProductCard = ({ product }) => {
 
   return (
     <article
-      className={`ambient-card group flex flex-col overflow-hidden rounded-2xl bg-white transition-all duration-300 ${
+      className={`ambient-card group flex flex-col overflow-hidden rounded-2xl bg-white transition-all duration-300 cursor-pointer ${
         isSoldOut ? "opacity-70" : ""
       }`}
+      onClick={() => navigate(`/product/${product._id ?? product.id}`)}
     >
       <div className="relative aspect-square overflow-hidden bg-[#f0ecf4]">
         <img
@@ -51,7 +54,10 @@ const ProductCard = ({ product }) => {
           {quantityInCart === 0 ? (
             <button
               disabled={isSoldOut}
-              onClick={() => addToCart(product)}
+              onClick={(e) => {
+                e.stopPropagation();
+                addToCart(product);
+              }}
               className={`rounded-lg px-3 py-2 text-xs font-bold text-white transition-all active:scale-95 ${
                 isSoldOut
                   ? "cursor-not-allowed bg-[#777682]"
@@ -61,7 +67,10 @@ const ProductCard = ({ product }) => {
               Add to Cart
             </button>
           ) : (
-            <div className="flex items-center gap-2 rounded-full border border-[#c8c5d3] bg-[#f6f2fa] px-2 py-1">
+            <div
+              className="flex items-center gap-2 rounded-full border border-[#c8c5d3] bg-[#f6f2fa] px-2 py-1"
+              onClick={(e) => e.stopPropagation()}
+            >
               <button
                 onClick={() => removeFromCart(productId)}
                 className="flex cursor-pointer h-8 w-8 items-center justify-center rounded-full text-lg font-bold text-[#474651] transition hover:bg-white hover:text-[#ba1a1a]"

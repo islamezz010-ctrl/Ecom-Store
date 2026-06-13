@@ -15,7 +15,9 @@ export const CartProvider = ({ children }) => {
     const productId = getProductId(product);
 
     setCart((prevCart) => {
-      const existingItem = prevCart.find((item) => getProductId(item) === productId);
+      const existingItem = prevCart.find(
+        (item) => getProductId(item) === productId,
+      );
 
       if (existingItem) {
         return prevCart.map((item) =>
@@ -65,4 +67,10 @@ export const CartProvider = ({ children }) => {
   );
 };
 
-export const useCart = () => useContext(CartContext);
+export const useCart = () => {
+  const context = useContext(CartContext);
+  if (!context) {
+    throw new Error("useCart must be used within a CartProvider");
+  }
+  return context;
+};

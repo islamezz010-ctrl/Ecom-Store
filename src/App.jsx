@@ -9,6 +9,8 @@ import Success from "./pages/Success";
 import Login from "./pages/Login";
 import Account from "./pages/Account";
 import Order from "./pages/Order";
+import ProductDetails from "./pages/ProductDetails";
+import Wishlist from "./pages/Wishlist";
 
 function App() {
   return (
@@ -22,8 +24,10 @@ function App() {
             <Route path="/account" element={<Account />} />
             <Route path="/" element={<Home />} />
             <Route path="/cart" element={<Cart />} />
+            <Route path="/wishlist" element={<Wishlist />} />
             <Route path="/success" element={<Success />} />
-            <Route path="/order" element={<Order />} />
+            <Route path="/orders" element={<Order />} />
+            <Route path="/product/:id" element={<ProductDetails />} />
           </Routes>
         </main>
         <Footer />

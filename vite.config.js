@@ -11,20 +11,24 @@ export default defineConfig({
     // Rollup options for code splitting
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ["react", "react-dom", "react-router-dom"],
-          stripe: ["@stripe/stripe-js"],
-          oauth: ["@react-oauth/google"],
+        manualChunks(id) {
+          if (
+            id.includes("node_modules/react") ||
+            id.includes("node_modules/react-dom") ||
+            id.includes("node_modules/react-router-dom")
+          ) {
+            return "vendor";
+          }
+          if (id.includes("@stripe/stripe-js")) {
+            return "stripe";
+          }
+          if (id.includes("@react-oauth/google")) {
+            return "oauth";
+          }
         },
       },
     },
     // Minify and optimize
-    minify: "terser",
-    terserOptions: {
-      compress: {
-        drop_console: true,
-      },
-    },
     // Set asset size limit for warnings
     assetsInlineLimit: 4096,
     // Enable CSS code splitting

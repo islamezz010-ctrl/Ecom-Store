@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { API } from "../lib/api";
 import { getCurrentUser, isAuthenticated } from "../lib/user";
-import { Package, ChevronRight, AlertCircle } from "lucide-react";
+import { Package, ChevronRight } from "lucide-react";
+import Login from "./Login";
 
 const Order = () => {
   const navigate = useNavigate();
@@ -15,11 +16,9 @@ const Order = () => {
   const user = getCurrentUser();
 
   // Redirect to login if not authenticated
-  useEffect(() => {
-    if (!isAuthenticated()) {
-      navigate("/login", { replace: true });
-    }
-  }, [navigate]);
+  if (!isAuthenticated()) {
+    return <Login heading="Sign in to see your orders" />;
+  }
 
   // Fetch orders
   useEffect(() => {

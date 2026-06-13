@@ -1,4 +1,10 @@
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import {
   DEFAULT_LOCATION_ID,
   getLocationById,
@@ -129,12 +135,15 @@ export const LocationProvider = ({ children }) => {
     return newAddress;
   }, []);
 
-  const selectAddress = useCallback((id) => {
-    const address = addresses.find((item) => item.id === id);
-    if (!address) return;
-    setSelectedAddressId(id);
-    setLocationId(address.locationId);
-  }, [addresses]);
+  const selectAddress = useCallback(
+    (id) => {
+      const address = addresses.find((item) => item.id === id);
+      if (!address) return;
+      setSelectedAddressId(id);
+      setLocationId(address.locationId);
+    },
+    [addresses],
+  );
 
   const calculateShipping = useCallback(
     (subtotal) => getShippingCost(location, subtotal),
@@ -165,4 +174,12 @@ export const LocationProvider = ({ children }) => {
   );
 };
 
-export const useDeliveryLocation = () => useContext(LocationContext);
+export const useDeliveryLocation = () => {
+  const context = useContext(LocationContext);
+  if (!context) {
+    throw new Error(
+      "useDeliveryLocation must be used within a LocationProvider",
+    );
+  }
+  return context;
+};

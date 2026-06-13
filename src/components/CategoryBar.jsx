@@ -24,14 +24,16 @@ const CategoryBar = () => {
   };
 
   return (
-    <div className="bg-[#001a4d] border-b border-[#001a4d] sticky top-20 z-40">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-10">
+    <div className="bg-[#001a4d] border-b border-[#001a4d] sticky top-20 z-40 overflow-visible">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-10 overflow-visible">
         <div
           className="flex items-center gap-6 overflow-x-auto py-3"
           style={{
             scrollBehavior: "smooth",
             msOverflowStyle: "none",
             scrollbarWidth: "none",
+            paddingLeft: "1rem",
+            paddingRight: "0.5rem",
           }}
         >
           {categories.map((category, index) => (
@@ -43,8 +45,9 @@ const CategoryBar = () => {
               style={{
                 transform: `scale(${getScale(index)})`,
                 transition: "transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",
+                transformOrigin: index === 0 ? "left center" : "center center",
               }}
-              className="whitespace-nowrap text-sm font-semibold text-white hover:text-yellow-300 hover:underline transition-colors origin-center"
+              className="whitespace-nowrap text-sm font-semibold text-white hover:text-yellow-300 hover:underline transition-colors"
             >
               {category}
             </a>

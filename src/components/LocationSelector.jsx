@@ -2,22 +2,12 @@ import { useEffect, useRef, useState } from "react";
 import { MapPin, ChevronDown, Check, Loader2 } from "lucide-react";
 import { useDeliveryLocation } from "../context/LocationContext";
 import { DELIVERY_LOCATIONS } from "../data/locations";
+import MapLocationModal from "./MapLocationModal";
 
 const LocationSelector = ({ variant = "compact" }) => {
   const { location, setLocation, geoDetecting } = useDeliveryLocation();
-  const [open, setOpen] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const containerRef = useRef(null);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (containerRef.current && !containerRef.current.contains(event.target)) {
-        setOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
 
   const isCompact = variant === "compact";
 
@@ -25,14 +15,12 @@ const LocationSelector = ({ variant = "compact" }) => {
     <div ref={containerRef} className="relative">
       <button
         type="button"
-        onClick={() => setOpen((prev) => !prev)}
+        onClick={() => setShowModal(true)}
         className={`flex cursor-pointer items-center gap-2 rounded-lg border transition-colors ${
           isCompact
             ? "border-transparent px-2 py-1.5 text-sm hover:border-[#e5e1e9] hover:bg-[#f6f2fa]"
-            : "w-full border-[#c8c5d3] bg-white px-4 py-3 text-left hover:border-[#312e81]"
+            : "w-full border-[#c8c5d3] bg-white px-4 py-3 text-left hover:border-[#1a146b]"
         }`}
-        aria-expanded={open}
-        aria-haspopup="listbox"
         aria-label="Select delivery location"
       >
         {geoDetecting ? (
@@ -67,57 +55,15 @@ const LocationSelector = ({ variant = "compact" }) => {
           )}
         </div>
         <ChevronDown
-          className={`shrink-0 text-[#777682] transition-transform ${
-            isCompact ? "h-4 w-4" : "h-5 w-5"
-          } ${open ? "rotate-180" : ""}`}
+          className={`shrink-0 text-[#777682] transition-transform ${isCompact ? "h-4 w-4" : "h-5 w-5"}`}
         />
       </button>
 
-      {open && (
-        <ul
-          role="listbox"
-          aria-label="Delivery locations"
-          className={`absolute z-50 max-h-72 overflow-y-auto rounded-xl border border-[#e5e1e9] bg-white shadow-xl ${
-            isCompact
-              ? "left-0 top-full mt-2 w-64"
-              : "left-0 right-0 top-full mt-2"
-          }`}
-        >
-          {DELIVERY_LOCATIONS.map((loc) => {
-            const isSelected = loc.id === location.id;
-
-            return (
-              <li key={loc.id} role="option" aria-selected={isSelected}>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setLocation(loc.id);
-                    setOpen(false);
-                  }}
-                  className={`flex w-full cursor-pointer items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-[#f6f2fa] ${
-                    isSelected ? "bg-[#e2dfff]/40" : ""
-                  }`}
-                >
-                  <div className="min-w-0 flex-1">
-                    <p className="font-semibold text-[#1b1b21]">
-                      {loc.name}, {loc.governorate}
-                    </p>
-                    <p className="mt-0.5 text-sm text-[#474651]">
-                      {loc.shippingCost === 0
-                        ? "Free delivery"
-                        : `$${loc.shippingCost.toFixed(2)}`}{" "}
-                      · {loc.deliveryDays} days
-                    </p>
-                  </div>
-                  {isSelected && (
-                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#006b5f]" />
-                  )}
-                </button>
-              </li>
-            );
-          })}
-        </ul>
-      )}
+      <MapLocationModal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        onConfirm={(selectedLocation) => setLocation(selectedLocation.id)}
+      />
     </div>
   );
 };

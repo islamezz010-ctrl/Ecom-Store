@@ -11,7 +11,8 @@ const Cart = () => {
   const [addressModalOpen, setAddressModalOpen] = React.useState(false);
   const { cart, cartCount, addToCart, removeFromCart, deleteFromCart } =
     useCart();
-  const { location, selectedAddress, calculateShipping } = useDeliveryLocation();
+  const { location, selectedAddress, calculateShipping } =
+    useDeliveryLocation();
 
   const handleStripeCheckout = async () => {
     setLoading(true);
@@ -78,28 +79,276 @@ const Cart = () => {
   const estimatedTax = subtotal * 0.08;
   const totalPrice = subtotal + shippingCost + estimatedTax;
   const shippingLabel =
-    shippingCost === 0
-      ? "Free"
-      : `$${shippingCost.toFixed(2)}`;
+    shippingCost === 0 ? "Free" : `$${shippingCost.toFixed(2)}`;
 
   if (cartCount === 0) {
     return (
-      <main className="mx-auto flex min-h-[70vh] max-w-4xl flex-col items-center justify-center px-4 text-center">
-        <span className="mb-4 rounded-full bg-[#e2dfff] px-4 py-2 text-xs font-bold uppercase tracking-widest text-[#1a146b]">
-          Your Bag
-        </span>
-        <h1 className="brand-heading text-4xl font-bold text-[#1a146b]">
-          Your cart is empty.
-        </h1>
-        <p className="mt-3 max-w-md text-[#474651]">
-          Build your selection from the premium utility collection.
-        </p>
-        <Link
-          to="/"
-          className="mt-8 rounded-lg bg-[#1a146b] px-8 py-4 text-sm font-bold text-white transition hover:bg-[#312e81]"
-        >
-          Continue Shopping
-        </Link>
+      <main className="mx-auto min-h-[70vh] px-4 py-12 sm:px-6 lg:px-10">
+        <div className="grid gap-12 items-center lg:grid-cols-2">
+          {/* Left Side - Message and CTA */}
+          <div className="flex flex-col justify-center">
+            <span className="mb-4 rounded-full bg-[#e2dfff] px-4 py-2 text-xs font-bold uppercase tracking-widest text-[#1a146b] w-fit">
+              Your Bag
+            </span>
+            <h1 className="brand-heading text-5xl font-bold text-[#1a146b] mb-4">
+              Your cart is empty.
+            </h1>
+            <p className="text-lg text-[#474651] mb-3 max-w-md leading-relaxed">
+              Build your selection from our premium utility collection. Start
+              shopping and discover amazing products!
+            </p>
+            <div className="flex flex-col gap-3 mb-8">
+              <div className="flex items-center gap-2 text-[#006b5f] font-semibold">
+                <span>✨ Free Shipping on Orders Over $50</span>
+              </div>
+              <div className="flex items-center gap-2 text-[#006b5f] font-semibold">
+                <span>🎁 Premium Quality Products</span>
+              </div>
+              <div className="flex items-center gap-2 text-[#006b5f] font-semibold">
+                <span>⚡ Fast Delivery</span>
+              </div>
+            </div>
+            <Link
+              to="/"
+              className="inline-flex rounded-lg px-8 py-4 text-sm font-bold text-white transition hover:shadow-lg hover:-translate-y-0.5 active:scale-95 w-fit"
+              style={{
+                backgroundImage:
+                  "linear-gradient(90deg, #1a146b 0%, #312e81 100%)",
+              }}
+            >
+              Continue Shopping
+            </Link>
+          </div>
+
+          {/* Right Side - Shopping Cart Illustration */}
+          <div className="hidden lg:flex justify-center items-center">
+            <div className="relative w-full max-w-sm">
+              {/* Decorative background shapes */}
+              <div
+                className="absolute -top-20 -left-20 w-64 h-64 rounded-full blur-3xl"
+                style={{
+                  backgroundImage:
+                    "linear-gradient(135deg, rgba(26,20,107,0.10) 0%, rgba(0,107,95,0.10) 100%)",
+                }}
+              ></div>
+
+              <svg
+                viewBox="0 0 300 350"
+                className="w-full h-auto"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                {/* Background circle */}
+                <circle
+                  cx="150"
+                  cy="175"
+                  r="130"
+                  fill="#f0ecf4"
+                  opacity="0.4"
+                />
+
+                {/* Shopping Cart */}
+                {/* Cart Body */}
+                <path
+                  d="M 60 120 L 75 80 L 230 80 L 240 120 Z"
+                  fill="none"
+                  stroke="#1a146b"
+                  strokeWidth="4"
+                  strokeLinejoin="round"
+                />
+
+                {/* Cart Main Container */}
+                <path
+                  d="M 65 120 L 70 240 Q 70 250 80 250 L 220 250 Q 230 250 230 240 L 235 120"
+                  fill="#006b5f"
+                  stroke="#1a146b"
+                  strokeWidth="3"
+                  opacity="0.8"
+                />
+
+                {/* Cart Handle */}
+                <path
+                  d="M 85 80 Q 150 40 215 80"
+                  stroke="#1a146b"
+                  strokeWidth="4"
+                  fill="none"
+                  strokeLinecap="round"
+                />
+
+                {/* Left Wheel */}
+                <circle
+                  cx="85"
+                  cy="255"
+                  r="12"
+                  fill="none"
+                  stroke="#1a146b"
+                  strokeWidth="3"
+                />
+                <circle cx="85" cy="255" r="6" fill="#1a146b" />
+
+                {/* Right Wheel */}
+                <circle
+                  cx="215"
+                  cy="255"
+                  r="12"
+                  fill="none"
+                  stroke="#1a146b"
+                  strokeWidth="3"
+                />
+                <circle cx="215" cy="255" r="6" fill="#1a146b" />
+
+                {/* Product boxes inside cart */}
+                {/* Box 1 */}
+                <rect
+                  x="85"
+                  y="135"
+                  width="35"
+                  height="35"
+                  rx="3"
+                  fill="#ffd700"
+                  opacity="0.9"
+                />
+                <circle
+                  cx="102.5"
+                  cy="152.5"
+                  r="8"
+                  fill="#1a146b"
+                  opacity="0.3"
+                />
+
+                {/* Box 2 */}
+                <rect
+                  x="135"
+                  y="145"
+                  width="35"
+                  height="35"
+                  rx="3"
+                  fill="#ff6b9d"
+                  opacity="0.9"
+                />
+                <circle
+                  cx="152.5"
+                  cy="162.5"
+                  r="8"
+                  fill="#1a146b"
+                  opacity="0.3"
+                />
+
+                {/* Box 3 */}
+                <rect
+                  x="185"
+                  y="135"
+                  width="35"
+                  height="35"
+                  rx="3"
+                  fill="#4dabf7"
+                  opacity="0.9"
+                />
+                <circle
+                  cx="202.5"
+                  cy="152.5"
+                  r="8"
+                  fill="#1a146b"
+                  opacity="0.3"
+                />
+
+                {/* Checkmarks on products */}
+                <text
+                  x="102"
+                  y="158"
+                  fontSize="14"
+                  fontWeight="bold"
+                  fill="#1a146b"
+                  textAnchor="middle"
+                >
+                  ✓
+                </text>
+                <text
+                  x="152"
+                  y="168"
+                  fontSize="14"
+                  fontWeight="bold"
+                  fill="#1a146b"
+                  textAnchor="middle"
+                >
+                  ✓
+                </text>
+                <text
+                  x="202"
+                  y="158"
+                  fontSize="14"
+                  fontWeight="bold"
+                  fill="#1a146b"
+                  textAnchor="middle"
+                >
+                  ✓
+                </text>
+
+                {/* Sparkles around cart */}
+                <circle cx="40" cy="100" r="4" fill="#1a146b" />
+                <circle cx="260" cy="110" r="4" fill="#006b5f" />
+                <circle cx="35" cy="180" r="3" fill="#1a146b" opacity="0.6" />
+                <circle cx="265" cy="190" r="3" fill="#006b5f" opacity="0.6" />
+                <circle cx="50" cy="240" r="2.5" fill="#1a146b" opacity="0.4" />
+                <circle
+                  cx="250"
+                  cy="230"
+                  r="2.5"
+                  fill="#006b5f"
+                  opacity="0.4"
+                />
+
+                {/* Decorative plus signs */}
+                <g opacity="0.5">
+                  <line
+                    x1="25"
+                    y1="150"
+                    x2="35"
+                    y2="150"
+                    stroke="#1a146b"
+                    strokeWidth="2"
+                  />
+                  <line
+                    x1="30"
+                    y1="145"
+                    x2="30"
+                    y2="155"
+                    stroke="#1a146b"
+                    strokeWidth="2"
+                  />
+                </g>
+                <g opacity="0.5">
+                  <line
+                    x1="270"
+                    y1="160"
+                    x2="280"
+                    y2="160"
+                    stroke="#006b5f"
+                    strokeWidth="2"
+                  />
+                  <line
+                    x1="275"
+                    y1="155"
+                    x2="275"
+                    y2="165"
+                    stroke="#006b5f"
+                    strokeWidth="2"
+                  />
+                </g>
+              </svg>
+
+              {/* Motivational Text */}
+              <div className="mt-8 text-center space-y-2">
+                <p className="text-lg font-bold text-[#1a146b]">
+                  Add items to get started!
+                </p>
+                <p className="text-sm text-[#474651]">
+                  Browse our collection and fill your cart with amazing
+                  products.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </main>
     );
   }
@@ -195,7 +444,9 @@ const Cart = () => {
             </h2>
 
             <div className="mt-5">
-              <DeliveryAddressCard onAddAddress={() => setAddressModalOpen(true)} />
+              <DeliveryAddressCard
+                onAddAddress={() => setAddressModalOpen(true)}
+              />
             </div>
 
             <div className="mt-6 space-y-4 text-[#474651]">
@@ -206,16 +457,16 @@ const Cart = () => {
               <div className="flex justify-between">
                 <span>
                   Shipping to{" "}
-                  {selectedAddress
-                    ? selectedAddress.cityArea
-                    : location.name}
+                  {selectedAddress ? selectedAddress.cityArea : location.name}
                 </span>
-                <span className="font-medium text-[#006f64]">{shippingLabel}</span>
+                <span className="font-medium text-[#006f64]">
+                  {shippingLabel}
+                </span>
               </div>
               {shippingCost > 0 && subtotal < location.freeShippingMin && (
                 <p className="text-sm text-[#006b5f]">
-                  Add ${(location.freeShippingMin - subtotal).toFixed(2)} more for
-                  free shipping to {location.name}.
+                  Add ${(location.freeShippingMin - subtotal).toFixed(2)} more
+                  for free shipping to {location.name}.
                 </p>
               )}
               <p className="text-sm text-[#777682]">

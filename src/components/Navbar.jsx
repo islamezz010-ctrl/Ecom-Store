@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useCart } from "../context/CartContext";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, Package, Heart, LogIn } from "lucide-react";
 import LocationSelector from "./LocationSelector";
 
 const Navbar = () => {
@@ -42,20 +42,36 @@ const Navbar = () => {
     .join("");
 
   return (
-    <header className="sticky top-0 z-50 border-b border-[#e5e1e9] bg-[#fcf8ff]/95 shadow-sm backdrop-blur">
+    <header className="sticky top-0 z-50 border-b border-white/20 bg-white/10 shadow-lg backdrop-blur-xl">
       <nav className="mx-auto flex h-20 w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-10">
-        <div className="flex items-center gap-3  bg-blue-100 rounded-lg mr-5 pr-3">
+        <div className="flex items-center gap-3">
           <Link
             to="/"
-            className="flex items-center gap-2 transition-transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#312e81] rounded-lg p-1"
+            className="flex items-center gap-2 transition-all hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-[#1a146b] rounded-lg p-2 hover:-translate-y-0.5"
             aria-label="LUXE Home"
           >
-            <img
-              src="/images/logo.svg"
-              alt="LUXE Logo"
-              className="h-10 w-10 object-contain"
-            />
-            <span className="luxe-font text-3xl text-[#1a146b] hidden sm:inline">
+            <div
+              className="rounded-lg p-2 shadow-md hover:shadow-lg transition-shadow"
+              style={{
+                backgroundImage:
+                  "linear-gradient(135deg, #1a146b 0%, #006b5f 100%)",
+              }}
+            >
+              <img
+                src="/images/logo.svg"
+                alt="LUXE Logo"
+                className="h-10 w-10 object-contain brightness-0 invert"
+              />
+            </div>
+            <span
+              className="luxe-font hidden text-2xl font-bold text-transparent sm:inline tracking-tight"
+              style={{
+                backgroundImage:
+                  "linear-gradient(90deg, #1a146b 0%, #006b5f 100%)",
+                WebkitBackgroundClip: "text",
+                backgroundClip: "text",
+              }}
+            >
               LUXE
             </span>
           </Link>
@@ -76,7 +92,7 @@ const Navbar = () => {
             <input
               type="text"
               aria-label="Search products"
-              className="w-full rounded-full border border-transparent bg-[#f6f2fa] py-3 pl-20 pr-4 text-sm outline-none transition focus:border-[#312e81] focus:ring-4 focus:ring-[#312e81]/10"
+              className="w-full rounded-full border border-transparent bg-[#f6f2fa] py-3 pl-20 pr-4 text-sm outline-none transition shadow-md hover:shadow-[0_4px_12px_rgba(26,20,107,0.2)] focus:shadow-[0_8px_16px_rgba(26,20,107,0.25)] focus:border-[#1a146b] focus:ring-0"
               placeholder="Search products..."
             />
           </div>
@@ -131,8 +147,9 @@ const Navbar = () => {
             location.pathname !== "/login" && (
               <Link
                 to="/login"
-                className="hidden rounded-lg border border-[#312e81] px-4 py-2 text-sm font-bold text-[#312e81] transition hover:bg-[#312e81]/5 sm:inline-flex"
+                className="hidden items-center gap-1.5 rounded-lg border border-[#1a146b] px-4 py-2 text-sm font-bold text-[#1a146b] transition hover:bg-[#1a146b] hover:text-white sm:inline-flex"
               >
+                <LogIn size={18} />
                 Sign In
               </Link>
             )
@@ -154,9 +171,18 @@ const Navbar = () => {
           </Link>
           <Link
             to="/orders"
-            className="hidden items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-semibold text-[#474651] transition hover:text-[#1a146b] sm:inline-flex"
+            className="hidden items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-semibold text-[#474651] transition hover:text-[#1a146b] hover:bg-[#f6f2fa] sm:inline-flex"
           >
+            <Package size={18} />
             Orders
+          </Link>
+          <Link
+            to="/wishlist"
+            aria-label="Wishlist"
+            className="hidden items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-semibold text-[#474651] transition hover:text-[#ba1a1a] hover:bg-[#ffdad6]/40 sm:inline-flex"
+          >
+            <Heart size={18} />
+            Wishlist
           </Link>
         </div>
       </nav>
