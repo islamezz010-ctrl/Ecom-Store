@@ -118,7 +118,7 @@ const StatinaryCarousel = () => {
   };
 
   return (
-    <div className="relative w-full h-[400px] sm:h-[450px] md:h-[500px] overflow-hidden rounded-lg">
+    <div className="relative w-full h-100 sm:h-112.5 md:h-125 overflow-hidden rounded-lg">
       {/* Slides */}
       {slides.map((slide, index) => (
         <div
