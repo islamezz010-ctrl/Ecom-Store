@@ -3,12 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 import { API } from "../lib/api";
+import { useNotification } from "../hooks/useNotification";
 import Button from "../components/Button";
 
 const Login = ({ heading = "Welcome Back" }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const notify = useNotification();
 
   useEffect(() => {
     if (localStorage.getItem("userInfo")) {
@@ -54,7 +56,7 @@ const Login = ({ heading = "Welcome Back" }) => {
       });
     } catch (err) {
       console.error("Auth failed", err);
-      alert("Authentication failed: " + err.message);
+      notify.error("Authentication failed: " + err.message);
     }
   };
 
@@ -73,11 +75,11 @@ const Login = ({ heading = "Welcome Back" }) => {
       if (response.ok) {
         finishLogin(data);
       } else {
-        alert(data.message);
+        notify.error(data.message);
       }
     } catch (err) {
       console.error("Login error", err);
-      alert("Login error: " + err.message);
+      notify.error("Login error: " + err.message);
     }
   };
 
@@ -142,7 +144,7 @@ const Login = ({ heading = "Welcome Back" }) => {
               onSuccess={handleSuccess}
               onError={() => {
                 console.log("Login Failed");
-                alert("Google Login popup was closed or failed.");
+                notify.warning("Google Login popup was closed or failed.");
               }}
               theme="outline"
               size="large"

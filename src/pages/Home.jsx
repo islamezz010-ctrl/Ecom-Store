@@ -56,10 +56,10 @@ const Home = () => {
         if (minPrice) params.append("minPrice", minPrice);
         if (maxPrice) params.append("maxPrice", maxPrice);
         if (sort !== "newest") params.append("sort", sort);
-        
+
         const queryString = params.toString();
         const url = `${API}/api/products${queryString ? `?${queryString}` : ""}`;
-        
+
         const response = await fetch(url);
         const data = await response.json();
         // API may return either a raw array or a paginated object { products, page, pages, total }

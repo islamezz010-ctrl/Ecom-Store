@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useDeliveryLocation } from "../context/LocationContext";
+import { useNotification } from "../hooks/useNotification";
 import DeliveryAddressCard from "../components/DeliveryAddressCard";
 import AddressFormModal from "../components/AddressFormModal";
 import { API } from "../lib/api";
@@ -9,6 +10,7 @@ import { API } from "../lib/api";
 const Cart = () => {
   const [loading, setLoading] = React.useState(false);
   const [addressModalOpen, setAddressModalOpen] = React.useState(false);
+  const notify = useNotification();
   const { cart, cartCount, addToCart, removeFromCart, deleteFromCart } =
     useCart();
   const { location, selectedAddress, calculateShipping } =
@@ -52,7 +54,7 @@ const Cart = () => {
       if (!response.ok) {
         const errorData = await response.json();
         console.error("Server error:", response.status, errorData);
-        alert("Checkout failed: " + (errorData.message || "Unknown error"));
+        notify.error("Checkout failed: " + (errorData.message || "Unknown error"));
         setLoading(false);
         return;
       }

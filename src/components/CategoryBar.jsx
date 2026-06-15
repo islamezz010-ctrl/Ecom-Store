@@ -12,7 +12,7 @@ const CategoryBar = () => {
     "Baby",
     "Toys & Games",
     "Sports & Outdoors",
-    "Books & Media",
+    "Stationary & Books",
   ];
 
   const [hoveredIndex, setHoveredIndex] = useState(null);
@@ -40,7 +40,7 @@ const CategoryBar = () => {
           {categories.map((category, index) => (
             <Link
               key={category}
-              to={`/category/${category.toLowerCase().replace(/ & /g, '-').replace(/\s+/g, '-')}`}
+              to={`/category/${category.toLowerCase().replace(/ & /g, "-").replace(/\s+/g, "-")}`}
               onMouseEnter={() => setHoveredIndex(index)}
               onMouseLeave={() => setHoveredIndex(null)}
               style={{
