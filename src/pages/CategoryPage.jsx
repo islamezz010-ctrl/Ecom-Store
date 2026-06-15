@@ -86,7 +86,7 @@ const CategorySubNav = ({ tabs, activeTab, setActiveTab }) => (
 );
 
 const CategorySubcategoryGrid = ({ subcategories }) => (
-  <div className="bg-linear-to-r from-[#e3eef8] via-[#f7e3e7] to-[#fae5e6]">
+  <div className="bg-gradient-to-r from-[#e3eef8] via-[#f7e3e7] to-[#fae5e6]">
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-10">
       <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-12 gap-y-10 gap-x-2">
         {subcategories.map((sub, i) => (

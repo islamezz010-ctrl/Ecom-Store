@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const slides = [
   {
@@ -9,9 +9,12 @@ const slides = [
       <>
         <div className="z-10 max-w-lg">
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-white leading-tight tracking-tight drop-shadow-md">
-            CRYSTAL-<span className="italic font-light">clear</span><br />
-            SOUNDS<br />
-            <span className="italic font-light">& immersive</span><br />
+            CRYSTAL-<span className="italic font-light">clear</span>
+            <br />
+            SOUNDS
+            <br />
+            <span className="italic font-light">& immersive</span>
+            <br />
             EXPERIENCES
           </h1>
           <button className="mt-8 bg-white text-[#1b1b21] px-8 py-3 rounded-full font-black uppercase tracking-widest text-sm hover:scale-105 transition-transform shadow-xl cursor-pointer">
@@ -19,19 +22,19 @@ const slides = [
           </button>
         </div>
         <div className="hidden md:flex relative z-10 w-1/2 h-full items-center justify-center">
-          <img 
-            src="https://images.unsplash.com/photo-1590658268037-6bf12165a8df?auto=format&fit=crop&q=80&w=400&h=400" 
-            alt="Earbuds" 
-            className="absolute left-10 top-1/4 w-48 h-48 object-cover rounded-3xl shadow-2xl transform -rotate-12 mix-blend-multiply" 
+          <img
+            src="https://images.unsplash.com/photo-1590658268037-6bf12165a8df?auto=format&fit=crop&q=80&w=400&h=400"
+            alt="Earbuds"
+            className="absolute left-10 top-1/4 w-48 h-48 object-cover rounded-3xl shadow-2xl transform -rotate-12 mix-blend-multiply"
           />
-          <img 
-            src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&q=80&w=400&h=400" 
-            alt="Smartwatch" 
-            className="absolute right-10 top-1/3 w-56 h-56 object-cover rounded-full shadow-2xl transform rotate-6 border-8 border-white" 
+          <img
+            src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&q=80&w=400&h=400"
+            alt="Smartwatch"
+            className="absolute right-10 top-1/3 w-56 h-56 object-cover rounded-full shadow-2xl transform rotate-6 border-8 border-white"
           />
         </div>
       </>
-    )
+    ),
   },
   {
     id: 2,
@@ -40,22 +43,26 @@ const slides = [
       <>
         <div className="z-10 max-w-lg">
           <h1 className="text-5xl sm:text-6xl md:text-7xl font-black text-white leading-none tracking-tighter">
-            IMMERSIVE<br />SOUND
+            IMMERSIVE
+            <br />
+            SOUND
           </h1>
-          <p className="mt-2 text-2xl text-white italic font-light">Unmatched clarity.</p>
+          <p className="mt-2 text-2xl text-white italic font-light">
+            Unmatched clarity.
+          </p>
           <button className="mt-8 bg-white text-[#1b1b21] px-8 py-3 font-bold uppercase tracking-widest text-sm hover:bg-gray-100 transition-colors shadow-lg cursor-pointer">
             Shop Now
           </button>
         </div>
         <div className="hidden md:flex relative z-10 w-1/2 h-full items-center justify-center">
-          <img 
-            src="https://images.unsplash.com/photo-1606220588913-b3eea4ce447a?auto=format&fit=crop&q=80&w=500&h=500" 
-            alt="Black Earbuds" 
-            className="w-80 h-80 object-cover object-center rounded-3xl mix-blend-multiply" 
+          <img
+            src="https://images.unsplash.com/photo-1606220588913-b3eea4ce447a?auto=format&fit=crop&q=80&w=500&h=500"
+            alt="Black Earbuds"
+            className="w-80 h-80 object-cover object-center rounded-3xl mix-blend-multiply"
           />
         </div>
       </>
-    )
+    ),
   },
   {
     id: 3,
@@ -63,24 +70,28 @@ const slides = [
     content: (
       <>
         <div className="z-10 max-w-lg flex flex-col justify-center items-start">
-          <h2 className="text-2xl font-black text-black tracking-widest uppercase">Your go-to for</h2>
+          <h2 className="text-2xl font-black text-black tracking-widest uppercase">
+            Your go-to for
+          </h2>
           <h1 className="text-5xl sm:text-6xl md:text-7xl font-black text-black leading-none tracking-tighter mt-1">
-            ELECTRONIC<br />DEVICES
+            ELECTRONIC
+            <br />
+            DEVICES
           </h1>
           <button className="mt-8 bg-black text-white px-8 py-3 rounded-xl font-bold uppercase tracking-widest text-sm hover:bg-gray-800 transition-colors shadow-xl cursor-pointer">
             Shop Now
           </button>
         </div>
         <div className="hidden md:flex relative z-10 w-1/2 h-full items-center justify-center">
-          <img 
-            src="https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fit=crop&q=80&w=500&h=500" 
-            alt="Electronics setup" 
-            className="w-full max-w-md object-cover rounded-3xl mix-blend-multiply" 
+          <img
+            src="https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fit=crop&q=80&w=500&h=500"
+            alt="Electronics setup"
+            className="w-full max-w-md object-cover rounded-3xl mix-blend-multiply"
           />
         </div>
       </>
-    )
-  }
+    ),
+  },
 ];
 
 const ElectronicsCarousel = () => {
@@ -94,10 +105,11 @@ const ElectronicsCarousel = () => {
   }, []);
 
   const next = () => setCurrent((prev) => (prev + 1) % slides.length);
-  const prev = () => setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
+  const prev = () =>
+    setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
 
   return (
-    <div className="relative w-full overflow-hidden h-64 sm:h-80 md:h-[450px]">
+    <div className="relative w-full overflow-hidden h-64 sm:h-80 md:h-112.5">
       {slides.map((slide, index) => (
         <div
           key={slide.id}
@@ -111,13 +123,13 @@ const ElectronicsCarousel = () => {
         </div>
       ))}
 
-      <button 
+      <button
         onClick={prev}
         className="absolute left-4 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full bg-black/20 hover:bg-black/40 flex items-center justify-center backdrop-blur-sm transition-colors text-white cursor-pointer"
       >
         <ChevronLeft size={24} />
       </button>
-      <button 
+      <button
         onClick={next}
         className="absolute right-4 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full bg-black/20 hover:bg-black/40 flex items-center justify-center backdrop-blur-sm transition-colors text-white cursor-pointer"
       >

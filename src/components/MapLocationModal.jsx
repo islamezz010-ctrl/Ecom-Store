@@ -56,8 +56,8 @@ const MapLocationModal = ({ isOpen, onClose, onConfirm }) => {
       try {
         const response = await fetch(
           `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-            searchQuery
-          )}&countrycodes=eg`
+            searchQuery,
+          )}&countrycodes=eg`,
         );
         const data = await response.json();
         setSearchResults(data);
@@ -265,7 +265,7 @@ const MapLocationModal = ({ isOpen, onClose, onConfirm }) => {
           style={{ maxWidth: "1200px" }}
         >
           {/* Header */}
-          <div className="flex items-center justify-between p-4 md:p-6 border-b border-[#e5e1e9] flex-shrink-0">
+          <div className="flex items-center justify-between p-4 md:p-6 border-b border-[#e5e1e9] shrink-0">
             <h2 className="text-lg md:text-2xl font-bold text-[#1a146b]">
               Add new address
             </h2>
@@ -326,10 +326,16 @@ const MapLocationModal = ({ isOpen, onClose, onConfirm }) => {
             </div>
 
             {/* Locations List Sidebar */}
-            <div className="w-full md:w-80 flex flex-col gap-4 border-t md:border-t-0 md:border-l border-[#e5e1e9] pt-4 md:pt-0 md:pl-6 flex-shrink-0">
+            <div className="w-full md:w-80 flex flex-col gap-4 border-t md:border-t-0 md:border-l border-[#e5e1e9] pt-4 md:pt-0 md:pl-6 shrink-0">
               <h3 className="text-xs md:text-sm font-semibold text-[#777682] uppercase flex items-center justify-between">
-                <span>{searchQuery.trim() === "" ? "Suggested Locations" : "Search Results"}</span>
-                {isSearching && <Loader2 size={14} className="animate-spin text-[#1a146b]" />}
+                <span>
+                  {searchQuery.trim() === ""
+                    ? "Suggested Locations"
+                    : "Search Results"}
+                </span>
+                {isSearching && (
+                  <Loader2 size={14} className="animate-spin text-[#1a146b]" />
+                )}
               </h3>
               <div className="space-y-2 flex-1 overflow-y-auto min-h-0 pr-2">
                 {searchQuery.trim() === "" ? (
@@ -339,7 +345,10 @@ const MapLocationModal = ({ isOpen, onClose, onConfirm }) => {
                       onClick={() => {
                         setManualSelection(loc);
                         if (mapInstanceRef.current) {
-                          mapInstanceRef.current.setView([loc.lat, loc.lng], 12);
+                          mapInstanceRef.current.setView(
+                            [loc.lat, loc.lng],
+                            12,
+                          );
                         }
                       }}
                       className={`w-full text-left p-2 md:p-3 rounded-lg border-2 transition hover:shadow-md text-sm md:text-base ${
@@ -350,14 +359,23 @@ const MapLocationModal = ({ isOpen, onClose, onConfirm }) => {
                     >
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex-1 min-w-0">
-                          <p className="font-semibold text-[#1b1b21]">{loc.name}</p>
-                          <p className="text-xs md:text-sm text-[#474651]">{loc.governorate}</p>
+                          <p className="font-semibold text-[#1b1b21]">
+                            {loc.name}
+                          </p>
+                          <p className="text-xs md:text-sm text-[#474651]">
+                            {loc.governorate}
+                          </p>
                           <p className="text-xs text-[#777682] mt-1">
-                            {loc.shippingCost === 0 ? "Free delivery" : `$${loc.shippingCost.toFixed(2)} shipping`} · {loc.deliveryDays}d
+                            {loc.shippingCost === 0
+                              ? "Free delivery"
+                              : `$${loc.shippingCost.toFixed(2)} shipping`}{" "}
+                            · {loc.deliveryDays}d
                           </p>
                         </div>
                         {selectedLocation.id === loc.id && (
-                          <div className="ml-2 h-5 w-5 rounded-full bg-[#1a146b] flex items-center justify-center text-white text-xs font-bold flex-shrink-0">✓</div>
+                          <div className="ml-2 h-5 w-5 rounded-full bg-[#1a146b] flex items-center justify-center text-white text-xs font-bold shrink-0">
+                            ✓
+                          </div>
                         )}
                       </div>
                     </button>
@@ -374,9 +392,13 @@ const MapLocationModal = ({ isOpen, onClose, onConfirm }) => {
                           setManualSelection(nearest);
                           if (mapInstanceRef.current) {
                             if (pinRef.current) pinRef.current.remove();
-                            pinRef.current = L.marker([lat, lng], { title: result.name })
+                            pinRef.current = L.marker([lat, lng], {
+                              title: result.name,
+                            })
                               .addTo(mapInstanceRef.current)
-                              .bindPopup("<div class='p-2'><strong>Your order will be delivered here</strong></div>")
+                              .bindPopup(
+                                "<div class='p-2'><strong>Your order will be delivered here</strong></div>",
+                              )
                               .openPopup();
                             mapInstanceRef.current.setView([lat, lng], 14);
                           }
@@ -385,15 +407,19 @@ const MapLocationModal = ({ isOpen, onClose, onConfirm }) => {
                       >
                         <div className="flex items-start justify-between gap-2">
                           <div className="flex-1 min-w-0">
-                            <p className="font-semibold text-[#1b1b21] truncate">{result.name || result.display_name.split(',')[0]}</p>
-                            <p className="text-xs md:text-sm text-[#474651] truncate mb-1">{result.display_name}</p>
+                            <p className="font-semibold text-[#1b1b21] truncate">
+                              {result.name || result.display_name.split(",")[0]}
+                            </p>
+                            <p className="text-xs md:text-sm text-[#474651] truncate mb-1">
+                              {result.display_name}
+                            </p>
                             <p className="text-xs font-medium text-[#006b5f] bg-[#e2f5f3] inline-block px-2 py-0.5 rounded-full mt-1">
                               Delivered via {nearest.name}
                             </p>
                           </div>
                         </div>
                       </button>
-                    )
+                    );
                   })
                 ) : !isSearching ? (
                   <div className="text-center py-8 text-[#777682]">
@@ -405,7 +431,7 @@ const MapLocationModal = ({ isOpen, onClose, onConfirm }) => {
           </div>
 
           {/* Footer with Confirm Button */}
-          <div className="border-t border-[#e5e1e9] p-4 md:p-6 bg-[#f6f2fa] flex-shrink-0">
+          <div className="border-t border-[#e5e1e9] p-4 md:p-6 bg-[#f6f2fa] shrink-0">
             <div className="mb-3 md:mb-4 pb-3 md:pb-4 border-b border-[#e5e1e9]">
               <p className="text-xs font-semibold uppercase tracking-wide text-[#777682] mb-2">
                 Selected Location
@@ -436,7 +462,7 @@ const MapLocationModal = ({ isOpen, onClose, onConfirm }) => {
         </div>
       </div>
     </>,
-    document.body
+    document.body,
   );
 };
 

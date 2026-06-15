@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const slides = [
   {
@@ -8,28 +8,32 @@ const slides = [
     content: (
       <>
         <div className="z-10 max-w-lg">
-          <span className="text-sm font-bold text-[#4a5f43] tracking-widest uppercase">ORGANIC CARE</span>
+          <span className="text-sm font-bold text-[#4a5f43] tracking-widest uppercase">
+            ORGANIC CARE
+          </span>
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-[#222e1f] leading-tight tracking-tight mt-2">
-            PURE & RAW<br />SKIN THERAPY
+            PURE & RAW
+            <br />
+            SKIN THERAPY
           </h1>
           <button className="mt-8 bg-[#4a5f43] text-white px-8 py-3 rounded-full font-bold uppercase tracking-widest text-sm hover:scale-105 transition-transform shadow-xl cursor-pointer">
             Shop Skincare
           </button>
         </div>
         <div className="hidden md:flex relative z-10 w-1/2 h-full items-center justify-center">
-          <img 
-            src="https://images.unsplash.com/photo-1556228578-8c89e6adf883?auto=format&fit=crop&q=80&w=400&h=500" 
-            alt="Natural lotion" 
-            className="absolute left-10 w-48 h-64 object-cover rounded-3xl shadow-2xl transform -rotate-12 border-4 border-white" 
+          <img
+            src="https://images.unsplash.com/photo-1556228578-8c89e6adf883?auto=format&fit=crop&q=80&w=400&h=500"
+            alt="Natural lotion"
+            className="absolute left-10 w-48 h-64 object-cover rounded-3xl shadow-2xl transform -rotate-12 border-4 border-white"
           />
-          <img 
-            src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&q=80&w=400&h=500" 
-            alt="Vitamin C Serum" 
-            className="absolute right-10 w-52 h-72 object-cover rounded-3xl shadow-2xl transform rotate-6 border-8 border-white z-10" 
+          <img
+            src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&q=80&w=400&h=500"
+            alt="Vitamin C Serum"
+            className="absolute right-10 w-52 h-72 object-cover rounded-3xl shadow-2xl transform rotate-6 border-8 border-white z-10"
           />
         </div>
       </>
-    )
+    ),
   },
   {
     id: 2,
@@ -37,24 +41,30 @@ const slides = [
     content: (
       <>
         <div className="z-10 max-w-lg">
-          <span className="text-sm font-bold text-[#8c6d12] tracking-widest uppercase">EXCLUSIVE SCENTS</span>
+          <span className="text-sm font-bold text-[#8c6d12] tracking-widest uppercase">
+            EXCLUSIVE SCENTS
+          </span>
           <h1 className="text-5xl sm:text-6xl md:text-7xl font-black text-gray-900 leading-none tracking-tighter mt-2">
-            SIGNATURE<br />SCENTS
+            SIGNATURE
+            <br />
+            SCENTS
           </h1>
-          <p className="mt-4 text-xl text-gray-700 font-light">Bold expressions, quiet whispers.</p>
+          <p className="mt-4 text-xl text-gray-700 font-light">
+            Bold expressions, quiet whispers.
+          </p>
           <button className="mt-8 bg-gray-900 text-white px-8 py-3 rounded-xl font-bold uppercase tracking-widest text-sm hover:bg-gray-800 transition-colors shadow-lg cursor-pointer">
             Explore Fragrances
           </button>
         </div>
         <div className="hidden md:flex relative z-10 w-1/2 h-full items-center justify-center">
-          <img 
-            src="https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&q=80&w=500&h=500" 
-            alt="Fragrance perfume" 
-            className="w-80 h-80 object-cover rounded-3xl shadow-2xl transform rotate-3" 
+          <img
+            src="https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&q=80&w=500&h=500"
+            alt="Fragrance perfume"
+            className="w-80 h-80 object-cover rounded-3xl shadow-2xl transform rotate-3"
           />
         </div>
       </>
-    )
+    ),
   },
   {
     id: 3,
@@ -62,24 +72,28 @@ const slides = [
     content: (
       <>
         <div className="z-10 max-w-lg flex flex-col justify-center items-start">
-          <span className="text-sm font-bold text-[#c2185b] tracking-widest uppercase">PROFESSIONAL MAKEUP</span>
+          <span className="text-sm font-bold text-[#c2185b] tracking-widest uppercase">
+            PROFESSIONAL MAKEUP
+          </span>
           <h1 className="text-5xl sm:text-6xl md:text-7xl font-black text-[#880e4f] leading-none tracking-tighter mt-2">
-            DEFINE YOUR<br />GLOW
+            DEFINE YOUR
+            <br />
+            GLOW
           </h1>
           <button className="mt-8 bg-[#880e4f] text-white px-8 py-3 rounded-full font-bold uppercase tracking-widest text-sm hover:bg-[#ad1457] transition-colors shadow-xl cursor-pointer">
             Shop Makeup
           </button>
         </div>
         <div className="hidden md:flex relative z-10 w-1/2 h-full items-center justify-center">
-          <img 
-            src="https://images.unsplash.com/photo-1512496015851-a90fb38ba796?auto=format&fit=crop&q=80&w=500&h=500" 
-            alt="Makeup brushes and palettes" 
-            className="w-80 h-80 object-cover rounded-full shadow-2xl border-8 border-white" 
+          <img
+            src="https://images.unsplash.com/photo-1512496015851-a90fb38ba796?auto=format&fit=crop&q=80&w=500&h=500"
+            alt="Makeup brushes and palettes"
+            className="w-80 h-80 object-cover rounded-full shadow-2xl border-8 border-white"
           />
         </div>
       </>
-    )
-  }
+    ),
+  },
 ];
 
 const BeautyCarousel = () => {
@@ -93,10 +107,11 @@ const BeautyCarousel = () => {
   }, []);
 
   const next = () => setCurrent((prev) => (prev + 1) % slides.length);
-  const prev = () => setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
+  const prev = () =>
+    setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
 
   return (
-    <div className="relative w-full overflow-hidden h-64 sm:h-80 md:h-[450px]">
+    <div className="relative w-full overflow-hidden h-64 sm:h-80 md:h-112.5">
       {slides.map((slide, index) => (
         <div
           key={slide.id}
@@ -110,13 +125,13 @@ const BeautyCarousel = () => {
         </div>
       ))}
 
-      <button 
+      <button
         onClick={prev}
         className="absolute left-4 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full bg-black/20 hover:bg-black/40 flex items-center justify-center backdrop-blur-sm transition-colors text-white cursor-pointer"
       >
         <ChevronLeft size={24} />
       </button>
-      <button 
+      <button
         onClick={next}
         className="absolute right-4 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full bg-black/20 hover:bg-black/40 flex items-center justify-center backdrop-blur-sm transition-colors text-white cursor-pointer"
       >
