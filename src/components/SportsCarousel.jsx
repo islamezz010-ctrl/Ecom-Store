@@ -4,27 +4,27 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 const slides = [
   {
     id: 1,
-    bg: "bg-gradient-to-r from-[#1b4332] via-[#2d6a4f] to-[#40916c]",
+    bg: "bg-gradient-to-r from-[#1e272e] via-[#2d3436] to-[#0f0c1b]",
     content: (
       <>
         <div className="z-10 max-w-lg">
-          <span className="text-sm font-bold text-[#d8f3dc] tracking-widest uppercase">ORGANIC & FRESH</span>
+          <span className="text-sm font-bold text-[#00d2d3] tracking-widest uppercase">TRAIN HARDER</span>
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-white leading-tight tracking-tight mt-2">
-            FROM FARM TO<br />YOUR FAMILY'S<br />TABLE
+            PUSH YOUR LIMITS,<br />BUILD YOUR STRENGTH
           </h1>
-          <button className="mt-8 bg-[#d8f3dc] text-[#1b4332] px-8 py-3 rounded-full font-bold uppercase tracking-widest text-sm hover:scale-105 transition-transform shadow-xl cursor-pointer">
-            Shop Fresh Produce
+          <button className="mt-8 bg-[#00d2d3] text-[#1e272e] px-8 py-3 rounded-full font-black uppercase tracking-widest text-sm hover:scale-105 transition-transform shadow-xl cursor-pointer">
+            Explore Fitness Gear
           </button>
         </div>
         <div className="hidden md:flex relative z-10 w-1/2 h-full items-center justify-center">
           <img 
-            src="https://images.unsplash.com/photo-1543168256-418811576931?auto=format&fit=crop&q=80&w=400&h=500" 
-            alt="Organic grains" 
-            className="absolute left-10 w-48 h-64 object-cover rounded-3xl shadow-2xl transform -rotate-12 border-4 border-white" 
+            src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=400&h=500" 
+            alt="Dumbbell Gym Workout" 
+            className="absolute left-10 w-48 h-64 object-cover rounded-3xl shadow-2xl transform -rotate-12 border-4 border-[#00d2d3]" 
           />
           <img 
-            src="https://images.unsplash.com/photo-1553787434-dd5e2cd0e110?auto=format&fit=crop&q=80&w=400&h=500" 
-            alt="Olive oil bottle" 
+            src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&q=80&w=400&h=500" 
+            alt="Gym accessories" 
             className="absolute right-10 w-52 h-72 object-cover rounded-3xl shadow-2xl transform rotate-6 border-8 border-white z-10" 
           />
         </div>
@@ -33,23 +33,23 @@ const slides = [
   },
   {
     id: 2,
-    bg: "bg-gradient-to-r from-[#d97706] via-[#f59e0b] to-[#b45309]",
+    bg: "bg-gradient-to-r from-[#3867d6] via-[#4b7bec] to-[#2d3436]",
     content: (
       <>
         <div className="z-10 max-w-lg">
-          <span className="text-sm font-bold text-amber-100 tracking-widest uppercase">PANTRY STAPLES & BEVERAGES</span>
+          <span className="text-sm font-bold text-[#fed330] tracking-widest uppercase">OUTDOOR ADVENTURE</span>
           <h1 className="text-5xl sm:text-6xl md:text-7xl font-black text-white leading-none tracking-tighter mt-2">
-            MORNING<br />REFRESHMENTS
+            EXPLORE THE<br />WILDERNESS
           </h1>
-          <p className="mt-4 text-xl text-amber-100 font-light">Fine coffee, green tea, and 100% pure organic juices.</p>
-          <button className="mt-8 bg-white text-amber-900 px-8 py-3 rounded-xl font-bold uppercase tracking-widest text-sm hover:bg-amber-50 transition-colors shadow-lg cursor-pointer">
-            Explore Beverages
+          <p className="mt-4 text-xl text-indigo-100 font-light">Tents, sleeping bags, and heavy duty hiking backpacks.</p>
+          <button className="mt-8 bg-[#fed330] text-gray-900 px-8 py-3 rounded-xl font-bold uppercase tracking-widest text-sm hover:bg-[#f7b731] transition-colors shadow-lg cursor-pointer">
+            Shop Camping Gear
           </button>
         </div>
         <div className="hidden md:flex relative z-10 w-1/2 h-full items-center justify-center">
           <img 
-            src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&q=80&w=500&h=500" 
-            alt="Cold brew coffee bottle" 
+            src="https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&q=80&w=500&h=500" 
+            alt="Camping Tent in nature" 
             className="w-80 h-80 object-cover rounded-3xl shadow-2xl transform rotate-3" 
           />
         </div>
@@ -58,22 +58,22 @@ const slides = [
   },
   {
     id: 3,
-    bg: "bg-gradient-to-r from-[#e2e8f0] to-[#cbd5e1]",
+    bg: "bg-gradient-to-r from-[#2c3e50] via-[#e67e22] to-[#d35400]",
     content: (
       <>
         <div className="z-10 max-w-lg flex flex-col justify-center items-start">
-          <span className="text-sm font-bold text-slate-600 tracking-widest uppercase">CRUNCHY & SWEET</span>
-          <h1 className="text-5xl sm:text-6xl md:text-7xl font-black text-slate-900 leading-none tracking-tighter mt-2">
-            DELICIOUS<br />HEALTHY SNACKS
+          <span className="text-sm font-bold text-white tracking-widest uppercase">HIGH SPEED CYCLING</span>
+          <h1 className="text-5xl sm:text-6xl md:text-7xl font-black text-white leading-none tracking-tighter mt-2">
+            SPEED & ROAD<br />ENDURANCE
           </h1>
-          <button className="mt-8 bg-slate-900 text-white px-8 py-3 rounded-full font-bold uppercase tracking-widest text-sm hover:bg-slate-800 transition-colors shadow-xl cursor-pointer">
-            Shop Premium Snacks
+          <button className="mt-8 bg-white text-gray-900 px-8 py-3 rounded-full font-bold uppercase tracking-widest text-sm hover:bg-gray-100 transition-colors shadow-xl cursor-pointer">
+            Shop Bicycles & Helmets
           </button>
         </div>
         <div className="hidden md:flex relative z-10 w-1/2 h-full items-center justify-center">
           <img 
-            src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&q=80&w=500&h=500" 
-            alt="Snack nuts" 
+            src="https://images.unsplash.com/photo-1557803175-2dfb8fce9dbe?auto=format&fit=crop&q=80&w=500&h=500" 
+            alt="Cycling cyclist helmet" 
             className="w-80 h-80 object-cover rounded-full shadow-2xl border-8 border-white" 
           />
         </div>
@@ -82,7 +82,7 @@ const slides = [
   }
 ];
 
-const GroceryCarousel = () => {
+const SportsCarousel = () => {
   const [current, setCurrent] = useState(0);
 
   useEffect(() => {
@@ -138,4 +138,4 @@ const GroceryCarousel = () => {
   );
 };
 
-export default GroceryCarousel;
+export default SportsCarousel;

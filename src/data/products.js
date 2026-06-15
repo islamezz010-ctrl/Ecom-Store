@@ -1,0 +1,816 @@
+// ============================================================
+// DYNAMIC PRODUCT GENERATION ENGINE
+// ============================================================
+
+const generateProducts = (subcategory, baseProducts, count, startId, imageIds, brands, models, styles, items) => {
+  const result = [...baseProducts];
+  const currentCount = result.length;
+
+  for (let i = currentCount; i < count; i++) {
+    const brand = brands[i % brands.length];
+    const model = models[(i + 3) % models.length];
+    const style = styles[(i + 7) % styles.length];
+    const item = items[(i + 11) % items.length];
+
+    const name = `${brand} ${style} ${item} (${model})`;
+    const price = Math.round((19.99 + Math.random() * 250) * 100) / 100;
+    const stock = Math.floor(Math.random() * 45) + 5;
+    const imageId = imageIds[i % imageIds.length];
+
+    result.push({
+      id: startId + i,
+      name,
+      price,
+      image: `https://images.unsplash.com/photo-${imageId}?auto=format&fit=crop&q=80&w=400&h=400`,
+      category: subcategory,
+      stock
+    });
+  }
+  return result;
+};
+
+// Common Unsplash pools
+const unsplashPools = {
+  speakers: [
+    "1505740420928-5e560c06d30e", "1545454675-3531b543be5d", "1590658268037-6bf12165a8df", 
+    "1606220588913-b3eea4ce447a", "1608043152269-423dbba4e7e1", "1583394838336-acd977736f90", 
+    "1487215078519-e21cc028cb29", "1595986813912-d4f1b1e8f1c0", "1526178614259-2c5a2b1f9191", 
+    "1617191515702-4a0f9a3c1a1e"
+  ],
+  tvs: [
+    "1593305841991-05c297ba4575", "1607604276583-eef5d076aa5f", "1509281373149-e957c6296406", 
+    "1461151341053-0a9b43480621", "1552537175-ab1c1b2c34ba", "1585386959984-a41552281b3d",
+    "1595950653106-6c9ebd614d3a", "1505740420928-5e560c06d30e", "1517336714731-489689fd1ca8"
+  ],
+  watches: [
+    "1517502884422-41eaaced0168", "1508685096489-7aacd43bd3b1", "1434494878577-86c23bcb06b9", 
+    "1579586337278-3befd40fd17a", "1523275335684-37898b6baf30", "1541534401786-27bd39d3dff2",
+    "1593566705108-4f59fa4b389f", "1603791440384-56cd371ee9a7"
+  ],
+  tablets: [
+    "1544244015-0df4b3ffc6b0", "1589254065878-42c9da997008", "1511707171634-5f897ff02aa9", 
+    "1561154464-82e9adf32764", "1611532736597-de2d4265fba3", "1580910051073-0c9a9a3b4850",
+    "1629784151993-fbbd0d2b5b2d", "1612831819738-2d1a5c0f3f7c"
+  ],
+  menClothing: [
+    "1596755094514-f87e34085b2c", "1473966968600-fa801b869a1a", "1553062407-98eeb64c6a62", 
+    "1434389677669-e08b4cac3105", "1551537482-f2075a1d41f2", "1617137984095-74e4e5e3613f",
+    "1490481651871-ab68de25d43d", "1507679799987-c73779587ccf", "1602810318383-e386cc2a3ccf"
+  ],
+  womenClothing: [
+    "1595777457583-95e059d581b8", "1594938298603-c8148c4dae35", "1434389677669-e08b4cac3105", 
+    "1564257631407-4deb1f99d992", "1583496661160-fb5886a0aaaa", "1469334031218-e382a71b716b",
+    "1515886657613-9f3515b0c78f", "1609357605107-552c9223d789"
+  ],
+  shoes: [
+    "1549298916-b41d501d3772", "1542272604-b1f5d7e45eb5", "1542291026-7eec264c27ff", 
+    "1560343090-f0409e92791a", "1543163521-1bf539c55dd2", "1595950653106-6c9ebd614d3a",
+    "1608231387042-66d1773070a5", "1606107557195-0e29a4b5b4aa"
+  ],
+  accessories: [
+    "1572635196237-14b3f281503f", "1548036328-c9fa89d128fa", "1524592094714-0f0654e20314", 
+    "1598532163257-ae3c6b2524df", "1521369909029-2afed882baee", "1601924921557-45e6ddf05b91",
+    "1515562141589-67f0d569b6c2", "1535632066927-ab7c9ab60908"
+  ],
+  skincare: [
+    "1620916566398-39f1143ab7be", "1556228578-8c89e6adf883", "1570194065650-d99fb4c38b8e", 
+    "1556228453-efd6c1ff04f6", "1596462502278-27bfdc403348", "1601049541240-345094cf419c",
+    "1612817288484-6f916006741a", "1608248597276-c2a0b163e77f"
+  ],
+  fragrances: [
+    "1541643600914-78b084683601", "1523293182086-7651a899d37f", "1588405748880-12d1d2a59f75", 
+    "1592945403244-b3fbafd7f539", "1594035910387-fea081e89e4d", "1615396879838-89c51f4142ab"
+  ],
+  makeup: [
+    "1586495777744-4413f21062fa", "1571781926291-c477ebfd024b", "1512496015851-a90fb38ba796", 
+    "1631214500115-598fc2cb8ada", "1522335789203-aabd1fc54bc9", "1615396879685-649fcb1ef552"
+  ],
+  haircare: [
+    "1585386959984-a41552281b3d", "1535585209827-a15fcdbc4c2d", "1612817288484-6f916006741a", 
+    "1527799820374-dcf8d9d4a388", "1519735777090-ec97162dc266", "1584297126421-410e822a1f0a"
+  ],
+  kitchen: [
+    "1585515320310-259814833e62", "1570222094114-d054a817e56b", "1517668808822-9ebb02f2a0e6", 
+    "1556909114-f6e7ad7d3136", "1556228453-efd6c1ff04f6", "1588854337236-4a627a781773",
+    "1591319337294-06127b618fce"
+  ],
+  livingroom: [
+    "1507473885765-e6ed057ab6fe", "1555041469-a586c61ea9bc", "1616486338812-3dadae4b4ace", 
+    "1583847268964-b28dc8f51f92", "1602607731024-30a23249e6ba", "1617806118233-0791c068340d",
+    "1615876234503-4467008a0d42"
+  ],
+  bedroom: [
+    "1631049307264-da0ec9d70304", "1540518614846-7eded433c457", "1513694203232-719a280e022f", 
+    "1513506003901-1e6a229e2d15", "1522771739844-6a9f6d5f14af", "1505691938895-1758d7ebd511",
+    "1616594039953-ce905c85adf1"
+  ],
+  homeappliances: [
+    "1558618666-fcd25c85f82e", "1626806787461-102c1bfaaea1", "1585771724684-38269d6639fd", 
+    "1558317374-067fb5f30001", "1567925086728-19fc663a3a64", "1584622650111-993d4157d6a4"
+  ],
+  babyessentials: [
+    "1522771930-78848d9293e8", "1515488042361-ee00e0ddd4e4", "1519689680058-2b0e6019e484", 
+    "1544787219-7f47ccb76574", "1555252333-9f8e92e65df9", "1507504038482-be97b830c25a"
+  ],
+  babyclothing: [
+    "1519689680058-2b0e6019e484", "1522771930-78848d9293e8", "1515488042361-ee00e0ddd4e4", 
+    "1544787219-7f47ccb76574", "1555252333-9f8e92e65df9"
+  ],
+  babygear: [
+    "1555252333-9f8e92e65df9", "1519689680058-2b0e6019e484", "1515488042361-ee00e0ddd4e4", 
+    "1544787219-7f47ccb76574", "1522771930-78848d9293e8"
+  ],
+  babyfeeding: [
+    "1515488042361-ee00e0ddd4e4", "1544787219-7f47ccb76574", "1555252333-9f8e92e65df9", 
+    "1519689680058-2b0e6019e484", "1522771930-78848d9293e8"
+  ],
+  toysaction: [
+    "1587654780014-d1e6a5ca0f0d", "1558060169-a2c0d7f7f1d1", "1596461404969-9ae70f2830c1", 
+    "1563396983906-b3795482a59a"
+  ],
+  toysboard: [
+    "1611371805429-8b5c1b2c34ba", "1529699211952-734e80c4d42b", "1606503153255-59d8b8b82176", 
+    "1563396983906-b3795482a59a", "1596461404969-9ae70f2830c1"
+  ],
+  toyseducational: [
+    "1558060169-a2c0d7f7f1d1", "1587654780014-d1e6a5ca0f0d", "1596461404969-9ae70f2830c1", 
+    "1563396983906-b3795482a59a"
+  ],
+  toysoutdoor: [
+    "1596461404969-9ae70f2830c1", "1558060169-a2c0d7f7f1d1", "1587654780014-d1e6a5ca0f0d", 
+    "1563396983906-b3795482a59a"
+  ],
+  sportsfitness: [
+    "1534438327276-14e5300c3a48", "1571019613454-1cb2f99b2d8b", "1517836357463-d25dfeac3438", 
+    "1526676037777-05a232554f77", "1552674605-db6ffd4facb5"
+  ],
+  sportsteam: [
+    "1575361204480-aadea25e6e68", "1546519638-68e109498ffc", "1617083934551-ac1f1bdf8f6b", 
+    "1461896836934-ffe607ba8211"
+  ],
+  sportsoutdoor: [
+    "1504280390367-361c6d9f38f4", "1553062407-98eeb64c6a62", "1602143407151-7111542de6e8", 
+    "1517836357463-d25dfeac3438"
+  ],
+  sportscycling: [
+    "1557803175-2dfb8fce9dbe", "1571019613454-1cb2f99b2d8b", "1526676037777-05a232554f77"
+  ],
+  grocerygrains: [
+    "1543168256-418811576931", "1553787434-dd5e2cd0e110", "1504674900247-0877df9cc836", 
+    "1563636619-e9143da7973b"
+  ],
+  grocerybeverages: [
+    "1509042239860-f550ce710b93", "1556679343-c7306c1976bc", "1621506289937-a8e4df240d0b", 
+    "1542990253-0d0f5be1f23d"
+  ],
+  grocerysnacks: [
+    "1504674900247-0877df9cc836", "1549007994-cb92caebd54b", "1563636619-e9143da7973b"
+  ],
+  groceryfresh: [
+    "1553787434-dd5e2cd0e110", "1563636619-e9143da7973b", "1504674900247-0877df9cc836"
+  ],
+  stationary: [
+    "1507842217343-583f7270bfbb", "1481627834876-b7833e8f5570", "1546868871-7041f2a55e12",
+    "1513364776144-60967b0f800f", "1604870945410-e4f36441ebb8", "1557821552-17105176677c"
+  ]
+};
+
+// ============================================================
+// 1. ELECTRONICS DATA
+// ============================================================
+
+const rawSpeakers = [
+  { id: 101, name: "soundcore Select 4", price: 34.99, image: "https://images.unsplash.com/photo-1600180758890-9c2f3c0b3b1b?auto=format&fit=crop&q=80&w=400&h=400", stock: 10 },
+  { id: 102, name: "Clip 5 Ultra", price: 29.99, image: "https://images.unsplash.com/photo-1595986813912-d4f1b1e8f1c0?auto=format&fit=crop&q=80&w=400&h=400", stock: 10 },
+  { id: 103, name: "Pyro Mini", price: 39.99, image: "https://images.unsplash.com/photo-1526178614259-2c5a2b1f9191?auto=format&fit=crop&q=80&w=400&h=400", stock: 10 },
+  { id: 104, name: "SpaceBox", price: 49.99, image: "https://images.unsplash.com/photo-1617191515702-4a0f9a3c1a1e?auto=format&fit=crop&q=80&w=400&h=400", stock: 10 },
+  { id: 105, name: "X Series Pro", price: 59.99, image: "https://images.unsplash.com/photo-1606813904660-45b6d0f3f9b0?auto=format&fit=crop&q=80&w=400&h=400", stock: 10 },
+];
+export const electronicsSpeakers = generateProducts(
+  "Speakers", rawSpeakers, 35, 100,
+  unsplashPools.speakers,
+  ["soundcore", "JBL", "Sony", "Bose", "Sennheiser", "Harman Kardon", "Audio-Technica"],
+  ["Select", "Clip", "Studio", "Ultra", "Max", "Air", "Link", "Pulse"],
+  ["Portable", "Waterproof", "Home", "High-Fi", "Surround", "NFC Wireless"],
+  ["Bluetooth Speaker", "Wireless Earbuds", "Soundbar", "Noise Cancelling Headphones", "Home Theater Speaker"]
+);
+
+const rawTelevisions = [
+  { id: 201, name: "LG UHD TV 55\"", price: 399.99, image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&q=80&w=400&h=400", stock: 10 },
+  { id: 202, name: "LG Nano Cell TV 65\"", price: 499.99, image: "https://images.unsplash.com/photo-1585386959984-a41552281b3d?auto=format&fit=crop&q=80&w=400&h=400", stock: 10 },
+  { id: 203, name: "LG QNED TV 75\"", price: 599.99, image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&q=80&w=400&h=400", stock: 10 },
+  { id: 204, name: "LG OLED TV 65\"", price: 899.99, image: "https://images.unsplash.com/photo-1586201375761-83865001e9a0?auto=format&fit=crop&q=80&w=400&h=400", stock: 10 },
+];
+export const electronicsTelevisions = generateProducts(
+  "Televisions", rawTelevisions, 35, 200,
+  unsplashPools.tvs,
+  ["LG", "Samsung", "Sony", "TCL", "Hisense", "Panasonic"],
+  ["UHD TV", "Nano Cell TV", "QNED TV", "OLED TV", "Neo QLED", "Crystal UHD", "Smart TV"],
+  ["43\"", "50\"", "55\"", "65\"", "75\"", "85\""],
+  ["Cinematic Wall Screen", "Smart TV Display", "Home Theater Display", "Gaming TV"]
+);
+
+const rawSmartwatches = [
+  { id: 301, name: "Oraimo Watch 6", price: 49.99, image: "https://images.unsplash.com/photo-1541534401786-27bd39d3dff2?auto=format&fit=crop&q=80&w=400&h=400", stock: 10 },
+  { id: 302, name: "Redmi Watch 5", price: 39.99, image: "https://images.unsplash.com/photo-1593566705108-4f59fa4b389f?auto=format&fit=crop&q=80&w=400&h=400", stock: 10 },
+  { id: 303, name: "Infinix XW1 Watch", price: 44.99, image: "https://images.unsplash.com/photo-1603791440384-56cd371ee9a7?auto=format&fit=crop&q=80&w=400&h=400", stock: 10 },
+  { id: 304, name: "HONOR Magic Watch 2", price: 129.99, image: "https://images.unsplash.com/photo-1519744792095-2f2205e87b6f?auto=format&fit=crop&q=80&w=400&h=400", stock: 10 },
+];
+export const electronicsSmartwatches = generateProducts(
+  "Smartwatches", rawSmartwatches, 35, 300,
+  unsplashPools.watches,
+  ["Apple", "Samsung", "Garmin", "Fitbit", "Oraimo", "Redmi", "Huawei", "Amazfit"],
+  ["Watch 6", "Watch 5", "XW1 Watch", "Magic Watch 2", "Venu", "Sense", "Active", "Pro"],
+  ["Sport", "Luxury", "GPS Fitness", "Elegant Smart", "Ultra-thin Active"],
+  ["Smartwatch", "Fitness Tracker", "Heart Rate Watch", "Sports Watch"]
+);
+
+const rawTablets = [
+  { id: 401, name: "iPad Air WiFi 128GB", price: 599.99, image: "https://images.unsplash.com/photo-1580910051073-0c9a9a3b4850?auto=format&fit=crop&q=80&w=400&h=400", stock: 10 },
+  { id: 402, name: "HONOR PAD X8a WiFi 64GB", price: 229.99, image: "https://images.unsplash.com/photo-1629784151993-fbbd0d2b5b2d?auto=format&fit=crop&q=80&w=400&h=400", stock: 10 },
+  { id: 403, name: "Redmi Pad SE WiFi 128GB", price: 199.99, image: "https://images.unsplash.com/photo-1612831819738-2d1a5c0f3f7c?auto=format&fit=crop&q=80&w=400&h=400", stock: 10 },
+  { id: 404, name: "Samsung Galaxy Tab A9 WiFi", price: 299.99, image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&q=80&w=400&h=400", stock: 10 },
+  { id: 405, name: "iPad Pro WiFi 256GB", price: 999.99, image: "https://images.unsplash.com/photo-1580910051073-0c9a9a3b4850?auto=format&fit=crop&q=80&w=400&h=400", stock: 10 },
+];
+export const electronicsTablets = generateProducts(
+  "Tablets", rawTablets, 35, 400,
+  unsplashPools.tablets,
+  ["Apple", "Samsung", "Lenovo", "Xiaomi", "HONOR", "Amazon", "Huawei"],
+  ["iPad Air", "iPad Pro", "Galaxy Tab S9", "Galaxy Tab A9", "PAD X8a", "Redmi Pad SE", "Fire HD"],
+  ["WiFi 128GB", "LTE 256GB", "WiFi 64GB", "Pro 512GB"],
+  ["Touch Screen Tablet", "Graphics Tablet", "E-Reader Tablet", "Media Tablet"]
+);
+
+// ============================================================
+// 2. FASHION DATA
+// ============================================================
+
+export const fashionTabs = ["Fashion", "Men", "Women", "Shoes", "Bags", "Watches", "Jewelry", "Accessories", "Kids", "Activewear"];
+
+const rawFashionMens = [
+  { id: 1001, name: "Slim Fit Oxford Shirt", price: 49.99, image: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&q=80&w=400&h=400", category: "Men's Clothing", stock: 10 },
+  { id: 1002, name: "Tailored Chino Pants", price: 69.99, image: "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?auto=format&fit=crop&q=80&w=400&h=400", category: "Men's Clothing", stock: 10 },
+  { id: 1003, name: "Classic Leather Belt", price: 34.99, image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&q=80&w=400&h=400", category: "Men's Clothing", stock: 10 },
+  { id: 1004, name: "Merino Wool Sweater", price: 89.99, image: "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?auto=format&fit=crop&q=80&w=400&h=400", category: "Men's Clothing", stock: 10 },
+  { id: 1005, name: "Denim Jacket", price: 119.99, image: "https://images.unsplash.com/photo-1551537482-f2075a1d41f2?auto=format&fit=crop&q=80&w=400&h=400", category: "Men's Clothing", stock: 10 },
+];
+export const fashionMensClothing = generateProducts(
+  "Men's Clothing", rawFashionMens, 35, 1000,
+  unsplashPools.menClothing,
+  ["Tommy Hilfiger", "Calvin Klein", "Ralph Lauren", "Zara", "Levi's", "Nike", "Adidas", "H&M"],
+  ["Core Collection", "Originals", "Modern Fit", "Premium Line", "Urban Style", "Classic Edition"],
+  ["Slim Fit Oxford", "Tailored Chino", "Classic Leather", "Merino Wool", "Denim", "Pique Polo", "Crewneck"],
+  ["Shirt", "Pants", "Belt", "Sweater", "Jacket", "T-Shirt", "Cardigan"]
+);
+
+const rawFashionWomens = [
+  { id: 1006, name: "Silk Wrap Dress", price: 129.99, image: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&q=80&w=400&h=400", category: "Women's Clothing", stock: 10 },
+  { id: 1007, name: "High-Waist Trousers", price: 79.99, image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&q=80&w=400&h=400", category: "Women's Clothing", stock: 10 },
+  { id: 1008, name: "Cashmere Cardigan", price: 149.99, image: "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?auto=format&fit=crop&q=80&w=400&h=400", category: "Women's Clothing", stock: 10 },
+  { id: 1009, name: "Linen Blouse", price: 59.99, image: "https://images.unsplash.com/photo-1564257631407-4deb1f99d992?auto=format&fit=crop&q=80&w=400&h=400", category: "Women's Clothing", stock: 10 },
+  { id: 1010, name: "Pleated Midi Skirt", price: 69.99, image: "https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?auto=format&fit=crop&q=80&w=400&h=400", category: "Women's Clothing", stock: 10 },
+];
+export const fashionWomensClothing = generateProducts(
+  "Women's Clothing", rawFashionWomens, 35, 1100,
+  unsplashPools.womenClothing,
+  ["Gucci", "Prada", "Chanel", "Zara", "H&M", "Mango", "ASOS", "Gap"],
+  ["Luxe Collection", "Summer Vibe", "Essentials", "Signature Series", "Tailored Line", "Knitwear Essentials"],
+  ["Silk Wrap", "High-Waist", "Cashmere", "Linen", "Pleated Midi", "Floral Print", "Knit"],
+  ["Dress", "Trousers", "Cardigan", "Blouse", "Skirt", "Jumpsuit", "Blazer"]
+);
+
+const rawFashionShoes = [
+  { id: 1011, name: "White Leather Sneakers", price: 99.99, image: "https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&q=80&w=400&h=400", category: "Shoes", stock: 10 },
+  { id: 1012, name: "Chelsea Ankle Boots", price: 159.99, image: "https://images.unsplash.com/photo-1542272604-b1f5d7e45eb5?auto=format&fit=crop&q=80&w=400&h=400", category: "Shoes", stock: 10 },
+  { id: 1013, name: "Running Performance Shoes", price: 129.99, image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=400&h=400", category: "Shoes", stock: 10 },
+  { id: 1014, name: "Classic Loafers", price: 89.99, image: "https://images.unsplash.com/photo-1560343090-f0409e92791a?auto=format&fit=crop&q=80&w=400&h=400", category: "Shoes", stock: 10 },
+  { id: 1015, name: "Strappy Heeled Sandals", price: 79.99, image: "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&q=80&w=400&h=400", category: "Shoes", stock: 10 },
+];
+export const fashionShoes = generateProducts(
+  "Shoes", rawFashionShoes, 35, 1200,
+  unsplashPools.shoes,
+  ["Nike", "Adidas", "Puma", "Clarks", "Dr. Martens", "New Balance", "Vans", "Timberland"],
+  ["Retro Edition", "Ultra Comfort", "Pro Run", "Urban Trek", "Classic Suede", "Eco Leather"],
+  ["White Leather", "Chelsea Ankle", "Running Performance", "Classic Loafers", "Strappy Heeled", "Canvas"],
+  ["Sneakers", "Boots", "Shoes", "Sandals", "Slip-Ons"]
+);
+
+const rawFashionAcc = [
+  { id: 1016, name: "Aviator Sunglasses", price: 59.99, image: "https://images.unsplash.com/photo-1572635196237-14b3f281503f?auto=format&fit=crop&q=80&w=400&h=400", category: "Accessories", stock: 10 },
+  { id: 1017, name: "Leather Crossbody Bag", price: 89.99, image: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&q=80&w=400&h=400", category: "Accessories", stock: 10 },
+  { id: 1018, name: "Minimalist Watch", price: 149.99, image: "https://images.unsplash.com/photo-1524592094714-0f0654e20314?auto=format&fit=crop&q=80&w=400&h=400", category: "Accessories", stock: 10 },
+  { id: 1019, name: "Silk Pocket Square Set", price: 29.99, image: "https://images.unsplash.com/photo-1598532163257-ae3c6b2524df?auto=format&fit=crop&q=80&w=400&h=400", category: "Accessories", stock: 10 },
+  { id: 1020, name: "Wool Fedora Hat", price: 49.99, image: "https://images.unsplash.com/photo-1521369909029-2afed882baee?auto=format&fit=crop&q=80&w=400&h=400", category: "Accessories", stock: 10 },
+];
+export const fashionAccessories = generateProducts(
+  "Accessories", rawFashionAcc, 35, 1300,
+  unsplashPools.accessories,
+  ["Ray-Ban", "Fossil", "Coach", "Michael Kors", "Gucci", "Kate Spade", "Prada"],
+  ["Classic", "Vintage Gold", "Modernist", "Urbanite", "Minimalist Black", "Signature Fabric"],
+  ["Aviator", "Leather Crossbody", "Minimalist", "Silk Pocket Square", "Wool Fedora", "Gold Plated"],
+  ["Sunglasses", "Bag", "Watch", "Set", "Hat", "Necklace", "Wallet"]
+);
+
+export const fashionSubcategories = [
+  { name: "Men's Clothing", img: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&q=80&w=100&h=100" },
+  { name: "Women's Clothing", img: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&q=80&w=100&h=100" },
+  { name: "Shoes", img: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=100&h=100" },
+  { name: "Bags", img: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&q=80&w=100&h=100" },
+  { name: "Jewelry", img: "https://images.unsplash.com/photo-1515562141589-67f0d569b6c2?auto=format&fit=crop&q=80&w=100&h=100" },
+  { name: "Watches", img: "https://images.unsplash.com/photo-1524592094714-0f0654e20314?auto=format&fit=crop&q=80&w=100&h=100" },
+  { name: "Sunglasses", img: "https://images.unsplash.com/photo-1572635196237-14b3f281503f?auto=format&fit=crop&q=80&w=100&h=100" },
+  { name: "Hats", img: "https://images.unsplash.com/photo-1521369909029-2afed882baee?auto=format&fit=crop&q=80&w=100&h=100" },
+  { name: "Scarves", img: "https://images.unsplash.com/photo-1601924921557-45e6ddf05b91?auto=format&fit=crop&q=80&w=100&h=100" },
+  { name: "Activewear", img: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&q=80&w=100&h=100" },
+  { name: "Lingerie", img: "https://images.unsplash.com/photo-1558171813-4c2b8e3d6e0c?auto=format&fit=crop&q=80&w=100&h=100" },
+  { name: "Kids Fashion", img: "https://images.unsplash.com/photo-1519689680058-2b0e6019e484?auto=format&fit=crop&q=80&w=100&h=100" },
+];
+
+// ============================================================
+// 3. BEAUTY & FRAGRANCE DATA
+// ============================================================
+
+export const beautyTabs = ["Beauty & Fragrance", "Skincare", "Makeup", "Fragrances", "Haircare", "Bath & Body", "Nail Care", "Men's Grooming", "Tools"];
+
+const rawBeautySkin = [
+  { id: 2001, name: "Vitamin C Serum", price: 34.99, image: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&q=80&w=400&h=400", category: "Skincare", stock: 10 },
+  { id: 2002, name: "Hyaluronic Acid Moisturizer", price: 42.99, image: "https://images.unsplash.com/photo-1556228578-8c89e6adf883?auto=format&fit=crop&q=80&w=400&h=400", category: "Skincare", stock: 10 },
+  { id: 2003, name: "Retinol Night Cream", price: 54.99, image: "https://images.unsplash.com/photo-1570194065650-d99fb4c38b8e?auto=format&fit=crop&q=80&w=400&h=400", category: "Skincare", stock: 10 },
+  { id: 2004, name: "Gentle Foaming Cleanser", price: 18.99, image: "https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?auto=format&fit=crop&q=80&w=400&h=400", category: "Skincare", stock: 10 },
+  { id: 2005, name: "SPF 50 Daily Sunscreen", price: 24.99, image: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&q=80&w=400&h=400", category: "Skincare", stock: 10 },
+];
+export const beautySkincare = generateProducts(
+  "Skincare", rawBeautySkin, 35, 2000,
+  unsplashPools.skincare,
+  ["La Roche-Posay", "The Ordinary", "CeraVe", "Clinique", "Kiehl's", "Drunk Elephant", "Paula's Choice"],
+  ["Advanced Repair", "Daily Therapy", "Moisture Plus", "Hydration Boost", "Active Clear", "Nightly Renewal"],
+  ["Vitamin C Serum", "Hyaluronic Acid", "Retinol Night Cream", "Gentle Foaming Cleanser", "SPF 50 Daily Sunscreen", "Niacinamide Serum"],
+  ["Serum", "Moisturizer", "Cleanser", "Sunscreen", "Exfoliator", "Mask"]
+);
+
+const rawBeautyFrag = [
+  { id: 2006, name: "Oud Noir Eau de Parfum", price: 129.99, image: "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&q=80&w=400&h=400", category: "Fragrances", stock: 10 },
+  { id: 2007, name: "Fresh Citrus Cologne", price: 79.99, image: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&q=80&w=400&h=400", category: "Fragrances", stock: 10 },
+  { id: 2008, name: "Rose Garden Perfume", price: 99.99, image: "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?auto=format&fit=crop&q=80&w=400&h=400", category: "Fragrances", stock: 10 },
+  { id: 2009, name: "Amber Woods Body Mist", price: 39.99, image: "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&q=80&w=400&h=400", category: "Fragrances", stock: 10 },
+  { id: 2010, name: "Vanilla Dream Perfume Oil", price: 49.99, image: "https://images.unsplash.com/photo-1594035910387-fea081e89e4d?auto=format&fit=crop&q=80&w=400&h=400", category: "Fragrances", stock: 10 },
+];
+export const beautyFragrances = generateProducts(
+  "Fragrances", rawBeautyFrag, 35, 2100,
+  unsplashPools.fragrances,
+  ["Dior", "Chanel", "Tom Ford", "Yves Saint Laurent", "Versace", "Jo Malone", "Creed"],
+  ["Eau de Parfum", "Eau de Toilette", "Elixir", "Intense", "Parfum Oil", "Cologne Spray"],
+  ["Oud Noir", "Fresh Citrus", "Rose Garden", "Amber Woods", "Vanilla Dream", "Santal Woods"],
+  ["Perfume", "Cologne", "Body Mist", "Scented Oil"]
+);
+
+const rawBeautyMake = [
+  { id: 2011, name: "Matte Liquid Lipstick Set", price: 29.99, image: "https://images.unsplash.com/photo-1586495777744-4413f21062fa?auto=format&fit=crop&q=80&w=400&h=400", category: "Makeup", stock: 10 },
+  { id: 2012, name: "Full Coverage Foundation", price: 38.99, image: "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?auto=format&fit=crop&q=80&w=400&h=400", category: "Makeup", stock: 10 },
+  { id: 2013, name: "Eyeshadow Palette (18 shades)", price: 45.99, image: "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?auto=format&fit=crop&q=80&w=400&h=400", category: "Makeup", stock: 10 },
+  { id: 2014, name: "Volumizing Mascara", price: 22.99, image: "https://images.unsplash.com/photo-1631214500115-598fc2cb8ada?auto=format&fit=crop&q=80&w=400&h=400", category: "Makeup", stock: 10 },
+  { id: 2015, name: "Setting Spray", price: 19.99, image: "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&q=80&w=400&h=400", category: "Makeup", stock: 10 },
+];
+export const beautyMakeup = generateProducts(
+  "Makeup", rawBeautyMake, 35, 2200,
+  unsplashPools.makeup,
+  ["Fenty Beauty", "MAC", "Maybelline", "NARS", "Anastasia Beverly Hills", "Estée Lauder", "Charlotte Tilbury"],
+  ["Matte Finish", "High Definition", "Waterproof Pro", "Glow Finish", "Longwear Formula"],
+  ["Matte Liquid Lipstick", "Full Coverage Foundation", "Eyeshadow Palette", "Volumizing Mascara", "Dewy Setting Spray"],
+  ["Lipstick Set", "Foundation", "Palette", "Mascara", "Setting Spray", "Concealer"]
+);
+
+const rawBeautyHair = [
+  { id: 2016, name: "Argan Oil Hair Serum", price: 28.99, image: "https://images.unsplash.com/photo-1585386959984-a41552281b3d?auto=format&fit=crop&q=80&w=400&h=400", category: "Haircare", stock: 10 },
+  { id: 2017, name: "Keratin Repair Shampoo", price: 16.99, image: "https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?auto=format&fit=crop&q=80&w=400&h=400", category: "Haircare", stock: 10 },
+  { id: 2018, name: "Deep Conditioning Mask", price: 24.99, image: "https://images.unsplash.com/photo-1612817288484-6f916006741a?auto=format&fit=crop&q=80&w=400&h=400", category: "Haircare", stock: 10 },
+  { id: 2019, name: "Heat Protectant Spray", price: 19.99, image: "https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?auto=format&fit=crop&q=80&w=400&h=400", category: "Haircare", stock: 10 },
+  { id: 2020, name: "Dry Shampoo Powder", price: 14.99, image: "https://images.unsplash.com/photo-1519735777090-ec97162dc266?auto=format&fit=crop&q=80&w=400&h=400", category: "Haircare", stock: 10 },
+];
+export const beautyHaircare = generateProducts(
+  "Haircare", rawBeautyHair, 35, 2300,
+  unsplashPools.haircare,
+  ["Olaplex", "Moroccanoil", "Redken", "Briogeo", "Kerastase", "SheaMoisture", "L'Oréal Pro"],
+  ["Bond Maintenance", "Keratin Repair", "Color Protect", "Volume Boosting", "Scalp Care", "Deep Hydrating"],
+  ["Argan Oil Serum", "Keratin Repair Shampoo", "Deep Conditioning Mask", "Heat Protectant Spray", "Dry Shampoo Powder"],
+  ["Hair Serum", "Shampoo", "Conditioner", "Hair Mask", "Styling Spray", "Dry Shampoo"]
+);
+
+export const beautySubcategories = [
+  { name: "Skincare", img: "https://images.unsplash.com/photo-1556228578-8c89e6adf883?auto=format&fit=crop&q=80&w=100&h=100" },
+  { name: "Makeup", img: "https://images.unsplash.com/photo-1586495777744-4413f21062fa?auto=format&fit=crop&q=80&w=100&h=100" },
+  { name: "Fragrances", img: "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&q=80&w=100&h=100" },
+  { name: "Haircare", img: "https://images.unsplash.com/photo-1585386959984-a41552281b3d?auto=format&fit=crop&q=80&w=100&h=100" },
+  { name: "Bath & Body", img: "https://images.unsplash.com/photo-1570194065650-d99fb4c38b8e?auto=format&fit=crop&q=80&w=100&h=100" },
+  { name: "Nail Care", img: "https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&q=80&w=100&h=100" },
+];
+
+// ============================================================
+// 4. HOME & APPLIANCES DATA
+// ============================================================
+
+export const homeTabs = ["Home & Appliances", "Kitchen", "Living Room", "Bedroom", "Bathroom", "Appliances", "Decor", "Garden", "Smart Home"];
+
+const rawHomeKit = [
+  { id: 3001, name: "Smart Air Fryer XL", price: 129.99, image: "https://images.unsplash.com/photo-1585515320310-259814833e62?auto=format&fit=crop&q=80&w=400&h=400", category: "Kitchen", stock: 10 },
+  { id: 3002, name: "Professional Blender", price: 89.99, image: "https://images.unsplash.com/photo-1570222094114-d054a817e56b?auto=format&fit=crop&q=80&w=400&h=400", category: "Kitchen", stock: 10 },
+  { id: 3003, name: "Espresso Machine", price: 249.99, image: "https://images.unsplash.com/photo-1517668808822-9ebb02f2a0e6?auto=format&fit=crop&q=80&w=400&h=400", category: "Kitchen", stock: 10 },
+  { id: 3004, name: "Non-Stick Cookware Set (10pc)", price: 179.99, image: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&q=80&w=400&h=400", category: "Kitchen", stock: 10 },
+  { id: 3005, name: "Electric Kettle", price: 49.99, image: "https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?auto=format&fit=crop&q=80&w=400&h=400", category: "Kitchen", stock: 10 },
+];
+export const homeKitchen = generateProducts(
+  "Kitchen", rawHomeKit, 35, 3000,
+  unsplashPools.kitchen,
+  ["Philips", "Ninja", "Breville", "KitchenAid", "Cuisinart", "Instant Pot", "T-fal"],
+  ["Pro series", "Chef Elite", "Classic", "Signature", "Smart Home Touch", "Heavy Duty"],
+  ["Smart Air Fryer XL", "Professional Blender", "Espresso Machine", "Non-Stick Cookware Set", "Electric Kettle", "Slow Cooker"],
+  ["Appliance", "Blender", "Cookware", "Kettle", "Processor", "Mixer"]
+);
+
+const rawHomeLiving = [
+  { id: 3006, name: "Smart LED Floor Lamp", price: 79.99, image: "https://images.unsplash.com/photo-1507473885765-e6ed057ab6fe?auto=format&fit=crop&q=80&w=400&h=400", category: "Living Room", stock: 10 },
+  { id: 3007, name: "Velvet Throw Pillows (Set of 2)", price: 44.99, image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&q=80&w=400&h=400", category: "Living Room", stock: 10 },
+  { id: 3008, name: "Woven Jute Area Rug", price: 119.99, image: "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&q=80&w=400&h=400", category: "Living Room", stock: 10 },
+  { id: 3009, name: "Floating Wall Shelves Set", price: 59.99, image: "https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?auto=format&fit=crop&q=80&w=400&h=400", category: "Living Room", stock: 10 },
+  { id: 3010, name: "Scented Candle Collection", price: 34.99, image: "https://images.unsplash.com/photo-1602607731024-30a23249e6ba?auto=format&fit=crop&q=80&w=400&h=400", category: "Living Room", stock: 10 },
+];
+export const homeLivingRoom = generateProducts(
+  "Living Room", rawHomeLiving, 35, 3100,
+  unsplashPools.livingroom,
+  ["West Elm", "IKEA", "Wayfair", "Crate & Barrel", "Pottery Barn", "CB2"],
+  ["Modernist", "Boho Chic", "Minimalist", "Rustic Charm", "Nordic Cozy", "Art Deco"],
+  ["Smart LED Floor Lamp", "Velvet Throw Pillows", "Woven Jute Area Rug", "Floating Wall Shelves Set", "Scented Candle Collection"],
+  ["Lamp", "Pillows", "Rug", "Shelves", "Candle Set", "Table"]
+);
+
+const rawHomeBed = [
+  { id: 3011, name: "Memory Foam Pillow (2-Pack)", price: 59.99, image: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&q=80&w=400&h=400", category: "Bedroom", stock: 10 },
+  { id: 3012, name: "Egyptian Cotton Sheet Set", price: 89.99, image: "https://images.unsplash.com/photo-1540518614846-7eded433c457?auto=format&fit=crop&q=80&w=400&h=400", category: "Bedroom", stock: 10 },
+  { id: 3013, name: "Blackout Curtains (2 Panels)", price: 49.99, image: "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&q=80&w=400&h=400", category: "Bedroom", stock: 10 },
+  { id: 3014, name: "Bedside Table Lamp", price: 39.99, image: "https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&q=80&w=400&h=400", category: "Bedroom", stock: 10 },
+  { id: 3015, name: "Weighted Blanket", price: 69.99, image: "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&q=80&w=400&h=400", category: "Bedroom", stock: 10 },
+];
+export const homeBedroom = generateProducts(
+  "Bedroom", rawHomeBed, 35, 3200,
+  unsplashPools.bedroom,
+  ["Casper", "Tempur-Pedic", "Brooklinen", "Parachute", "Tuft & Needle", "Target Home"],
+  ["Sleep Soft", "Premium Cotton", "All-Season Comfort", "Driftwood", "Zen Wellness", "Cloud Comfort"],
+  ["Memory Foam Pillow", "Egyptian Cotton Sheet Set", "Blackout Curtains", "Bedside Table Lamp", "Weighted Blanket"],
+  ["Pillow Set", "Sheets", "Curtains", "Nightstand Lamp", "Blanket", "Duvet Cover"]
+);
+
+const rawHomeApp = [
+  { id: 3016, name: "Robot Vacuum Cleaner", price: 299.99, image: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?auto=format&fit=crop&q=80&w=400&h=400", category: "Appliances", stock: 10 },
+  { id: 3017, name: "Smart Washing Machine", price: 549.99, image: "https://images.unsplash.com/photo-1626806787461-102c1bfaaea1?auto=format&fit=crop&q=80&w=400&h=400", category: "Appliances", stock: 10 },
+  { id: 3018, name: "Digital Air Purifier", price: 199.99, image: "https://images.unsplash.com/photo-1585771724684-38269d6639fd?auto=format&fit=crop&q=80&w=400&h=400", category: "Appliances", stock: 10 },
+  { id: 3019, name: "Cordless Stick Vacuum", price: 249.99, image: "https://images.unsplash.com/photo-1558317374-067fb5f30001?auto=format&fit=crop&q=80&w=400&h=400", category: "Appliances", stock: 10 },
+  { id: 3020, name: "Smart Thermostat", price: 179.99, image: "https://images.unsplash.com/photo-1567925086728-19fc663a3a64?auto=format&fit=crop&q=80&w=400&h=400", category: "Appliances", stock: 10 },
+];
+export const homeAppliances = generateProducts(
+  "Appliances", rawHomeApp, 35, 3300,
+  unsplashPools.homeappliances,
+  ["Dyson", "iRobot", "Samsung", "LG", "Nest", "Honeywell", "Shark"],
+  ["Cyclone V12", "Roomba i7", "EcoBubble", "Pure Cool", "Learning Thermostat", "TrueHEPA"],
+  ["Robot Vacuum Cleaner", "Smart Washing Machine", "Digital Air Purifier", "Cordless Stick Vacuum", "Smart Thermostat"],
+  ["Robot Vacuum", "Washer", "Air Purifier", "Vacuum Cleaner", "Thermostat", "Humidifier"]
+);
+
+export const homeSubcategories = [
+  { name: "Kitchen", img: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&q=80&w=100&h=100" },
+  { name: "Living Room", img: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&q=80&w=100&h=100" },
+  { name: "Bedroom", img: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&q=80&w=100&h=100" },
+  { name: "Bathroom", img: "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?auto=format&fit=crop&q=80&w=100&h=100" },
+  { name: "Laundry", img: "https://images.unsplash.com/photo-1626806787461-102c1bfaaea1?auto=format&fit=crop&q=80&w=100&h=100" },
+  { name: "Lighting", img: "https://images.unsplash.com/photo-1507473885765-e6ed057ab6fe?auto=format&fit=crop&q=80&w=100&h=100" },
+];
+
+// ============================================================
+// 5. BABY DATA
+// ============================================================
+
+export const babyTabs = ["Baby", "Essentials", "Clothing", "Gear", "Feeding", "Diapering", "Nursery", "Bath", "Toys"];
+
+const rawBabyEs = [
+  { id: 4001, name: "Organic Cotton Onesies (5-Pack)", price: 34.99, image: "https://images.unsplash.com/photo-1522771930-78848d9293e8?auto=format&fit=crop&q=80&w=400&h=400", category: "Baby Essentials", stock: 10 },
+  { id: 4002, name: "Baby Monitor with Camera", price: 89.99, image: "https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?auto=format&fit=crop&q=80&w=400&h=400", category: "Baby Essentials", stock: 10 },
+  { id: 4003, name: "Diaper Caddy Organizer", price: 29.99, image: "https://images.unsplash.com/photo-1519689680058-2b0e6019e484?auto=format&fit=crop&q=80&w=400&h=400", category: "Baby Essentials", stock: 10 },
+  { id: 4004, name: "Baby Bath Tub Set", price: 39.99, image: "https://images.unsplash.com/photo-1544787219-7f47ccb76574?auto=format&fit=crop&q=80&w=400&h=400", category: "Baby Essentials", stock: 10 },
+  { id: 4005, name: "Bottle Sterilizer", price: 59.99, image: "https://images.unsplash.com/photo-1555252333-9f8e92e65df9?auto=format&fit=crop&q=80&w=400&h=400", category: "Baby Essentials", stock: 10 },
+];
+export const babyEssentials = generateProducts(
+  "Baby Essentials", rawBabyEs, 35, 4000,
+  unsplashPools.babyessentials,
+  ["Huggies", "Pampers", "Johnson's", "Burts Bees Baby", "Skip Hop", "Munchkin", "Honest Company"],
+  ["Newborn Care", "Ultra Soft", "Organic Natural", "Daily Protect", "Sensitive Skin", "Nursery Select"],
+  ["Organic Cotton Onesies", "HD Baby Monitor Camera", "Diaper Caddy Organizer", "Baby Bath Tub Set", "Bottle Sterilizer"],
+  ["Onesie Set", "Monitor", "Organizer Caddy", "Tub Set", "Sterilizer Unit", "Wipes Pack"]
+);
+
+const rawBabyClo = [
+  { id: 4006, name: "Soft Knit Baby Booties", price: 14.99, image: "https://images.unsplash.com/photo-1519689680058-2b0e6019e484?auto=format&fit=crop&q=80&w=400&h=400", category: "Baby Clothing", stock: 10 },
+  { id: 4007, name: "Fleece Sleep Sack", price: 24.99, image: "https://images.unsplash.com/photo-1522771930-78848d9293e8?auto=format&fit=crop&q=80&w=400&h=400", category: "Baby Clothing", stock: 10 },
+  { id: 4008, name: "Organic Romper Set", price: 29.99, image: "https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?auto=format&fit=crop&q=80&w=400&h=400", category: "Baby Clothing", stock: 10 },
+  { id: 4009, name: "Sun Protection Hat", price: 12.99, image: "https://images.unsplash.com/photo-1544787219-7f47ccb76574?auto=format&fit=crop&q=80&w=400&h=400", category: "Baby Clothing", stock: 10 },
+  { id: 4010, name: "Winter Snowsuit", price: 44.99, image: "https://images.unsplash.com/photo-1555252333-9f8e92e65df9?auto=format&fit=crop&q=80&w=400&h=400", category: "Baby Clothing", stock: 10 },
+];
+export const babyClothing = generateProducts(
+  "Baby Clothing", rawBabyClo, 35, 4100,
+  unsplashPools.babyclothing,
+  ["Carter's", "OshKosh", "Gerber", "Baby Gap", "H&M Kids", "Burt's Bees"],
+  ["Cozy Wear", "Play Time", "Pure Organic", "Super Soft Knit", "Winter Warmth", "Layette Collection"],
+  ["Soft Knit Booties", "Fleece Sleep Sack", "Organic Romper Set", "Sun Protection Hat", "Winter Snowsuit"],
+  ["Booties", "Sleep Sack", "Romper Set", "Sun Hat", "Snowsuit", "Sleepwear"]
+);
+
+const rawBabyGe = [
+  { id: 4011, name: "Convertible Car Seat", price: 229.99, image: "https://images.unsplash.com/photo-1555252333-9f8e92e65df9?auto=format&fit=crop&q=80&w=400&h=400", category: "Baby Gear", stock: 10 },
+  { id: 4012, name: "Lightweight Stroller", price: 179.99, image: "https://images.unsplash.com/photo-1519689680058-2b0e6019e484?auto=format&fit=crop&q=80&w=400&h=400", category: "Baby Gear", stock: 10 },
+  { id: 4013, name: "Baby Carrier Wrap", price: 49.99, image: "https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?auto=format&fit=crop&q=80&w=400&h=400", category: "Baby Gear", stock: 10 },
+  { id: 4014, name: "Portable Playpen", price: 129.99, image: "https://images.unsplash.com/photo-1544787219-7f47ccb76574?auto=format&fit=crop&q=80&w=400&h=400", category: "Baby Gear", stock: 10 },
+  { id: 4015, name: "High Chair", price: 149.99, image: "https://images.unsplash.com/photo-1522771930-78848d9293e8?auto=format&fit=crop&q=80&w=400&h=400", category: "Baby Gear", stock: 10 },
+];
+export const babyGear = generateProducts(
+  "Baby Gear", rawBabyGe, 35, 4200,
+  unsplashPools.babygear,
+  ["Graco", "Chicco", "Ergobaby", "BabyBjorn", "Evenflo", "Britax"],
+  ["Safety-First", "Airflow Travel", "3-in-1 Convertible", "Comfy Carry", "Foldable Slim"],
+  ["Convertible Car Seat", "Lightweight Stroller", "Baby Carrier Wrap", "Portable Playpen", "Adjustable High Chair"],
+  ["Car Seat", "Stroller", "Carrier Wrap", "Playpen", "High Chair", "Bouncer"]
+);
+
+const rawBabyFe = [
+  { id: 4016, name: "Glass Baby Bottles (4-Pack)", price: 32.99, image: "https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?auto=format&fit=crop&q=80&w=400&h=400", category: "Baby Feeding", stock: 10 },
+  { id: 4017, name: "Silicone Bib Set", price: 16.99, image: "https://images.unsplash.com/photo-1544787219-7f47ccb76574?auto=format&fit=crop&q=80&w=400&h=400", category: "Baby Feeding", stock: 10 },
+  { id: 4018, name: "Baby Food Maker", price: 79.99, image: "https://images.unsplash.com/photo-1555252333-9f8e92e65df9?auto=format&fit=crop&q=80&w=400&h=400", category: "Baby Feeding", stock: 10 },
+  { id: 4019, name: "Sippy Cup Set (3-Pack)", price: 19.99, image: "https://images.unsplash.com/photo-1519689680058-2b0e6019e484?auto=format&fit=crop&q=80&w=400&h=400", category: "Baby Feeding", stock: 10 },
+  { id: 4020, name: "Nursing Pillow", price: 39.99, image: "https://images.unsplash.com/photo-1522771930-78848d9293e8?auto=format&fit=crop&q=80&w=400&h=400", category: "Baby Feeding", stock: 10 },
+];
+export const babyFeeding = generateProducts(
+  "Baby Feeding", rawBabyFe, 35, 4300,
+  unsplashPools.babyfeeding,
+  ["Philips Avent", "Dr. Brown's", "Munchkin", "NUK", "Beaba", "Boppy"],
+  ["Natural Flow", "Ergonomic Grip", "Easy Clean Silicone", "Baby Prep Smart", "Nursing Relief"],
+  ["Glass Baby Bottles Set", "Silicone Catch Bibs", "Steam Baby Food Maker", "Leak-Proof Sippy Cups", "Supportive Nursing Pillow"],
+  ["Bottles Pack", "Bib Set", "Food Maker", "Sippy Cups", "Nursing Pillow", "Spoon Set"]
+);
+
+export const babySubcategories = [
+  { name: "Essentials", img: "https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?auto=format&fit=crop&q=80&w=100&h=100" },
+  { name: "Clothing", img: "https://images.unsplash.com/photo-1522771930-78848d9293e8?auto=format&fit=crop&q=80&w=100&h=100" },
+  { name: "Gear", img: "https://images.unsplash.com/photo-1519689680058-2b0e6019e484?auto=format&fit=crop&q=80&w=100&h=100" },
+  { name: "Feeding", img: "https://images.unsplash.com/photo-1544787219-7f47ccb76574?auto=format&fit=crop&q=80&w=100&h=100" },
+];
+
+// ============================================================
+// 6. TOYS & GAMES DATA
+// ============================================================
+
+export const toysTabs = ["Toys & Games", "Action", "Building", "Board Games", "Educational", "Outdoor", "Electronic", "Arts & Crafts", "Dolls"];
+
+const rawToysAct = [
+  { id: 5001, name: "LEGO Architecture Set", price: 79.99, image: "https://images.unsplash.com/photo-1587654780014-d1e6a5ca0f0d?auto=format&fit=crop&q=80&w=400&h=400", category: "Action & Building", stock: 10 },
+  { id: 5002, name: "Remote Control Racing Car", price: 49.99, image: "https://images.unsplash.com/photo-1558060169-a2c0d7f7f1d1?auto=format&fit=crop&q=80&w=400&h=400", category: "Action & Building", stock: 10 },
+  { id: 5003, name: "Magnetic Building Tiles (100pc)", price: 39.99, image: "https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?auto=format&fit=crop&q=80&w=400&h=400", category: "Action & Building", stock: 10 },
+  { id: 5004, name: "Action Figure Collection", price: 24.99, image: "https://images.unsplash.com/photo-1563396983906-b3795482a59a?auto=format&fit=crop&q=80&w=400&h=400", category: "Action & Building", stock: 10 },
+  { id: 5005, name: "Model Train Set", price: 89.99, image: "https://images.unsplash.com/photo-1587654780014-d1e6a5ca0f0d?auto=format&fit=crop&q=80&w=400&h=400", category: "Action & Building", stock: 10 },
+];
+export const toysAction = generateProducts(
+  "Action & Building", rawToysAct, 35, 5000,
+  unsplashPools.toysaction,
+  ["LEGO", "Hot Wheels", "Hasbro", "Transformers", "Megabloks", "Playmobil", "Fisher-Price"],
+  ["City Creator", "Speed Champions", "Super Robot V", "Castle Siege", "Adventure Pack", "Ultimate Series"],
+  ["LEGO Architecture Set", "Remote Control Racing Car", "Magnetic Building Tiles Set", "Action Figure Hero", "Model Steam Train Set"],
+  ["Building Blocks", "Racing Car", "Magnetic Tiles", "Action Figure", "Train Set", "Track Pack"]
+);
+
+const rawToysBoard = [
+  { id: 5006, name: "Strategy Board Game", price: 44.99, image: "https://images.unsplash.com/photo-1611371805429-8b5c1b2c34ba?auto=format&fit=crop&q=80&w=400&h=400", category: "Board Games", stock: 10 },
+  { id: 5007, name: "Classic Chess Set (Wood)", price: 34.99, image: "https://images.unsplash.com/photo-1529699211952-734e80c4d42b?auto=format&fit=crop&q=80&w=400&h=400", category: "Board Games", stock: 10 },
+  { id: 5008, name: "Family Trivia Night", price: 29.99, image: "https://images.unsplash.com/photo-1606503153255-59d8b8b82176?auto=format&fit=crop&q=80&w=400&h=400", category: "Board Games", stock: 10 },
+  { id: 5009, name: "Cooperative Adventure Game", price: 39.99, image: "https://images.unsplash.com/photo-1563396983906-b3795482a59a?auto=format&fit=crop&q=80&w=400&h=400", category: "Board Games", stock: 10 },
+  { id: 5010, name: "Card Game Collection", price: 19.99, image: "https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?auto=format&fit=crop&q=80&w=400&h=400", category: "Board Games", stock: 10 },
+];
+export const toysBoard = generateProducts(
+  "Board Games", rawToysBoard, 35, 5100,
+  unsplashPools.toysboard,
+  ["Hasbro Gaming", "Mattel", "Ravensburger", "Asmodee", "Spin Master", "Z-Man Games"],
+  ["Family Edition", "Championship", "Classic Retro", "Trivia Special", "Mystery Quest", "Deck Builder"],
+  ["Modern Strategy Board Game", "Premium Wooden Chess Set", "Ultimate Family Trivia Night", "Cooperative Adventure Campaign", "Premium Card Game Collection"],
+  ["Board Game", "Chess Set", "Trivia Deck", "Adventure Game", "Card Deck", "Dice Set"]
+);
+
+const rawToysEdu = [
+  { id: 5011, name: "STEM Robot Kit", price: 59.99, image: "https://images.unsplash.com/photo-1558060169-a2c0d7f7f1d1?auto=format&fit=crop&q=80&w=400&h=400", category: "Educational", stock: 10 },
+  { id: 5012, name: "Science Experiment Lab", price: 34.99, image: "https://images.unsplash.com/photo-1587654780014-d1e6a5ca0f0d?auto=format&fit=crop&q=80&w=400&h=400", category: "Educational", stock: 10 },
+  { id: 5013, name: "World Map Puzzle (1000pc)", price: 24.99, image: "https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?auto=format&fit=crop&q=80&w=400&h=400", category: "Educational", stock: 10 },
+  { id: 5014, name: "Coding Robot for Kids", price: 79.99, image: "https://images.unsplash.com/photo-1563396983906-b3795482a59a?auto=format&fit=crop&q=80&w=400&h=400", category: "Educational", stock: 10 },
+  { id: 5015, name: "Microscope Kit", price: 49.99, image: "https://images.unsplash.com/photo-1558060169-a2c0d7f7f1d1?auto=format&fit=crop&q=80&w=400&h=400", category: "Educational", stock: 10 },
+];
+export const toysEducational = generateProducts(
+  "Educational", rawToysEdu, 35, 5200,
+  unsplashPools.toyseducational,
+  ["Discovery Kids", "National Geographic", "Melissa & Doug", "Learning Resources", "Sphero", "K'NEX"],
+  ["STEM Academy", "Lab Investigator", "Global Explorer", "Early Coding", "Discovery Scope", "Physics Fun"],
+  ["Programmable STEM Robot Kit", "Science Lab Experiment Set", "World Map Puzzle 1000pcs", "Coding Smart Robot", "Monocular Microscope Kit"],
+  ["Robot Kit", "Science Lab", "Jigsaw Puzzle", "Coding Toy", "Microscope", "Math Set"]
+);
+
+const rawToysOut = [
+  { id: 5016, name: "Trampoline with Safety Net", price: 249.99, image: "https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?auto=format&fit=crop&q=80&w=400&h=400", category: "Outdoor Toys", stock: 10 },
+  { id: 5017, name: "Water Blaster Set", price: 19.99, image: "https://images.unsplash.com/photo-1558060169-a2c0d7f7f1d1?auto=format&fit=crop&q=80&w=400&h=400", category: "Outdoor Toys", stock: 10 },
+  { id: 5018, name: "Bicycle with Training Wheels", price: 129.99, image: "https://images.unsplash.com/photo-1587654780014-d1e6a5ca0f0d?auto=format&fit=crop&q=80&w=400&h=400", category: "Outdoor Toys", stock: 10 },
+  { id: 5019, name: "Outdoor Play Tent", price: 44.99, image: "https://images.unsplash.com/photo-1563396983906-b3795482a59a?auto=format&fit=crop&q=80&w=400&h=400", category: "Outdoor Toys", stock: 10 },
+  { id: 5020, name: "Roller Skates Set", price: 39.99, image: "https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?auto=format&fit=crop&q=80&w=400&h=400", category: "Outdoor Toys", stock: 10 },
+];
+export const toysOutdoor = generateProducts(
+  "Outdoor Toys", rawToysOut, 35, 5300,
+  unsplashPools.toysoutdoor,
+  ["Little Tikes", "Step2", "Nerf", "Radio Flyer", "Schwinn", "Razor"],
+  ["Backyard Bounce", "Super Soaker Pro", "Tricycle Rider", "Adventure Dome", "Street Glider", "Summer Splash"],
+  ["Trampoline with Safety Netting", "High Output Water Blasters", "Kids Bicycle with Training Wheels", "Pop-up Outdoor Play Tent", "Adjustable Inline Roller Skates"],
+  ["Trampoline", "Water Gun", "Bicycle", "Play Tent", "Roller Skates", "Scooter"]
+);
+
+export const toysSubcategories = [
+  { name: "Action Figures", img: "https://images.unsplash.com/photo-1563396983906-b3795482a59a?auto=format&fit=crop&q=80&w=100&h=100" },
+  { name: "Building Sets", img: "https://images.unsplash.com/photo-1587654780014-d1e6a5ca0f0d?auto=format&fit=crop&q=80&w=100&h=100" },
+  { name: "Board Games", img: "https://images.unsplash.com/photo-1611371805429-8b5c1b2c34ba?auto=format&fit=crop&q=80&w=100&h=100" },
+  { name: "Puzzles", img: "https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?auto=format&fit=crop&q=80&w=100&h=100" },
+  { name: "Educational", img: "https://images.unsplash.com/photo-1558060169-a2c0d7f7f1d1?auto=format&fit=crop&q=80&w=100&h=100" },
+  { name: "Outdoor", img: "https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?auto=format&fit=crop&q=80&w=100&h=100" },
+];
+
+// ============================================================
+// 7. SPORTS & OUTDOORS DATA
+// ============================================================
+
+export const sportsTabs = ["Sports & Outdoors", "Fitness", "Running", "Cycling", "Team Sports", "Outdoor", "Camping", "Yoga", "Swimming"];
+
+const rawSportsFit = [
+  { id: 6001, name: "Adjustable Dumbbell Set", price: 149.99, image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=400&h=400", category: "Fitness", stock: 10 },
+  { id: 6002, name: "Yoga Mat Premium", price: 39.99, image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&q=80&w=400&h=400", category: "Fitness", stock: 10 },
+  { id: 6003, name: "Resistance Bands (Set of 5)", price: 24.99, image: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&q=80&w=400&h=400", category: "Fitness", stock: 10 },
+  { id: 6004, name: "Smart Jump Rope", price: 34.99, image: "https://images.unsplash.com/photo-1526676037777-05a232554f77?auto=format&fit=crop&q=80&w=400&h=400", category: "Fitness", stock: 10 },
+  { id: 6005, name: "Foam Roller Set", price: 29.99, image: "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?auto=format&fit=crop&q=80&w=400&h=400", category: "Fitness", stock: 10 },
+];
+export const sportsFitness = generateProducts(
+  "Fitness", rawSportsFit, 35, 6000,
+  unsplashPools.sportsfitness,
+  ["Bowflex", "Manduka", "Rogue Fitness", "Fitbit", "Theragun", "Under Armour", "Everlast"],
+  ["Home Gym", "Pro Grip", "Elastic Strength", "Bluetooth Smart", "Recovery Plus", "Comfort Cushion"],
+  ["Adjustable Iron Dumbbells", "Eco-Friendly Yoga Mat", "Heavy Duty Resistance Bands", "Smart Speed Jump Rope", "Deep Tissue Foam Roller"],
+  ["Dumbbell Set", "Yoga Mat", "Resistance Bands", "Jump Rope", "Foam Roller", "Kettlebell"]
+);
+
+const rawSportsTeam = [
+  { id: 6006, name: "Professional Soccer Ball", price: 34.99, image: "https://images.unsplash.com/photo-1575361204480-aadea25e6e68?auto=format&fit=crop&q=80&w=400&h=400", category: "Team Sports", stock: 10 },
+  { id: 6007, name: "Basketball Indoor/Outdoor", price: 29.99, image: "https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&q=80&w=400&h=400", category: "Team Sports", stock: 10 },
+  { id: 6008, name: "Tennis Racket Pro", price: 89.99, image: "https://images.unsplash.com/photo-1617083934551-ac1f1bdf8f6b?auto=format&fit=crop&q=80&w=400&h=400", category: "Team Sports", stock: 10 },
+  { id: 6009, name: "Volleyball Net Set", price: 59.99, image: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&q=80&w=400&h=400", category: "Team Sports", stock: 10 },
+  { id: 6010, name: "Baseball Glove", price: 49.99, image: "https://images.unsplash.com/photo-1526676037777-05a232554f77?auto=format&fit=crop&q=80&w=400&h=400", category: "Team Sports", stock: 10 },
+];
+export const sportsTeam = generateProducts(
+  "Team Sports", rawSportsTeam, 35, 6100,
+  unsplashPools.sportsteam,
+  ["Wilson", "Spalding", "Adidas", "Nike", "Rawlings", "Mikasa", "Babolat"],
+  ["Official Match", "Gold Standard", "Carbon Pro", "All-Weather", "Supreme Leather", "Hardcourt Special"],
+  ["Professional Match Soccer Ball", "Indoor/Outdoor Grip Basketball", "Graphite Tennis Racket Pro", "Portable Volleyball Net Set", "Genuine Leather Baseball Glove"],
+  ["Soccer Ball", "Basketball", "Tennis Racket", "Volleyball Net", "Baseball Glove", "Bat"]
+);
+
+const rawSportsOut = [
+  { id: 6011, name: "4-Person Camping Tent", price: 179.99, image: "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&q=80&w=400&h=400", category: "Outdoor Adventure", stock: 10 },
+  { id: 6012, name: "Hiking Backpack 50L", price: 99.99, image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&q=80&w=400&h=400", category: "Outdoor Adventure", stock: 10 },
+  { id: 6013, name: "Insulated Water Bottle", price: 29.99, image: "https://images.unsplash.com/photo-1602143407151-7111542de6e8?auto=format&fit=crop&q=80&w=400&h=400", category: "Outdoor Adventure", stock: 10 },
+  { id: 6014, name: "LED Headlamp", price: 24.99, image: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&q=80&w=400&h=400", category: "Outdoor Adventure", stock: 10 },
+  { id: 6015, name: "Portable Hammock", price: 39.99, image: "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?auto=format&fit=crop&q=80&w=400&h=400", category: "Outdoor Adventure", stock: 10 },
+];
+export const sportsOutdoor = generateProducts(
+  "Outdoor Adventure", rawSportsOut, 35, 6200,
+  unsplashPools.sportsoutdoor,
+  ["Coleman", "Osprey", "Hydro Flask", "Black Diamond", "ENO", "Patagonia", "Columbia"],
+  ["Sundome Camping", "Atmos AG 50", "Vacuum Flask", "LED Spotlight", "DoubleNest Sleep", "Trailwear Comfort"],
+  ["4-Person Waterproof Camping Tent", "Hiking Internal Frame Backpack 50L", "Insulated Stainless Steel Water Bottle", "Rechargeable Bright LED Headlamp", "Portable Double Camping Hammock"],
+  ["Camping Tent", "Backpack", "Water Bottle", "Headlamp", "Hammock", "Sleeping Bag"]
+);
+
+const rawSportsCyc = [
+  { id: 6016, name: "Mountain Bike Helmet", price: 59.99, image: "https://images.unsplash.com/photo-1557803175-2dfb8fce9dbe?auto=format&fit=crop&q=80&w=400&h=400", category: "Cycling", stock: 10 },
+  { id: 6017, name: "Cycling Shorts Padded", price: 44.99, image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&q=80&w=400&h=400", category: "Cycling", stock: 10 },
+  { id: 6018, name: "Bike Repair Kit", price: 29.99, image: "https://images.unsplash.com/photo-1526676037777-05a232554f77?auto=format&fit=crop&q=80&w=400&h=400", category: "Cycling", stock: 10 },
+  { id: 6019, name: "LED Bike Lights Set", price: 19.99, image: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&q=80&w=400&h=400", category: "Cycling", stock: 10 },
+  { id: 6020, name: "Cycling Gloves", price: 24.99, image: "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?auto=format&fit=crop&q=80&w=400&h=400", category: "Cycling", stock: 10 },
+];
+export const sportsCycling = generateProducts(
+  "Cycling", rawSportsCyc, 35, 6300,
+  unsplashPools.sportscycling,
+  ["Giro", "Pearl Izumi", "Park Tool", "Cygolite", "Shimano", "Specialized", "Schwinn"],
+  ["Impact Shield", "Elite 3D Gel", "Multi-Tool Kit", "High Lumens Pro", "Ergo-Grip Fit", "Trail Blazer"],
+  ["Mountain Bike Impact Helmet", "Gel Padded Cycling Shorts", "Universal Bike Repair Multi-Tool Kit", "High Visibility LED Bike Lights Set", "Shockproof Cycling Gloves"],
+  ["Helmet", "Cycling Shorts", "Repair Kit", "Lights Set", "Gloves", "Pump"]
+);
+
+export const sportsSubcategories = [
+  { name: "Fitness", img: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=100&h=100" },
+  { name: "Running", img: "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?auto=format&fit=crop&q=80&w=100&h=100" },
+  { name: "Cycling", img: "https://images.unsplash.com/photo-1557803175-2dfb8fce9dbe?auto=format&fit=crop&q=80&w=100&h=100" },
+  { name: "Swimming", img: "https://images.unsplash.com/photo-1519315901367-f34ff9154487?auto=format&fit=crop&q=80&w=100&h=100" },
+  { name: "Team Sports", img: "https://images.unsplash.com/photo-1575361204480-aadea25e6e68?auto=format&fit=crop&q=80&w=100&h=100" },
+  { name: "Outdoor", img: "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&q=80&w=100&h=100" },
+];
+
+// ============================================================
+// 8. GROCERY DATA
+// ============================================================
+
+const rawGroceryGra = [
+  { id: 7001, name: "Organic Quinoa", price: 8.99, image: "https://images.unsplash.com/photo-1543168256-418811576931?auto=format&fit=crop&q=80&w=400&h=400", category: "Grains & Cereals", stock: 10 },
+  { id: 7002, name: "Basmati Rice 5kg", price: 12.99, image: "https://images.unsplash.com/photo-1553787434-dd5e2cd0e110?auto=format&fit=crop&q=80&w=400&h=400", category: "Grains & Cereals", stock: 10 },
+  { id: 7003, name: "Steel Cut Oats", price: 6.99, image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&q=80&w=400&h=400", category: "Grains & Cereals", stock: 10 },
+  { id: 7004, name: "Whole Wheat Pasta", price: 4.99, image: "https://images.unsplash.com/photo-1563636619-e9143da7973b?auto=format&fit=crop&q=80&w=400&h=400", category: "Grains & Cereals", stock: 10 },
+  { id: 7005, name: "Granola Clusters", price: 7.99, image: "https://images.unsplash.com/photo-1542990253-0d0f5be1f23d?auto=format&fit=crop&q=80&w=400&h=400", category: "Grains & Cereals", stock: 10 },
+];
+export const groceryGrains = generateProducts(
+  "Grains & Cereals", rawGroceryGra, 35, 7000,
+  unsplashPools.grocerygrains,
+  ["Bob's Red Mill", "Royal Basmati", "Quaker Oats", "Barilla", "Nature's Path", "Kirkland", "Arrowhead Mills"],
+  ["Organic Whole Grain", "Premium Long Grain", "Traditional Steel Cut", "Bronze Cut Semolina", "Honey Almond", "Gluten Free"],
+  ["Pure White Quinoa", "Basmati Rice Extra Long", "Quick Cooking Oats", "Whole Wheat Fusilli", "Granola Clusters Oats & Honey"],
+  ["Quinoa Pack", "Rice Bag", "Steel Cut Oats", "Pasta Box", "Granola Bag", "Cereal Box"]
+);
+
+const rawGroceryBev = [
+  { id: 7006, name: "Cold Brew Coffee Pack", price: 14.99, image: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&q=80&w=400&h=400", category: "Beverages", stock: 10 },
+  { id: 7007, name: "Green Tea Collection", price: 9.99, image: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&q=80&w=400&h=400", category: "Beverages", stock: 10 },
+  { id: 7008, name: "Fresh Orange Juice 1L", price: 5.99, image: "https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?auto=format&fit=crop&q=80&w=400&h=400", category: "Beverages", stock: 10 },
+  { id: 7009, name: "Sparkling Water (12-Pack)", price: 8.99, image: "https://images.unsplash.com/photo-1542990253-0d0f5be1f23d?auto=format&fit=crop&q=80&w=400&h=400", category: "Beverages", stock: 10 },
+  { id: 7010, name: "Protein Shake Mix", price: 24.99, image: "https://images.unsplash.com/photo-1553787434-dd5e2cd0e110?auto=format&fit=crop&q=80&w=400&h=400", category: "Beverages", stock: 10 },
+];
+export const groceryBeverages = generateProducts(
+  "Beverages", rawGroceryBev, 35, 7100,
+  unsplashPools.grocerybeverages,
+  ["LaCroix", "Saratoga", "Twinings", "Stumptown", "Tropicana", "Orgain", "Perrier"],
+  ["Pure Sparkling", "Organic Herbal", "Rich Cold Brew", "100% Squeezed Pure", "Plant-Based High Protein", "Lime Natural"],
+  ["Cold Brew Coffee Beans", "Organic Green Tea", "Fresh Squeezed Orange Juice", "Sparkling Water Variety", "Vanilla Whey Protein Shake"],
+  ["Coffee Pack", "Tea Box", "Juice Bottle", "Sparkling Water Case", "Protein Powder Tub", "Energy Drink"]
+);
+
+const rawGrocerySna = [
+  { id: 7011, name: "Mixed Nuts Premium", price: 11.99, image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&q=80&w=400&h=400", category: "Snacks", stock: 10 },
+  { id: 7012, name: "Dark Chocolate Bars (3-Pack)", price: 9.99, image: "https://images.unsplash.com/photo-1549007994-cb92caebd54b?auto=format&fit=crop&q=80&w=400&h=400", category: "Snacks", stock: 10 },
+  { id: 7013, name: "Organic Dried Fruit", price: 7.99, image: "https://images.unsplash.com/photo-1563636619-e9143da7973b?auto=format&fit=crop&q=80&w=400&h=400", category: "Snacks", stock: 10 },
+  { id: 7014, name: "Rice Cakes Variety", price: 5.99, image: "https://images.unsplash.com/photo-1543168256-418811576931?auto=format&fit=crop&q=80&w=400&h=400", category: "Snacks", stock: 10 },
+  { id: 7015, name: "Trail Mix", price: 6.99, image: "https://images.unsplash.com/photo-1542990253-0d0f5be1f23d?auto=format&fit=crop&q=80&w=400&h=400", category: "Snacks", stock: 10 },
+];
+export const grocerySnacks = generateProducts(
+  "Snacks", rawGrocerySna, 35, 7200,
+  unsplashPools.grocerysnacks,
+  ["Blue Diamond", "Lindt", "Simple Truth", "Lundberg", "Sahale Snacks", "SkinnyPop"],
+  ["Roasted Salted Premium", "70% Cocoa Dark", "Organic Unsulfured", "Lightly Salted Brown Rice", "Gluten-Free Trail", "Sea Salt Air-Popped"],
+  ["Gourmet Roasted Mixed Nuts", "Rich Dark Chocolate Bars", "Sweet Dried Mango Slices", "White Cheddar Rice Cakes", "Classic Cranberry Trail Mix"],
+  ["Nuts Bag", "Chocolate Pack", "Dried Fruit Pack", "Rice Cakes Box", "Trail Mix Bag", "Popcorn Bag"]
+);
+
+const rawGroceryFre = [
+  { id: 7016, name: "Extra Virgin Olive Oil", price: 15.99, image: "https://images.unsplash.com/photo-1553787434-dd5e2cd0e110?auto=format&fit=crop&q=80&w=400&h=400", category: "Fresh & Organic", stock: 10 },
+  { id: 7017, name: "Raw Honey Jar", price: 12.99, image: "https://images.unsplash.com/photo-1563636619-e9143da7973b?auto=format&fit=crop&q=80&w=400&h=400", category: "Fresh & Organic", stock: 10 },
+  { id: 7018, name: "Organic Coconut Oil", price: 9.99, image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&q=80&w=400&h=400", category: "Fresh & Organic", stock: 10 },
+  { id: 7019, name: "Himalayan Pink Salt", price: 6.99, image: "https://images.unsplash.com/photo-1543168256-418811576931?auto=format&fit=crop&q=80&w=400&h=400", category: "Fresh & Organic", stock: 10 },
+  { id: 7020, name: "Apple Cider Vinegar", price: 7.99, image: "https://images.unsplash.com/photo-1542990253-0d0f5be1f23d?auto=format&fit=crop&q=80&w=400&h=400", category: "Fresh & Organic", stock: 10 },
+];
+export const groceryFresh = generateProducts(
+  "Fresh & Organic", rawGroceryFre, 35, 7300,
+  unsplashPools.groceryfresh,
+  ["Bragg", "California Olive Ranch", "Nature's Way", "Himalayan Chef", "Wedderspoon", "Spectrum Organic"],
+  ["First Cold Pressed", "Unfiltered Raw", "Pure Extra Virgin", "Fine Ground Pink", "Organic Raw Unrefined", "Aged Mother"],
+  ["Premium Cold Olive Oil", "Raw Manuka Honey Jar", "Organic Unrefined Coconut Oil", "Himalayan Coarse Pink Salt", "Organic Raw Apple Cider Vinegar"],
+  ["Olive Oil Bottle", "Honey Jar", "Coconut Oil Tub", "Pink Salt Shaker", "Vinegar Bottle"]
+);
+
+// ============================================================
+// 9. STATIONARY & BOOKS DATA
+// ============================================================
+
+const rawStationary = [
+  { id: 8001, name: "Premium Hardcover Notebook", price: 12.99, image: "https://images.unsplash.com/photo-1507842217343-583f7270bfbb?auto=format&fit=crop&q=80&w=400&h=400", category: "Notebooks", stock: 10 },
+  { id: 8002, name: "Ruled Spiral Notebook", price: 8.99, image: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&q=80&w=400&h=400", category: "Notebooks", stock: 10 },
+  { id: 8003, name: "Bullet Journal Set", price: 15.99, image: "https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&q=80&w=400&h=400", category: "Notebooks", stock: 10 },
+  { id: 8004, name: "Professional Highlighter Set", price: 9.99, image: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&q=80&w=400&h=400", category: "Markers", stock: 10 },
+  { id: 8005, name: "Premium Gel Pen Set", price: 11.99, image: "https://images.unsplash.com/photo-1604870945410-e4f36441ebb8?auto=format&fit=crop&q=80&w=400&h=400", category: "Pens", stock: 10 },
+  { id: 8006, name: "Permanent Markers Black", price: 7.99, image: "https://images.unsplash.com/photo-1557821552-17105176677c?auto=format&fit=crop&q=80&w=400&h=400", category: "Markers", stock: 10 },
+  { id: 8007, name: "Stainless Steel Desk Lamp", price: 34.99, image: "https://images.unsplash.com/photo-1565636192335-14c46fa1120d?auto=format&fit=crop&q=80&w=400&h=400", category: "Office Essentials", stock: 10 },
+  { id: 8008, name: "Desk Organizer Set", price: 19.99, image: "https://images.unsplash.com/photo-1612548403641-d8c50ba89177?auto=format&fit=crop&q=80&w=400&h=400", category: "Office Essentials", stock: 10 },
+  { id: 8009, name: "Coloring Pencils (48-pack)", price: 13.99, image: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&q=80&w=400&h=400", category: "Art Supplies", stock: 10 },
+  { id: 8010, name: "Watercolor Paint Set", price: 22.99, image: "https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&q=80&w=400&h=400", category: "Art Supplies", stock: 10 },
+  { id: 8011, name: "Sketch Pad (200 sheets)", price: 16.99, image: "https://images.unsplash.com/photo-1507842217343-583f7270bfbb?auto=format&fit=crop&q=80&w=400&h=400", category: "Art Supplies", stock: 10 },
+  { id: 8012, name: "Fiction Novel Bundle", price: 29.99, image: "https://images.unsplash.com/photo-1495446815901-a7297e3ffe02?auto=format&fit=crop&q=80&w=400&h=400", category: "Books", stock: 10 },
+];
+// Expand stationaryBooksProducts to contain 200 items so we comfortably exceed 1,000 items in the entire store
+export const stationaryBooksProducts = generateProducts(
+  "Stationary & Books", rawStationary, 200, 8000,
+  unsplashPools.stationary,
+  ["Moleskine", "Pilot G2", "Sharpie", "Derwent", "Winsor & Newton", "Prismacolor", "Penguin Books", "Lamy"],
+  ["Classic Hardcover", "Ultra-Fine Point", "Professional Art", "Artist Grade", "Championship Edition", "Bestselling Fiction"],
+  ["Dotted Bullet Journal", "Dual-Tip Pastel Brush Pens", "Professional Desk Organizer", "Acrylic Paint Tube Set", "Hardcover Mystery Novel"],
+  ["Notebook", "Highlighter Set", "Organizer Box", "Watercolor Kit", "Sketch Pad", "Book Bundle"]
+);

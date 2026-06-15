@@ -1,158 +1,138 @@
-import { useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useState, useEffect } from 'react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const slides = [
   {
     id: 1,
-    bg: "bg-[#f5e6d3]",
-    title: "Write It. Plan It. Slay It",
-    subtitle: "Notebooks",
-    titleColor: "text-[#8b2e2e]",
-    textColor: "text-[#1a1a1a]",
-    image:
-      "https://images.unsplash.com/photo-1507842217343-583f7270bfbb?auto=format&fit=crop&q=80&w=400&h=500",
+    bg: "bg-gradient-to-r from-[#f5e6d3] via-[#ebd2b6] to-[#dcbba0]",
+    content: (
+      <>
+        <div className="z-10 max-w-lg">
+          <span className="text-sm font-bold text-[#8b5e3c] tracking-widest uppercase">CREATIVE JOURNALING</span>
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-[#5c3c21] leading-tight tracking-tight mt-2">
+            WRITE IT. PLAN IT.<br />CREATE YOUR STORY.
+          </h1>
+          <button className="mt-8 bg-[#5c3c21] text-white px-8 py-3 rounded-full font-bold uppercase tracking-widest text-sm hover:scale-105 transition-transform shadow-xl cursor-pointer">
+            Shop Notebooks
+          </button>
+        </div>
+        <div className="hidden md:flex relative z-10 w-1/2 h-full items-center justify-center">
+          <img 
+            src="https://images.unsplash.com/photo-1507842217343-583f7270bfbb?auto=format&fit=crop&q=80&w=400&h=500" 
+            alt="Hardcover notebook" 
+            className="absolute left-10 w-48 h-64 object-cover rounded-3xl shadow-2xl transform -rotate-12 border-4 border-white" 
+          />
+          <img 
+            src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&q=80&w=400&h=500" 
+            alt="Bullet journal setup" 
+            className="absolute right-10 w-52 h-72 object-cover rounded-3xl shadow-2xl transform rotate-6 border-8 border-white z-10" 
+          />
+        </div>
+      </>
+    )
   },
   {
     id: 2,
-    bg: "bg-[#f9ede1]",
-    title: "Markers and highlighters",
-    subtitle: "Bold color for clear notes!",
-    titleColor: "text-[#ff6b4a]",
-    textColor: "text-[#1a1a1a]",
-    image:
-      "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&q=80&w=400&h=500",
+    bg: "bg-gradient-to-r from-[#7d8a7e] via-[#9bb1a1] to-[#cbd7c9]",
+    content: (
+      <>
+        <div className="z-10 max-w-lg">
+          <span className="text-sm font-bold text-white tracking-widest uppercase">ART SUPPLIES & MARKERS</span>
+          <h1 className="text-5xl sm:text-6xl md:text-7xl font-black text-white leading-none tracking-tighter mt-2">
+            BOLD COLORS,<br />SHARP NOTES
+          </h1>
+          <p className="mt-4 text-xl text-slate-100 font-light">Fine pens, permanent markers, and watercolor paint sets.</p>
+          <button className="mt-8 bg-white text-[#556b2f] px-8 py-3 rounded-xl font-bold uppercase tracking-widest text-sm hover:bg-slate-50 transition-colors shadow-lg cursor-pointer">
+            Shop Pens & Art Kits
+          </button>
+        </div>
+        <div className="hidden md:flex relative z-10 w-1/2 h-full items-center justify-center">
+          <img 
+            src="https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&q=80&w=500&h=500" 
+            alt="Coloring pencils and highlighters" 
+            className="w-80 h-80 object-cover rounded-3xl shadow-2xl transform rotate-3" 
+          />
+        </div>
+      </>
+    )
   },
   {
     id: 3,
-    bg: "bg-[#7d8a7e]",
-    title: "ALL YOUR OFFICE ESSENTIALS",
-    subtitle: "in-one-place",
-    titleColor: "text-white",
-    textColor: "text-white",
-    image:
-      "https://images.unsplash.com/photo-1612548403641-d8c50ba89177?auto=format&fit=crop&q=80&w=400&h=500",
-  },
+    bg: "bg-gradient-to-r from-[#8b2e2e] via-[#6d1a1a] to-[#2b0c0c]",
+    content: (
+      <>
+        <div className="z-10 max-w-lg flex flex-col justify-center items-start">
+          <span className="text-sm font-bold text-red-300 tracking-widest uppercase">MUST-READ LITERATURE</span>
+          <h1 className="text-5xl sm:text-6xl md:text-7xl font-black text-white leading-none tracking-tighter mt-2">
+            COZY READS &<br />FICTION BUNDLES
+          </h1>
+          <button className="mt-8 bg-white text-[#6d1a1a] px-8 py-3 rounded-full font-bold uppercase tracking-widest text-sm hover:bg-red-50 transition-colors shadow-xl cursor-pointer">
+            Explore Books & Novels
+          </button>
+        </div>
+        <div className="hidden md:flex relative z-10 w-1/2 h-full items-center justify-between">
+          <img 
+            src="https://images.unsplash.com/photo-1495446815901-a7297e3ffe02?auto=format&fit=crop&q=80&w=500&h=500" 
+            alt="Bestselling books collection" 
+            className="w-80 h-80 object-cover rounded-full shadow-2xl border-8 border-white" 
+          />
+        </div>
+      </>
+    )
+  }
 ];
 
 const StationaryBooksCarousel = () => {
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [isAutoPlay, setIsAutoPlay] = useState(true);
+  const [current, setCurrent] = useState(0);
 
   useEffect(() => {
-    if (!isAutoPlay) return;
-
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    const timer = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % slides.length);
     }, 5000);
+    return () => clearInterval(timer);
+  }, []);
 
-    return () => clearInterval(interval);
-  }, [isAutoPlay]);
-
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % slides.length);
-    setIsAutoPlay(false);
-  };
-
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
-    setIsAutoPlay(false);
-  };
-
-  const goToSlide = (index) => {
-    setCurrentSlide(index);
-    setIsAutoPlay(false);
-  };
-
-  const currentSlideData = slides[currentSlide];
+  const next = () => setCurrent((prev) => (prev + 1) % slides.length);
+  const prev = () => setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
 
   return (
-    <div className="mx-auto max-w-md">
-      {/* Main Carousel Container - Vertical/Tall */}
-      <div className="relative w-full h-[600px] overflow-hidden rounded-2xl shadow-xl">
-        {/* Slides */}
-        {slides.map((slide, index) => (
-          <div
-            key={slide.id}
-            className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
-              index === currentSlide ? "opacity-100" : "opacity-0"
-            }`}
-          >
-            <div
-              className={`${slide.bg} w-full h-full flex flex-col items-center justify-between p-6`}
-            >
-              {/* Text Content */}
-              <div className="flex flex-col items-center justify-center flex-1 text-center pt-4">
-                <h1
-                  className={`text-2xl sm:text-3xl font-black leading-tight tracking-tight mb-2 ${slide.titleColor}`}
-                >
-                  {slide.title}
-                </h1>
-                <p
-                  className={`text-base sm:text-lg font-semibold ${slide.textColor}`}
-                >
-                  {slide.subtitle}
-                </p>
-              </div>
-
-              {/* Image */}
-              <div className="w-full flex justify-center mb-4">
-                <img
-                  src={slide.image}
-                  alt={slide.title}
-                  className="w-40 h-48 object-cover rounded-xl shadow-lg"
-                />
-              </div>
-
-              {/* Button */}
-              <button
-                className={`px-6 py-2 font-bold uppercase tracking-widest text-sm rounded hover:opacity-90 transition-opacity shadow-md ${
-                  index === 2
-                    ? "bg-white text-[#1a1a1a]"
-                    : "bg-[#1a1a1a] text-white"
-                }`}
-              >
-                Shop Now
-              </button>
-            </div>
+    <div className="relative w-full overflow-hidden h-64 sm:h-80 md:h-[450px]">
+      {slides.map((slide, index) => (
+        <div
+          key={slide.id}
+          className={`absolute inset-0 transition-opacity duration-1000 ${
+            index === current ? "opacity-100 z-20" : "opacity-0 z-0"
+          } ${slide.bg}`}
+        >
+          <div className="relative h-full mx-auto max-w-7xl px-4 sm:px-6 lg:px-10 flex items-center justify-between">
+            {slide.content}
           </div>
-        ))}
-
-        {/* Navigation Arrows */}
-        <button
-          onClick={prevSlide}
-          onMouseEnter={() => setIsAutoPlay(false)}
-          onMouseLeave={() => setIsAutoPlay(true)}
-          className="absolute left-3 top-1/2 transform -translate-y-1/2 z-10 bg-white/80 hover:bg-white text-[#1a1a1a] p-2 rounded-full shadow-lg transition-all"
-          aria-label="Previous slide"
-        >
-          <ChevronLeft size={20} />
-        </button>
-
-        <button
-          onClick={nextSlide}
-          onMouseEnter={() => setIsAutoPlay(false)}
-          onMouseLeave={() => setIsAutoPlay(true)}
-          className="absolute right-3 top-1/2 transform -translate-y-1/2 z-10 bg-white/80 hover:bg-white text-[#1a1a1a] p-2 rounded-full shadow-lg transition-all"
-          aria-label="Next slide"
-        >
-          <ChevronRight size={20} />
-        </button>
-
-        {/* Dots */}
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-10 flex gap-2">
-          {slides.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => goToSlide(index)}
-              className={`w-2 h-2 rounded-full transition-all ${
-                index === currentSlide
-                  ? "bg-white w-6"
-                  : "bg-white/50 hover:bg-white/75"
-              }`}
-              aria-label={`Go to slide ${index + 1}`}
-            />
-          ))}
         </div>
+      ))}
+
+      <button 
+        onClick={prev}
+        className="absolute left-4 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full bg-black/20 hover:bg-black/40 flex items-center justify-center backdrop-blur-sm transition-colors text-white cursor-pointer"
+      >
+        <ChevronLeft size={24} />
+      </button>
+      <button 
+        onClick={next}
+        className="absolute right-4 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full bg-black/20 hover:bg-black/40 flex items-center justify-center backdrop-blur-sm transition-colors text-white cursor-pointer"
+      >
+        <ChevronRight size={24} />
+      </button>
+
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 flex gap-2">
+        {slides.map((_, idx) => (
+          <button
+            key={idx}
+            onClick={() => setCurrent(idx)}
+            className={`w-3 h-3 rounded-full transition-colors cursor-pointer ${
+              idx === current ? "bg-white" : "bg-white/40"
+            }`}
+          />
+        ))}
       </div>
     </div>
   );

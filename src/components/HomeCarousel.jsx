@@ -4,27 +4,27 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 const slides = [
   {
     id: 1,
-    bg: "bg-gradient-to-r from-[#1b4332] via-[#2d6a4f] to-[#40916c]",
+    bg: "bg-gradient-to-r from-[#e8dfd8] via-[#dfd3c9] to-[#cebea9]",
     content: (
       <>
         <div className="z-10 max-w-lg">
-          <span className="text-sm font-bold text-[#d8f3dc] tracking-widest uppercase">ORGANIC & FRESH</span>
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-white leading-tight tracking-tight mt-2">
-            FROM FARM TO<br />YOUR FAMILY'S<br />TABLE
+          <span className="text-sm font-bold text-[#6e5843] tracking-widest uppercase">INTERIOR DESIGN</span>
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-[#3b2d20] leading-tight tracking-tight mt-2">
+            COMFORT &<br />HARMONY FOR<br />YOUR SPACE
           </h1>
-          <button className="mt-8 bg-[#d8f3dc] text-[#1b4332] px-8 py-3 rounded-full font-bold uppercase tracking-widest text-sm hover:scale-105 transition-transform shadow-xl cursor-pointer">
-            Shop Fresh Produce
+          <button className="mt-8 bg-[#3b2d20] text-white px-8 py-3 rounded-full font-bold uppercase tracking-widest text-sm hover:scale-105 transition-transform shadow-xl cursor-pointer">
+            Shop Living Room
           </button>
         </div>
         <div className="hidden md:flex relative z-10 w-1/2 h-full items-center justify-center">
           <img 
-            src="https://images.unsplash.com/photo-1543168256-418811576931?auto=format&fit=crop&q=80&w=400&h=500" 
-            alt="Organic grains" 
+            src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&q=80&w=400&h=500" 
+            alt="Living room sofa" 
             className="absolute left-10 w-48 h-64 object-cover rounded-3xl shadow-2xl transform -rotate-12 border-4 border-white" 
           />
           <img 
-            src="https://images.unsplash.com/photo-1553787434-dd5e2cd0e110?auto=format&fit=crop&q=80&w=400&h=500" 
-            alt="Olive oil bottle" 
+            src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&q=80&w=400&h=500" 
+            alt="Wooden side table" 
             className="absolute right-10 w-52 h-72 object-cover rounded-3xl shadow-2xl transform rotate-6 border-8 border-white z-10" 
           />
         </div>
@@ -33,23 +33,23 @@ const slides = [
   },
   {
     id: 2,
-    bg: "bg-gradient-to-r from-[#d97706] via-[#f59e0b] to-[#b45309]",
+    bg: "bg-gradient-to-r from-[#2d3748] via-[#4a5568] to-[#1a202c]",
     content: (
       <>
         <div className="z-10 max-w-lg">
-          <span className="text-sm font-bold text-amber-100 tracking-widest uppercase">PANTRY STAPLES & BEVERAGES</span>
+          <span className="text-sm font-bold text-[#a0aec0] tracking-widest uppercase">SMART LIVING</span>
           <h1 className="text-5xl sm:text-6xl md:text-7xl font-black text-white leading-none tracking-tighter mt-2">
-            MORNING<br />REFRESHMENTS
+            INTELLIGENT<br />APPLIANCES
           </h1>
-          <p className="mt-4 text-xl text-amber-100 font-light">Fine coffee, green tea, and 100% pure organic juices.</p>
-          <button className="mt-8 bg-white text-amber-900 px-8 py-3 rounded-xl font-bold uppercase tracking-widest text-sm hover:bg-amber-50 transition-colors shadow-lg cursor-pointer">
-            Explore Beverages
+          <p className="mt-4 text-xl text-gray-300 font-light">Engineered for clean, automated homes.</p>
+          <button className="mt-8 bg-white text-gray-900 px-8 py-3 rounded-xl font-bold uppercase tracking-widest text-sm hover:bg-gray-100 transition-colors shadow-lg cursor-pointer">
+            Shop Smart Appliances
           </button>
         </div>
         <div className="hidden md:flex relative z-10 w-1/2 h-full items-center justify-center">
           <img 
-            src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&q=80&w=500&h=500" 
-            alt="Cold brew coffee bottle" 
+            src="https://images.unsplash.com/photo-1558618666-fcd25c85f82e?auto=format&fit=crop&q=80&w=500&h=500" 
+            alt="Smart robot vacuum" 
             className="w-80 h-80 object-cover rounded-3xl shadow-2xl transform rotate-3" 
           />
         </div>
@@ -58,22 +58,22 @@ const slides = [
   },
   {
     id: 3,
-    bg: "bg-gradient-to-r from-[#e2e8f0] to-[#cbd5e1]",
+    bg: "bg-gradient-to-r from-[#eed8ce] via-[#e2c1b2] to-[#ce9b84]",
     content: (
       <>
         <div className="z-10 max-w-lg flex flex-col justify-center items-start">
-          <span className="text-sm font-bold text-slate-600 tracking-widest uppercase">CRUNCHY & SWEET</span>
-          <h1 className="text-5xl sm:text-6xl md:text-7xl font-black text-slate-900 leading-none tracking-tighter mt-2">
-            DELICIOUS<br />HEALTHY SNACKS
+          <span className="text-sm font-bold text-[#8c5740] tracking-widest uppercase">KITCHEN ESSENTIALS</span>
+          <h1 className="text-5xl sm:text-6xl md:text-7xl font-black text-[#5c311c] leading-none tracking-tighter mt-2">
+            THE HEART OF<br />YOUR KITCHEN
           </h1>
-          <button className="mt-8 bg-slate-900 text-white px-8 py-3 rounded-full font-bold uppercase tracking-widest text-sm hover:bg-slate-800 transition-colors shadow-xl cursor-pointer">
-            Shop Premium Snacks
+          <button className="mt-8 bg-[#5c311c] text-white px-8 py-3 rounded-full font-bold uppercase tracking-widest text-sm hover:bg-[#442110] transition-colors shadow-xl cursor-pointer">
+            Shop Cookware & Blenders
           </button>
         </div>
         <div className="hidden md:flex relative z-10 w-1/2 h-full items-center justify-center">
           <img 
-            src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&q=80&w=500&h=500" 
-            alt="Snack nuts" 
+            src="https://images.unsplash.com/photo-1517668808822-9ebb02f2a0e6?auto=format&fit=crop&q=80&w=500&h=500" 
+            alt="Espresso maker" 
             className="w-80 h-80 object-cover rounded-full shadow-2xl border-8 border-white" 
           />
         </div>
@@ -82,7 +82,7 @@ const slides = [
   }
 ];
 
-const GroceryCarousel = () => {
+const HomeCarousel = () => {
   const [current, setCurrent] = useState(0);
 
   useEffect(() => {
@@ -138,4 +138,4 @@ const GroceryCarousel = () => {
   );
 };
 
-export default GroceryCarousel;
+export default HomeCarousel;

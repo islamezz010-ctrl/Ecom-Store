@@ -2,254 +2,138 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import SubcategoryGrid from "../components/SubcategoryGrid";
 import ProductSlider from "../components/ProductSlider";
-import CategoryCarousel from "../components/CategoryCarousel";
+import ElectronicsCarousel from "../components/ElectronicsCarousel";
+import FashionCarousel from "../components/FashionCarousel";
+import BeautyCarousel from "../components/BeautyCarousel";
+import HomeCarousel from "../components/HomeCarousel";
+import BabyCarousel from "../components/BabyCarousel";
+import ToysCarousel from "../components/ToysCarousel";
+import SportsCarousel from "../components/SportsCarousel";
+import GroceryCarousel from "../components/GroceryCarousel";
 import StationaryBooksCarousel from "../components/StationaryBooksCarousel";
 import ProductCard from "../components/ProductCard";
 
-// Mock products for Stationary & Books
-const stationaryBooksProducts = [
-  {
-    id: 1,
-    name: "Premium Hardcover Notebook",
-    price: 12.99,
-    image:
-      "https://images.unsplash.com/photo-1507842217343-583f7270bfbb?auto=format&fit=crop&q=80&w=400&h=400",
-    category: "Notebooks",
-  },
-  {
-    id: 2,
-    name: "Ruled Spiral Notebook",
-    price: 8.99,
-    image:
-      "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&q=80&w=400&h=400",
-    category: "Notebooks",
-  },
-  {
-    id: 3,
-    name: "Bullet Journal Set",
-    price: 15.99,
-    image:
-      "https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&q=80&w=400&h=400",
-    category: "Notebooks",
-  },
-  {
-    id: 4,
-    name: "Professional Highlighter Set (12-pack)",
-    price: 9.99,
-    image:
-      "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&q=80&w=400&h=400",
-    category: "Markers & Highlighters",
-  },
-  {
-    id: 5,
-    name: "Premium Gel Pen Set",
-    price: 11.99,
-    image:
-      "https://images.unsplash.com/photo-1604870945410-e4f36441ebb8?auto=format&fit=crop&q=80&w=400&h=400",
-    category: "Pens",
-  },
-  {
-    id: 6,
-    name: "Permanent Markers Collection",
-    price: 7.99,
-    image:
-      "https://images.unsplash.com/photo-1557821552-17105176677c?auto=format&fit=crop&q=80&w=400&h=400",
-    category: "Markers & Highlighters",
-  },
-  {
-    id: 7,
-    name: "Stainless Steel Desk Lamp",
-    price: 34.99,
-    image:
-      "https://images.unsplash.com/photo-1565636192335-14c46fa1120d?auto=format&fit=crop&q=80&w=400&h=400",
-    category: "Office Essentials",
-  },
-  {
-    id: 8,
-    name: "Desk Organizer Set",
-    price: 19.99,
-    image:
-      "https://images.unsplash.com/photo-1612548403641-d8c50ba89177?auto=format&fit=crop&q=80&w=400&h=400",
-    category: "Office Essentials",
-  },
-  {
-    id: 9,
-    name: "Coloring Pencils (48-pack)",
-    price: 13.99,
-    image:
-      "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&q=80&w=400&h=400",
-    category: "Art Supplies",
-  },
-  {
-    id: 10,
-    name: "Watercolor Paint Set",
-    price: 22.99,
-    image:
-      "https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&q=80&w=400&h=400",
-    category: "Art Supplies",
-  },
-  {
-    id: 11,
-    name: "Sketch Pad (200 sheets)",
-    price: 16.99,
-    image:
-      "https://images.unsplash.com/photo-1507842217343-583f7270bfbb?auto=format&fit=crop&q=80&w=400&h=400",
-    category: "Art Supplies",
-  },
-  {
-    id: 12,
-    name: "Fiction Novel Bundle (3 books)",
-    price: 29.99,
-    image:
-      "https://images.unsplash.com/photo-1495446815901-a7297e3ffe02?auto=format&fit=crop&q=80&w=400&h=400",
-    category: "Books",
-  },
-];
+// Import all mock data
+import {
+  fashionTabs,
+  fashionMensClothing,
+  fashionWomensClothing,
+  fashionShoes,
+  fashionAccessories,
+  fashionSubcategories,
+  beautyTabs,
+  beautySkincare,
+  beautyFragrances,
+  beautyMakeup,
+  beautyHaircare,
+  beautySubcategories,
+  homeTabs,
+  homeKitchen,
+  homeLivingRoom,
+  homeBedroom,
+  homeAppliances,
+  homeSubcategories,
+  babyTabs,
+  babyEssentials,
+  babyClothing,
+  babyGear,
+  babyFeeding,
+  babySubcategories,
+  toysTabs,
+  toysAction,
+  toysBoard,
+  toysEducational,
+  toysOutdoor,
+  toysSubcategories,
+  sportsTabs,
+  sportsFitness,
+  sportsTeam,
+  sportsOutdoor,
+  sportsCycling,
+  sportsSubcategories,
+  groceryGrains,
+  groceryBeverages,
+  grocerySnacks,
+  groceryFresh,
+  stationaryBooksProducts,
+  electronicsSpeakers,
+  electronicsTelevisions,
+  electronicsSmartwatches,
+  electronicsTablets,
+} from "../data/products";
 
-// Mock products for Electronics
-const electronicsSpeakers = [
-  {
-    id: 101,
-    name: "soundcore Select 4",
-    price: 34.99,
-    image:
-      "https://images.unsplash.com/photo-1600180758890-9c2f3c0b3b1b?auto=format&fit=crop&q=80&w=400&h=400",
-  },
-  {
-    id: 102,
-    name: "Clip 5 Ultra",
-    price: 29.99,
-    image:
-      "https://images.unsplash.com/photo-1595986813912-d4f1b1e8f1c0?auto=format&fit=crop&q=80&w=400&h=400",
-  },
-  {
-    id: 103,
-    name: "Pyro Mini",
-    price: 39.99,
-    image:
-      "https://images.unsplash.com/photo-1526178614259-2c5a2b1f9191?auto=format&fit=crop&q=80&w=400&h=400",
-  },
-  {
-    id: 104,
-    name: "SpaceBox",
-    price: 49.99,
-    image:
-      "https://images.unsplash.com/photo-1617191515702-4a0f9a3c1a1e?auto=format&fit=crop&q=80&w=400&h=400",
-  },
-  {
-    id: 105,
-    name: "X Series",
-    price: 59.99,
-    image:
-      "https://images.unsplash.com/photo-1606813904660-45b6d0f3f9b0?auto=format&fit=crop&q=80&w=400&h=400",
-  },
-];
+// Inline reusable components
+const CategorySubNav = ({ tabs, activeTab, setActiveTab }) => (
+  <div className="bg-white border-b border-[#e5e1e9]">
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-10">
+      <div className="flex items-center gap-2 overflow-x-auto py-4 hide-scrollbar">
+        {tabs.map((tab, i) => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab && setActiveTab(i)}
+            className={`whitespace-nowrap px-6 py-2.5 rounded-lg text-sm font-bold transition-colors cursor-pointer ${
+              activeTab === i || (activeTab === undefined && i === 0)
+                ? "bg-[#e5e8f0] text-[#1a146b] border border-[#d0d3db]"
+                : "bg-[#f6f2fa] text-[#474651] border border-transparent hover:bg-[#e5e8f0]"
+            }`}
+          >
+            {tab}
+          </button>
+        ))}
+      </div>
+    </div>
+  </div>
+);
 
-const electronicsTelevisions = [
-  {
-    id: 201,
-    name: "LG UHD TV",
-    price: 399.99,
-    image:
-      "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&q=80&w=400&h=400",
-  },
-  {
-    id: 202,
-    name: "LG Nano Cell TVs",
-    price: 499.99,
-    image:
-      "https://images.unsplash.com/photo-1585386959984-a41552281b3d?auto=format&fit=crop&q=80&w=400&h=400",
-  },
-  {
-    id: 203,
-    name: "LG QNED TVs",
-    price: 599.99,
-    image:
-      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&q=80&w=400&h=400",
-  },
-  {
-    id: 204,
-    name: "LG OLED TVs",
-    price: 899.99,
-    image:
-      "https://images.unsplash.com/photo-1586201375761-83865001e9a0?auto=format&fit=crop&q=80&w=400&h=400",
-  },
-];
+const CategorySubcategoryGrid = ({ subcategories }) => (
+  <div className="bg-gradient-to-r from-[#e3eef8] via-[#f7e3e7] to-[#fae5e6]">
+    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-10">
+      <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-12 gap-y-10 gap-x-2">
+        {subcategories.map((sub, i) => (
+          <div
+            key={i}
+            className="flex flex-col items-center gap-3 cursor-pointer group"
+          >
+            <div className="w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center transition-transform group-hover:-translate-y-2 rounded-full overflow-hidden bg-white shadow-sm border border-white/40 p-2">
+              <img
+                src={sub.img}
+                alt={sub.name}
+                className="w-full h-full object-cover rounded-full"
+              />
+            </div>
+            <span className="text-xs font-bold text-center text-gray-800 leading-tight">
+              {sub.name}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+);
 
-const electronicsSmartwatches = [
-  {
-    id: 301,
-    name: "Oraimo Watch 6",
-    price: 49.99,
-    image:
-      "https://images.unsplash.com/photo-1541534401786-27bd39d3dff2?auto=format&fit=crop&q=80&w=400&h=400",
-  },
-  {
-    id: 302,
-    name: "Redmi Watch 5",
-    price: 39.99,
-    image:
-      "https://images.unsplash.com/photo-1593566705108-4f59fa4b389f?auto=format&fit=crop&q=80&w=400&h=400",
-  },
-  {
-    id: 303,
-    name: "Infinix XW1 Watch",
-    price: 44.99,
-    image:
-      "https://images.unsplash.com/photo-1603791440384-56cd371ee9a7?auto=format&fit=crop&q=80&w=400&h=400",
-  },
-  {
-    id: 304,
-    name: "HONOR Magic Watch 2",
-    price: 129.99,
-    image:
-      "https://images.unsplash.com/photo-1519744792095-2f2205e87b6f?auto=format&fit=crop&q=80&w=400&h=400",
-  },
-];
-
-const electronicsTablets = [
-  {
-    id: 401,
-    name: "iPad Air",
-    price: 599.99,
-    image:
-      "https://images.unsplash.com/photo-1580910051073-0c9a9a3b4850?auto=format&fit=crop&q=80&w=400&h=400",
-  },
-  {
-    id: 402,
-    name: "HONOR PAD X8a",
-    price: 229.99,
-    image:
-      "https://images.unsplash.com/photo-1629784151993-fbbd0d2b5b2d?auto=format&fit=crop&q=80&w=400&h=400",
-  },
-  {
-    id: 403,
-    name: "Redmi Pad SE",
-    price: 199.99,
-    image:
-      "https://images.unsplash.com/photo-1612831819738-2d1a5c0f3f7c?auto=format&fit=crop&q=80&w=400&h=400",
-  },
-  {
-    id: 404,
-    name: "Samsung Galaxy Tab A9",
-    price: 299.99,
-    image:
-      "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&q=80&w=400&h=400",
-  },
-  {
-    id: 405,
-    name: "iPad Pro",
-    price: 999.99,
-    image:
-      "https://images.unsplash.com/photo-1580910051073-0c9a9a3b4850?auto=format&fit=crop&q=80&w=400&h=400",
-  },
-];
+const CategoryProductSections = ({ sections }) => (
+  <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-10">
+    {sections.map((section) => (
+      <div key={section.title} className="mb-8">
+        <h3 className="mb-4 text-sm font-semibold text-[#1b1b21]">
+          {section.title}
+        </h3>
+        <div className="flex gap-4 overflow-x-auto hide-scrollbar py-2">
+          {section.items.map((prod) => (
+            <div key={prod.id} className="w-64 flex-shrink-0">
+              <ProductCard product={prod} />
+            </div>
+          ))}
+        </div>
+      </div>
+    ))}
+  </section>
+);
 
 const CategoryPage = () => {
   const { id } = useParams();
   const [activeTab, setActiveTab] = useState(0);
 
-  // Create a nice display title from the URL id (e.g., "electronics" -> "Electronics")
   const displayTitle = id
     ? id
         .split("-")
@@ -259,86 +143,122 @@ const CategoryPage = () => {
 
   return (
     <div className="bg-[#fcf8ff]">
-      {/* Category Sub-nav for Electronics */}
+      {/* Category Sub-navs */}
       {id === "electronics" && (
-        <div className="bg-white border-b border-[#e5e1e9]">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-10">
-            <div className="flex items-center gap-2 overflow-x-auto py-4 hide-scrollbar">
-              {[
-                "Electronics",
-                "Mobiles",
-                "Headsets",
-                "Wearables",
-                "Accessories",
-                "Laptops",
-                "Laptop Accessories",
-                "Gaming",
-                "TVs",
-                "Cameras",
-                "Appliances",
-              ].map((tab, i) => (
-                <button
-                  key={tab}
-                  className={`whitespace-nowrap px-6 py-2.5 rounded-lg text-sm font-bold transition-colors cursor-pointer ${
-                    i === 0
-                      ? "bg-[#e5e8f0] text-[#1a146b] border border-[#d0d3db]"
-                      : "bg-[#f6f2fa] text-[#474651] border border-transparent hover:bg-[#e5e8f0]"
-                  }`}
-                >
-                  {tab}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
+        <CategorySubNav
+          tabs={[
+            "Electronics",
+            "Mobiles",
+            "Headsets",
+            "Wearables",
+            "Accessories",
+            "Laptops",
+            "Laptop Accessories",
+            "Gaming",
+            "TVs",
+            "Cameras",
+            "Appliances",
+          ]}
+        />
       )}
-
-      {/* Category Sub-nav for Grocery */}
       {id === "grocery" && (
-        <div className="bg-white border-b border-[#e5e1e9]">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-10">
-            <div className="flex items-center gap-2 overflow-x-auto py-4 hide-scrollbar">
-              {[
-                "All Groceries",
-                "Grains & Cereals",
-                "Spices & Seasonings",
-                "Oils & Condiments",
-                "Healthy Foods",
-                "Beverages",
-                "Baking Essentials",
-                "Organic Products",
-              ].map((tab, i) => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(i)}
-                  className={`whitespace-nowrap px-6 py-2.5 rounded-lg text-sm font-bold transition-colors cursor-pointer ${
-                    i === activeTab
-                      ? "bg-[#e5e8f0] text-[#1a146b] border border-[#d0d3db]"
-                      : "bg-[#f6f2fa] text-[#474651] border border-transparent hover:bg-[#e5e8f0]"
-                  }`}
-                >
-                  {tab}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
+        <CategorySubNav
+          tabs={[
+            "All Groceries",
+            "Grains & Cereals",
+            "Spices & Seasonings",
+            "Oils & Condiments",
+            "Healthy Foods",
+            "Beverages",
+            "Baking Essentials",
+            "Organic Products",
+          ]}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+        />
+      )}
+      {id === "fashion" && (
+        <CategorySubNav
+          tabs={fashionTabs}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+        />
+      )}
+      {id === "beauty-fragrance" && (
+        <CategorySubNav
+          tabs={beautyTabs}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+        />
+      )}
+      {id === "home-appliances" && (
+        <CategorySubNav
+          tabs={homeTabs}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+        />
+      )}
+      {id === "baby" && (
+        <CategorySubNav
+          tabs={babyTabs}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+        />
+      )}
+      {id === "toys-games" && (
+        <CategorySubNav
+          tabs={toysTabs}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+        />
+      )}
+      {id === "sports-outdoors" && (
+        <CategorySubNav
+          tabs={sportsTabs}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+        />
       )}
 
       {/* Hero Carousel Area */}
-      {id !== "stationary-books" && <CategoryCarousel />}
+      {id === "electronics" && <ElectronicsCarousel />}
+      {id === "fashion" && <FashionCarousel />}
+      {id === "beauty-fragrance" && <BeautyCarousel />}
+      {id === "home-appliances" && <HomeCarousel />}
+      {id === "baby" && <BabyCarousel />}
+      {id === "toys-games" && <ToysCarousel />}
+      {id === "sports-outdoors" && <SportsCarousel />}
+      {id === "grocery" && <GroceryCarousel />}
 
-      {/* Stationary Books Carousel - Only for stationary-books category */}
+      {/* Stationary Books Carousel */}
       {id === "stationary-books" && (
         <div className="flex justify-center py-12 bg-white">
           <StationaryBooksCarousel />
         </div>
       )}
 
-      {/* Subcategory Icon Grid - Only for non-grocery categories */}
-      {id !== "grocery" && id !== "stationary-books" && <SubcategoryGrid />}
+      {/* Subcategory Grids */}
+      {id === "electronics" && <SubcategoryGrid />}
+      {id === "fashion" && (
+        <CategorySubcategoryGrid subcategories={fashionSubcategories} />
+      )}
+      {id === "beauty-fragrance" && (
+        <CategorySubcategoryGrid subcategories={beautySubcategories} />
+      )}
+      {id === "home-appliances" && (
+        <CategorySubcategoryGrid subcategories={homeSubcategories} />
+      )}
+      {id === "baby" && (
+        <CategorySubcategoryGrid subcategories={babySubcategories} />
+      )}
+      {id === "toys-games" && (
+        <CategorySubcategoryGrid subcategories={toysSubcategories} />
+      )}
+      {id === "sports-outdoors" && (
+        <CategorySubcategoryGrid subcategories={sportsSubcategories} />
+      )}
 
-      {/* Product Sliders based on category */}
+      {/* Product Sections */}
       {id === "stationary-books" ? (
         <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-10">
           <div className="mb-10">
@@ -350,7 +270,6 @@ const CategoryPage = () => {
               office essentials, and books
             </p>
           </div>
-
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {stationaryBooksProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
@@ -358,18 +277,8 @@ const CategoryPage = () => {
           </div>
         </section>
       ) : id === "electronics" ? (
-        <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-10">
-          <div className="mb-8">
-            <h2 className="brand-heading text-3xl font-semibold text-[#1b1b21] mb-2">
-              Electronics
-            </h2>
-            <p className="text-gray-600">
-              Top trending picks across speakers, TVs, smartwatches, and
-              tablets.
-            </p>
-          </div>
-
-          {[
+        <CategoryProductSections
+          sections={[
             { title: "Speakers | Top & Trending", items: electronicsSpeakers },
             {
               title: "Televisions | Top & Trending",
@@ -380,35 +289,84 @@ const CategoryPage = () => {
               items: electronicsSmartwatches,
             },
             { title: "Tablets | Top & Trending", items: electronicsTablets },
-          ].map((section) => (
-            <div key={section.title} className="mb-8">
-              <h3 className="mb-4 text-sm font-semibold text-[#1b1b21]">
-                {section.title}
-              </h3>
-              <div className="flex gap-4 overflow-x-auto hide-scrollbar py-2">
-                {section.items.map((prod) => (
-                  <div key={prod.id} className="w-44 flex-shrink-0">
-                    <ProductCard product={prod} />
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </section>
+          ]}
+        />
+      ) : id === "fashion" ? (
+        <CategoryProductSections
+          sections={[
+            { title: "Men's Clothing | Top Picks", items: fashionMensClothing },
+            {
+              title: "Women's Collection | Trending",
+              items: fashionWomensClothing,
+            },
+            { title: "Shoes | Best Sellers", items: fashionShoes },
+            { title: "Accessories | Must-Haves", items: fashionAccessories },
+          ]}
+        />
+      ) : id === "beauty-fragrance" ? (
+        <CategoryProductSections
+          sections={[
+            { title: "Skincare | Best Sellers", items: beautySkincare },
+            { title: "Fragrances | Premium", items: beautyFragrances },
+            { title: "Makeup | Trending", items: beautyMakeup },
+            { title: "Haircare | Top Rated", items: beautyHaircare },
+          ]}
+        />
+      ) : id === "home-appliances" ? (
+        <CategoryProductSections
+          sections={[
+            { title: "Kitchen | Must-Haves", items: homeKitchen },
+            { title: "Living Room | Trending", items: homeLivingRoom },
+            { title: "Bedroom | Comfort", items: homeBedroom },
+            { title: "Appliances | Smart Living", items: homeAppliances },
+          ]}
+        />
+      ) : id === "baby" ? (
+        <CategoryProductSections
+          sections={[
+            { title: "Essentials | Top Picks", items: babyEssentials },
+            { title: "Clothing | Adorable", items: babyClothing },
+            { title: "Gear | Must-Haves", items: babyGear },
+            { title: "Feeding | Best Sellers", items: babyFeeding },
+          ]}
+        />
+      ) : id === "toys-games" ? (
+        <CategoryProductSections
+          sections={[
+            { title: "Action & Building | Top Picks", items: toysAction },
+            { title: "Board Games | Family Fun", items: toysBoard },
+            { title: "Educational | STEM", items: toysEducational },
+            { title: "Outdoor | Adventure", items: toysOutdoor },
+          ]}
+        />
+      ) : id === "sports-outdoors" ? (
+        <CategoryProductSections
+          sections={[
+            { title: "Fitness | Top Equipment", items: sportsFitness },
+            { title: "Team Sports | Game On", items: sportsTeam },
+            { title: "Outdoor Adventure | Explore", items: sportsOutdoor },
+            { title: "Cycling | Gear Up", items: sportsCycling },
+          ]}
+        />
       ) : id === "grocery" ? (
-        <>
-          <ProductSlider title="All Groceries" category="Grocery" />
-          <ProductSlider title="Organic Products" category="Grocery" />
-          <ProductSlider title="Popular Choices" category="Grocery" />
-        </>
+        <CategoryProductSections
+          sections={[
+            {
+              title: "Grains & Cereals | Pantry Staples",
+              items: groceryGrains,
+            },
+            { title: "Beverages | Refreshing", items: groceryBeverages },
+            { title: "Snacks | Tasty", items: grocerySnacks },
+            { title: "Fresh & Organic", items: groceryFresh },
+          ]}
+        />
       ) : (
-        <>
-          <ProductSlider
-            title="Mobiles and Accessories"
-            category="smartphones"
-          />
-          <ProductSlider title="Top Rated Laptops" category="laptops" />
-        </>
+        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-10 text-center">
+          <h2 className="text-3xl font-bold mb-4">{displayTitle}</h2>
+          <p className="text-xl text-gray-500">
+            Products coming soon in this category!
+          </p>
+        </div>
       )}
 
       <style>{`

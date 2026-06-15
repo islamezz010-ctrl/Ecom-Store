@@ -4,27 +4,27 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 const slides = [
   {
     id: 1,
-    bg: "bg-gradient-to-r from-[#1b4332] via-[#2d6a4f] to-[#40916c]",
+    bg: "bg-gradient-to-r from-[#e7ede5] via-[#dbe4d8] to-[#c7d5c3]",
     content: (
       <>
         <div className="z-10 max-w-lg">
-          <span className="text-sm font-bold text-[#d8f3dc] tracking-widest uppercase">ORGANIC & FRESH</span>
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-white leading-tight tracking-tight mt-2">
-            FROM FARM TO<br />YOUR FAMILY'S<br />TABLE
+          <span className="text-sm font-bold text-[#4a5f43] tracking-widest uppercase">ORGANIC CARE</span>
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-[#222e1f] leading-tight tracking-tight mt-2">
+            PURE & RAW<br />SKIN THERAPY
           </h1>
-          <button className="mt-8 bg-[#d8f3dc] text-[#1b4332] px-8 py-3 rounded-full font-bold uppercase tracking-widest text-sm hover:scale-105 transition-transform shadow-xl cursor-pointer">
-            Shop Fresh Produce
+          <button className="mt-8 bg-[#4a5f43] text-white px-8 py-3 rounded-full font-bold uppercase tracking-widest text-sm hover:scale-105 transition-transform shadow-xl cursor-pointer">
+            Shop Skincare
           </button>
         </div>
         <div className="hidden md:flex relative z-10 w-1/2 h-full items-center justify-center">
           <img 
-            src="https://images.unsplash.com/photo-1543168256-418811576931?auto=format&fit=crop&q=80&w=400&h=500" 
-            alt="Organic grains" 
+            src="https://images.unsplash.com/photo-1556228578-8c89e6adf883?auto=format&fit=crop&q=80&w=400&h=500" 
+            alt="Natural lotion" 
             className="absolute left-10 w-48 h-64 object-cover rounded-3xl shadow-2xl transform -rotate-12 border-4 border-white" 
           />
           <img 
-            src="https://images.unsplash.com/photo-1553787434-dd5e2cd0e110?auto=format&fit=crop&q=80&w=400&h=500" 
-            alt="Olive oil bottle" 
+            src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&q=80&w=400&h=500" 
+            alt="Vitamin C Serum" 
             className="absolute right-10 w-52 h-72 object-cover rounded-3xl shadow-2xl transform rotate-6 border-8 border-white z-10" 
           />
         </div>
@@ -33,23 +33,23 @@ const slides = [
   },
   {
     id: 2,
-    bg: "bg-gradient-to-r from-[#d97706] via-[#f59e0b] to-[#b45309]",
+    bg: "bg-gradient-to-r from-[#fdfbf7] via-[#f8f3e5] to-[#ebdca9]",
     content: (
       <>
         <div className="z-10 max-w-lg">
-          <span className="text-sm font-bold text-amber-100 tracking-widest uppercase">PANTRY STAPLES & BEVERAGES</span>
-          <h1 className="text-5xl sm:text-6xl md:text-7xl font-black text-white leading-none tracking-tighter mt-2">
-            MORNING<br />REFRESHMENTS
+          <span className="text-sm font-bold text-[#8c6d12] tracking-widest uppercase">EXCLUSIVE SCENTS</span>
+          <h1 className="text-5xl sm:text-6xl md:text-7xl font-black text-gray-900 leading-none tracking-tighter mt-2">
+            SIGNATURE<br />SCENTS
           </h1>
-          <p className="mt-4 text-xl text-amber-100 font-light">Fine coffee, green tea, and 100% pure organic juices.</p>
-          <button className="mt-8 bg-white text-amber-900 px-8 py-3 rounded-xl font-bold uppercase tracking-widest text-sm hover:bg-amber-50 transition-colors shadow-lg cursor-pointer">
-            Explore Beverages
+          <p className="mt-4 text-xl text-gray-700 font-light">Bold expressions, quiet whispers.</p>
+          <button className="mt-8 bg-gray-900 text-white px-8 py-3 rounded-xl font-bold uppercase tracking-widest text-sm hover:bg-gray-800 transition-colors shadow-lg cursor-pointer">
+            Explore Fragrances
           </button>
         </div>
         <div className="hidden md:flex relative z-10 w-1/2 h-full items-center justify-center">
           <img 
-            src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&q=80&w=500&h=500" 
-            alt="Cold brew coffee bottle" 
+            src="https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&q=80&w=500&h=500" 
+            alt="Fragrance perfume" 
             className="w-80 h-80 object-cover rounded-3xl shadow-2xl transform rotate-3" 
           />
         </div>
@@ -58,22 +58,22 @@ const slides = [
   },
   {
     id: 3,
-    bg: "bg-gradient-to-r from-[#e2e8f0] to-[#cbd5e1]",
+    bg: "bg-gradient-to-r from-[#fce4ec] to-[#f8bbd0]",
     content: (
       <>
         <div className="z-10 max-w-lg flex flex-col justify-center items-start">
-          <span className="text-sm font-bold text-slate-600 tracking-widest uppercase">CRUNCHY & SWEET</span>
-          <h1 className="text-5xl sm:text-6xl md:text-7xl font-black text-slate-900 leading-none tracking-tighter mt-2">
-            DELICIOUS<br />HEALTHY SNACKS
+          <span className="text-sm font-bold text-[#c2185b] tracking-widest uppercase">PROFESSIONAL MAKEUP</span>
+          <h1 className="text-5xl sm:text-6xl md:text-7xl font-black text-[#880e4f] leading-none tracking-tighter mt-2">
+            DEFINE YOUR<br />GLOW
           </h1>
-          <button className="mt-8 bg-slate-900 text-white px-8 py-3 rounded-full font-bold uppercase tracking-widest text-sm hover:bg-slate-800 transition-colors shadow-xl cursor-pointer">
-            Shop Premium Snacks
+          <button className="mt-8 bg-[#880e4f] text-white px-8 py-3 rounded-full font-bold uppercase tracking-widest text-sm hover:bg-[#ad1457] transition-colors shadow-xl cursor-pointer">
+            Shop Makeup
           </button>
         </div>
         <div className="hidden md:flex relative z-10 w-1/2 h-full items-center justify-center">
           <img 
-            src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&q=80&w=500&h=500" 
-            alt="Snack nuts" 
+            src="https://images.unsplash.com/photo-1512496015851-a90fb38ba796?auto=format&fit=crop&q=80&w=500&h=500" 
+            alt="Makeup brushes and palettes" 
             className="w-80 h-80 object-cover rounded-full shadow-2xl border-8 border-white" 
           />
         </div>
@@ -82,7 +82,7 @@ const slides = [
   }
 ];
 
-const GroceryCarousel = () => {
+const BeautyCarousel = () => {
   const [current, setCurrent] = useState(0);
 
   useEffect(() => {
@@ -138,4 +138,4 @@ const GroceryCarousel = () => {
   );
 };
 
-export default GroceryCarousel;
+export default BeautyCarousel;
