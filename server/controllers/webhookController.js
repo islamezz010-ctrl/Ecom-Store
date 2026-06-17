@@ -2,6 +2,7 @@
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const Order = require("../models/Order");
 const Product = require("../models/Product");
+const { withTransaction } = require("../lib/transactionHelper");
 
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
@@ -25,7 +26,7 @@ exports.handleStripeWebhook = async (req, res) => {
   } else {
     // No secret configured — parse body directly (dev mode only)
     console.warn(
-      "⚠️  STRIPE_WEBHOOK_SECRET not set — skipping signature verification"
+      "⚠️  STRIPE_WEBHOOK_SECRET not set — skipping signature verification",
     );
     event = req.body;
   }
@@ -79,6 +80,7 @@ async function handleCheckoutCompleted(session) {
 
 // ──────────────────────────────────────────────
 // Handle expired checkout (release reserved stock)
+// Uses transaction: stock release + order status update must both succeed
 // ──────────────────────────────────────────────
 async function handleCheckoutExpired(session) {
   const order = await Order.findOne({ stripeSessionId: session.id });
@@ -87,17 +89,31 @@ async function handleCheckoutExpired(session) {
     return;
   }
 
-  // Release reserved stock
-  for (const item of order.items) {
-    await Product.findByIdAndUpdate(item.product, {
-      $inc: { stock: item.quantity },
+  try {
+    await withTransaction(async (session) => {
+      // Release reserved stock for all items
+      for (const item of order.items) {
+        await Product.findByIdAndUpdate(
+          item.product,
+          { $inc: { stock: item.quantity } },
+          { session },
+        );
+      }
+
+      // Update order status
+      order.status = "cancelled";
+      await order.save({ session });
     });
+
+    console.log(
+      `⏰ Order ${order._id} cancelled — stock released (session expired)`,
+    );
+  } catch (error) {
+    console.error(
+      `❌ Error cancelling order ${order._id} on session expiry:`,
+      error.message,
+    );
+    // If transaction fails, stock and order state remain consistent
+    // (either both succeed or both rollback)
   }
-
-  order.status = "cancelled";
-  await order.save();
-
-  console.log(
-    `⏰ Order ${order._id} cancelled — stock released (session expired)`
-  );
 }

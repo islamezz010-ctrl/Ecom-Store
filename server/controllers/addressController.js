@@ -1,5 +1,6 @@
 // server/controllers/addressController.js
 const Address = require("../models/Address");
+const { withTransaction } = require("../lib/transactionHelper");
 
 // ──────────────────────────────────────────────
 // GET /api/addresses
@@ -71,27 +72,45 @@ exports.updateAddress = async (req, res) => {
 
 // ──────────────────────────────────────────────
 // DELETE /api/addresses/:id
+// Uses transaction: delete + default reassignment must both succeed or both fail
 // ──────────────────────────────────────────────
 exports.deleteAddress = async (req, res) => {
-  const address = await Address.findOneAndDelete({
-    _id: req.params.id,
-    user: req.user._id,
-  });
+  try {
+    const result = await withTransaction(async (session) => {
+      const address = await Address.findOneAndDelete(
+        {
+          _id: req.params.id,
+          user: req.user._id,
+        },
+        { session },
+      );
 
-  if (!address) {
-    return res.status(404).json({ message: "Address not found" });
-  }
+      if (!address) {
+        throw new Error("Address not found");
+      }
 
-  // If the deleted address was default, make the most recent one default
-  if (address.isDefault) {
-    const next = await Address.findOne({ user: req.user._id }).sort({
-      updatedAt: -1,
+      // If the deleted address was default, make the most recent one default
+      if (address.isDefault) {
+        const next = await Address.findOne({ user: req.user._id })
+          .sort({
+            updatedAt: -1,
+          })
+          .session(session);
+
+        if (next) {
+          next.isDefault = true;
+          await next.save({ session });
+        }
+      }
+
+      return address;
     });
-    if (next) {
-      next.isDefault = true;
-      await next.save();
-    }
-  }
 
-  res.json({ message: "Address deleted" });
+    res.json({ message: "Address deleted" });
+  } catch (error) {
+    if (error.message === "Address not found") {
+      return res.status(404).json({ message: "Address not found" });
+    }
+    throw error;
+  }
 };
