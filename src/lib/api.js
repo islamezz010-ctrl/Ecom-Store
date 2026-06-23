@@ -3,14 +3,20 @@ const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 // Create a fetch-based API client
 export const API = {
   async get(endpoint, options = {}) {
-    const url = new URL(endpoint, BASE_URL);
+    // Ensure endpoint starts with /api
+    const fullEndpoint = endpoint.startsWith("/api")
+      ? endpoint
+      : `/api${endpoint}`;
+    const url = `${BASE_URL}${fullEndpoint}`;
+
     if (options.params) {
+      const urlObj = new URL(url);
       Object.entries(options.params).forEach(([key, value]) => {
-        url.searchParams.append(key, value);
+        urlObj.searchParams.append(key, value);
       });
     }
 
-    const response = await fetch(url.toString(), {
+    const response = await fetch(url, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -27,7 +33,13 @@ export const API = {
   },
 
   async post(endpoint, data = {}, options = {}) {
-    const response = await fetch(`${BASE_URL}${endpoint}`, {
+    // Ensure endpoint starts with /api
+    const fullEndpoint = endpoint.startsWith("/api")
+      ? endpoint
+      : `/api${endpoint}`;
+    const url = `${BASE_URL}${fullEndpoint}`;
+
+    const response = await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -45,7 +57,13 @@ export const API = {
   },
 
   async put(endpoint, data = {}, options = {}) {
-    const response = await fetch(`${BASE_URL}${endpoint}`, {
+    // Ensure endpoint starts with /api
+    const fullEndpoint = endpoint.startsWith("/api")
+      ? endpoint
+      : `/api${endpoint}`;
+    const url = `${BASE_URL}${fullEndpoint}`;
+
+    const response = await fetch(url, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -63,7 +81,13 @@ export const API = {
   },
 
   async delete(endpoint, options = {}) {
-    const response = await fetch(`${BASE_URL}${endpoint}`, {
+    // Ensure endpoint starts with /api
+    const fullEndpoint = endpoint.startsWith("/api")
+      ? endpoint
+      : `/api${endpoint}`;
+    const url = `${BASE_URL}${fullEndpoint}`;
+
+    const response = await fetch(url, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",

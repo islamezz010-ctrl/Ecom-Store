@@ -1,10 +1,19 @@
 // src/pages/AdminProducts.jsx
 import { useEffect, useState } from "react";
-import { Plus, Edit, Trash2, Search } from "lucide-react";
+import { Plus, Edit, Trash2, Search, X } from "lucide-react";
 import AdminLayout from "../components/admin/AdminLayout";
-import AdminTable from "../components/admin/AdminTable";
 import { API } from "../lib/api";
-import Button from "../components/Button";
+import { Button } from "../components/ui/Button";
+import { Input } from "../components/ui/Input";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogClose,
+  DialogBody,
+  DialogFooter,
+} from "../components/ui/Dialog";
 
 export default function AdminProducts() {
   const [products, setProducts] = useState([]);
@@ -14,6 +23,7 @@ export default function AdminProducts() {
   const [search, setSearch] = useState("");
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [saveLoading, setSaveLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     price: "",
@@ -33,8 +43,8 @@ export default function AdminProducts() {
       const response = await API.get("/admin/products", {
         params: { page: currentPage, limit: 20, search },
       });
-      setProducts(response.data.products);
-      setTotalPages(response.data.pages);
+      setProducts(response.data.products || []);
+      setTotalPages(response.data.pages || 1);
     } catch (error) {
       console.error("Failed to fetch products:", error);
     } finally {
@@ -60,69 +70,93 @@ export default function AdminProducts() {
       try {
         await API.delete(`/admin/products/${product._id}`);
         fetchProducts();
+        // Trigger event to refresh home page
+        window.dispatchEvent(new Event("products:updated"));
       } catch (error) {
         console.error("Failed to delete product:", error);
       }
     }
   };
 
+  const handleAddNew = () => {
+    setSelectedProduct(null);
+    setFormData({
+      name: "",
+      price: "",
+      description: "",
+      category: "",
+      stock: "",
+      image: "",
+    });
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setSelectedProduct(null);
+    setFormData({
+      name: "",
+      price: "",
+      description: "",
+      category: "",
+      stock: "",
+      image: "",
+    });
+  };
+
+  const handleFormChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      setSaveLoading(true);
       if (selectedProduct) {
         await API.put(`/admin/products/${selectedProduct._id}`, formData);
       } else {
-        await API.post("/admin/products", formData);
+        const response = await API.post("/admin/products", formData);
+        console.log("Product created:", response.data);
       }
-      setShowModal(false);
-      setSelectedProduct(null);
-      setFormData({
-        name: "",
-        price: "",
-        description: "",
-        category: "",
-        stock: "",
-        image: "",
-      });
+      // Trigger event for other components to refresh
+      window.dispatchEvent(new Event("products:updated"));
+      handleCloseModal();
       fetchProducts();
     } catch (error) {
       console.error("Failed to save product:", error);
+      alert(error.message || "Failed to save product");
+    } finally {
+      setSaveLoading(false);
     }
   };
 
   return (
     <AdminLayout>
       {/* Header */}
-      <div className="flex justify-between items-center mb-8">
+      <div className="mb-8 flex justify-between items-start">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Products</h1>
-          <p className="text-gray-600 mt-1">Manage your product inventory</p>
+          <h1 className="text-4xl font-bold text-slate-900">Products</h1>
+          <p className="text-slate-600 mt-2">Manage your product inventory</p>
         </div>
-        <button
-          onClick={() => {
-            setSelectedProduct(null);
-            setFormData({
-              name: "",
-              price: "",
-              description: "",
-              category: "",
-              stock: "",
-              image: "",
-            });
-            setShowModal(true);
-          }}
-          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+        <Button
+          onClick={handleAddNew}
+          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white"
+          size="lg"
         >
-          <Plus className="w-4 h-4" />
+          <Plus className="w-5 h-5" />
           Add Product
-        </button>
+        </Button>
       </div>
 
-      {/* Search */}
-      <div className="mb-6 flex gap-4">
-        <div className="flex-1 flex items-center gap-2 bg-white rounded-lg shadow px-4 py-2">
-          <Search className="w-5 h-5 text-gray-400" />
-          <input
+      {/* Search Bar */}
+      <div className="mb-6 bg-white p-4 rounded-lg shadow">
+        <div className="flex items-center gap-3">
+          <Search className="w-5 h-5 text-slate-400" />
+          <Input
             type="text"
             placeholder="Search products..."
             value={search}
@@ -130,172 +164,245 @@ export default function AdminProducts() {
               setSearch(e.target.value);
               setCurrentPage(1);
             }}
-            className="flex-1 outline-none text-gray-900"
+            className="border-none focus:ring-0"
           />
         </div>
       </div>
 
       {/* Products Table */}
-      <AdminTable
-        columns={[
-          { key: "name", label: "Product Name" },
-          { key: "category", label: "Category" },
-          {
-            key: "price",
-            label: "Price",
-            render: (v) => `$${v.toFixed(2)}`,
-          },
-          { key: "stock", label: "Stock" },
-          {
-            key: "image",
-            label: "Image",
-            render: (v) =>
-              v ? (
-                <img
-                  src={v}
-                  alt="Product"
-                  className="h-10 w-10 object-cover rounded"
-                />
-              ) : (
-                <span className="text-gray-400">No image</span>
-              ),
-          },
-        ]}
-        data={products}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-      />
+      <div className="bg-white rounded-lg shadow overflow-hidden">
+        {loading ? (
+          <div className="p-8 text-center text-slate-500">
+            Loading products...
+          </div>
+        ) : products.length === 0 ? (
+          <div className="p-8 text-center text-slate-500">
+            No products found
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-slate-200 bg-slate-50">
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-slate-900">
+                    Product Name
+                  </th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-slate-900">
+                    Category
+                  </th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-slate-900">
+                    Price
+                  </th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-slate-900">
+                    Stock
+                  </th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-slate-900">
+                    Image
+                  </th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-slate-900">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {products.map((product) => (
+                  <tr
+                    key={product._id}
+                    className="border-b border-slate-200 hover:bg-slate-50"
+                  >
+                    <td className="px-6 py-4 text-sm text-slate-900 font-medium">
+                      {product.name}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-slate-600">
+                      {product.category}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-slate-900 font-semibold">
+                      ${product.price.toFixed(2)}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-slate-600">
+                      {product.stock}
+                    </td>
+                    <td className="px-6 py-4 text-sm">
+                      {product.image && (
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          className="w-12 h-12 rounded object-cover"
+                        />
+                      )}
+                    </td>
+                    <td className="px-6 py-4 text-sm flex gap-2">
+                      <button
+                        onClick={() => handleEdit(product)}
+                        className="inline-flex items-center gap-1 px-3 py-2 rounded-lg bg-blue-100 text-blue-700 hover:bg-blue-200 transition"
+                      >
+                        <Edit className="w-4 h-4" />
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(product)}
+                        className="inline-flex items-center gap-1 px-3 py-2 rounded-lg bg-red-100 text-red-700 hover:bg-red-200 transition"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
 
-      {/* Pagination */}
-      <div className="mt-6 flex justify-center gap-2">
-        <button
-          onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-          disabled={currentPage === 1}
-          className="px-4 py-2 rounded-lg bg-white text-gray-900 disabled:opacity-50"
-        >
-          Previous
-        </button>
-        <span className="px-4 py-2 text-gray-900">
-          Page {currentPage} of {totalPages}
-        </span>
-        <button
-          onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-          disabled={currentPage === totalPages}
-          className="px-4 py-2 rounded-lg bg-white text-gray-900 disabled:opacity-50"
-        >
-          Next
-        </button>
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="p-4 border-t border-slate-200 flex justify-center gap-2">
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                onClick={() => setCurrentPage(page)}
+                className={`px-3 py-1 rounded-lg text-sm font-medium transition ${
+                  currentPage === page
+                    ? "bg-blue-600 text-white"
+                    : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                }`}
+              >
+                {page}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* Modal */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
+      {/* Add/Edit Product Modal */}
+      <Dialog open={showModal} onOpenChange={setShowModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
               {selectedProduct ? "Edit Product" : "Add New Product"}
-            </h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            </DialogTitle>
+            <DialogClose onClick={handleCloseModal} />
+          </DialogHeader>
+
+          <form onSubmit={handleSubmit}>
+            <DialogBody className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Product Name
+                <label className="block text-sm font-medium text-slate-900 mb-2">
+                  Product Name *
                 </label>
-                <input
-                  type="text"
-                  required
+                <Input
+                  name="name"
                   value={formData.name}
-                  onChange={(e) =>
-                    setFormData({ ...formData, name: e.target.value })
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Price
-                </label>
-                <input
-                  type="number"
-                  step="0.01"
+                  onChange={handleFormChange}
+                  placeholder="Enter product name"
                   required
-                  value={formData.price}
-                  onChange={(e) =>
-                    setFormData({ ...formData, price: e.target.value })
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-900 mb-2">
+                    Price *
+                  </label>
+                  <Input
+                    name="price"
+                    type="number"
+                    step="0.01"
+                    value={formData.price}
+                    onChange={handleFormChange}
+                    placeholder="0.00"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-900 mb-2">
+                    Stock *
+                  </label>
+                  <Input
+                    name="stock"
+                    type="number"
+                    value={formData.stock}
+                    onChange={handleFormChange}
+                    placeholder="0"
+                    required
+                  />
+                </div>
+              </div>
+
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Category
+                <label className="block text-sm font-medium text-slate-900 mb-2">
+                  Category *
                 </label>
-                <input
-                  type="text"
+                <Input
+                  name="category"
                   value={formData.category}
-                  onChange={(e) =>
-                    setFormData({ ...formData, category: e.target.value })
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Stock
-                </label>
-                <input
-                  type="number"
+                  onChange={handleFormChange}
+                  placeholder="e.g., Electronics, Fashion"
                   required
-                  value={formData.stock}
-                  onChange={(e) =>
-                    setFormData({ ...formData, stock: e.target.value })
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
+
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-slate-900 mb-2">
+                  Image URL
+                </label>
+                <Input
+                  name="image"
+                  value={formData.image}
+                  onChange={handleFormChange}
+                  placeholder="https://..."
+                />
+                {formData.image && (
+                  <div className="mt-2 flex justify-center">
+                    <img
+                      src={formData.image}
+                      alt="preview"
+                      className="max-w-xs max-h-48 rounded-lg object-cover"
+                      onError={(e) => (e.target.style.display = "none")}
+                    />
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-900 mb-2">
                   Description
                 </label>
                 <textarea
+                  name="description"
                   value={formData.description}
-                  onChange={(e) =>
-                    setFormData({ ...formData, description: e.target.value })
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  rows="3"
+                  onChange={handleFormChange}
+                  placeholder="Enter product description..."
+                  rows="4"
+                  className="w-full px-4 py-2 rounded-lg border border-slate-300 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Image URL
-                </label>
-                <input
-                  type="url"
-                  value={formData.image}
-                  onChange={(e) =>
-                    setFormData({ ...formData, image: e.target.value })
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-              <div className="flex gap-3 pt-4">
-                <button
-                  type="button"
-                  onClick={() => setShowModal(false)}
-                  className="flex-1 px-4 py-2 rounded-lg bg-gray-200 text-gray-900 hover:bg-gray-300"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700"
-                >
-                  {selectedProduct ? "Update" : "Create"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+            </DialogBody>
+
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleCloseModal}
+                disabled={saveLoading}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={saveLoading}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                {saveLoading
+                  ? "Saving..."
+                  : selectedProduct
+                    ? "Update Product"
+                    : "Add Product"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </AdminLayout>
   );
 }

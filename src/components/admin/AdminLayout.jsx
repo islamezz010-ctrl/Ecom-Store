@@ -1,16 +1,16 @@
 // src/components/admin/AdminLayout.jsx
-import AdminNavigation from "./AdminNavigation";
+import AdminSidebar from "./AdminSidebar";
 
 export default function AdminLayout({ children }) {
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      <AdminNavigation />
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 py-8">
-        {children}
+    <div className="min-h-screen bg-slate-50">
+      <AdminSidebar />
+      <main className="ml-64 flex flex-col min-h-screen">
+        <div className="flex-1 p-8 max-w-7xl w-full mx-auto">{children}</div>
+        <footer className="ml-64 bg-slate-900 text-slate-400 text-center py-4">
+          <p>&copy; 2024 Store Admin Panel. All rights reserved.</p>
+        </footer>
       </main>
-      <footer className="bg-gray-900 text-gray-400 text-center py-4 mt-12">
-        <p>&copy; 2024 Store Admin Panel. All rights reserved.</p>
-      </footer>
     </div>
   );
 }

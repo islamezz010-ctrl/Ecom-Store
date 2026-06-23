@@ -63,7 +63,7 @@ const Home = () => {
         }
 
         const queryString = params.toString();
-        const url = `${API}/api/products${queryString ? `?${queryString}` : ""}`;
+        const url = `${BASE_API_URL}/api/products${queryString ? `?${queryString}` : ""}`;
 
         const response = await fetch(url);
         const data = await response.json();
@@ -87,7 +87,17 @@ const Home = () => {
       fetchProducts();
     }, 300);
 
-    return () => clearTimeout(delayDebounceFn);
+    // Listen for product updates from admin panel
+    const handleProductsUpdated = () => {
+      fetchProducts();
+    };
+
+    window.addEventListener("products:updated", handleProductsUpdated);
+
+    return () => {
+      clearTimeout(delayDebounceFn);
+      window.removeEventListener("products:updated", handleProductsUpdated);
+    };
   }, [selectedCategory, minPrice, maxPrice, sort, location.search]);
 
   return (

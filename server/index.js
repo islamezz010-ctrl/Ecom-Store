@@ -53,6 +53,8 @@ const allowedOrigins = (
   .split(",")
   .map((o) => o.trim().replace(/\/$/, ""));
 
+console.log("✅ Allowed CORS Origins:", allowedOrigins);
+
 app.use(
   cors({
     origin(origin, callback) {
