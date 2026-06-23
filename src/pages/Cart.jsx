@@ -5,7 +5,7 @@ import { useDeliveryLocation } from "../context/LocationContext";
 import { useNotification } from "../hooks/useNotification";
 import DeliveryAddressCard from "../components/DeliveryAddressCard";
 import AddressFormModal from "../components/AddressFormModal";
-import { API } from "../lib/api";
+import { BASE_API_URL } from "../lib/api";
 
 const Cart = () => {
   const [loading, setLoading] = React.useState(false);
@@ -24,7 +24,7 @@ const Cart = () => {
         quantity: item.quantity,
       }));
 
-      const response = await fetch(`${API}/api/checkout/session`, {
+      const response = await fetch(`${BASE_API_URL}/api/checkout/session`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -54,7 +54,9 @@ const Cart = () => {
       if (!response.ok) {
         const errorData = await response.json();
         console.error("Server error:", response.status, errorData);
-        notify.error("Checkout failed: " + (errorData.message || "Unknown error"));
+        notify.error(
+          "Checkout failed: " + (errorData.message || "Unknown error"),
+        );
         setLoading(false);
         return;
       }

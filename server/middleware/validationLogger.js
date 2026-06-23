@@ -3,7 +3,6 @@
  * Logs all validation errors, invalid inputs, and suspicious patterns
  */
 
-
 const logger = {
   logValidationError: (req, errors, source = "body") => {
     const timestamp = new Date().toISOString();
@@ -102,15 +101,23 @@ const detectSuspiciousPatterns = (obj, req) => {
       regex: /union.*select|select.*from|insert|delete|update|drop/gi,
       reason: "SQL injection attempt",
     },
-    { regex: /\$where|\$regex|ObjectId/gi, reason: "NoSQL injection attempt" },
+    // More specific NoSQL injection detection - avoid false positives
     {
-      regex: /\.\.\/|\.\.\\|\/\/|\\\\|etc\/passwd/gi,
-      reason: "Path traversal attempt",
+      regex: /^\s*\{[\s\S]*\$where[\s\S]*\}|db\.(collection|eval)/gi,
+      reason: "NoSQL injection attempt",
     },
   ];
 
+  // Fields to skip suspicious pattern checking (e.g., URLs can have $ characters)
+  const skipFields = ["picture", "image", "url", "link", "avatar", "thumbnail"];
+
   for (const [key, value] of Object.entries(obj || {})) {
     if (typeof value !== "string") continue;
+
+    // Skip URL fields from suspicious pattern checking
+    if (skipFields.some((field) => key.toLowerCase().includes(field))) {
+      continue;
+    }
 
     for (const { regex, reason } of suspiciousPatterns) {
       if (regex.test(value)) {

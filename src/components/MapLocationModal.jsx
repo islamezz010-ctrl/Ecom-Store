@@ -259,10 +259,14 @@ const MapLocationModal = ({ isOpen, onClose, onConfirm }) => {
       />
 
       {/* Modal */}
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-2 md:p-4">
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center p-2 md:p-4"
+        onClick={onClose}
+      >
         <div
           className="relative w-full h-[90vh] bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col"
           style={{ maxWidth: "1200px" }}
+          onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
           <div className="flex items-center justify-between p-4 md:p-6 border-b border-[#e5e1e9] shrink-0">

@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 import Carousel from "../components/Carousel";
 import ProductFilters from "../components/ProductFilters";
-import { API } from "../lib/api";
+import { BASE_API_URL } from "../lib/api";
 
 const collections = [
   {
@@ -33,11 +34,16 @@ const Home = () => {
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [sort, setSort] = useState("newest");
+  const location = useLocation();
+
+  // Get search query from URL
+  const params = new URLSearchParams(location.search);
+  const searchQuery = params.get("search");
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch(`${API}/api/products/categories`);
+        const response = await fetch(`${BASE_API_URL}/api/products/categories`);
         const data = await response.json();
         if (Array.isArray(data)) setCategories(data);
       } catch (error) {
@@ -51,11 +57,10 @@ const Home = () => {
     const fetchProducts = async () => {
       setLoading(true);
       try {
-        const params = new URLSearchParams();
-        if (selectedCategory) params.append("category", selectedCategory);
-        if (minPrice) params.append("minPrice", minPrice);
-        if (maxPrice) params.append("maxPrice", maxPrice);
-        if (sort !== "newest") params.append("sort", sort);
+        const params = new URLSearchParams(location.search);
+        if (searchQuery) {
+          params.append("search", searchQuery);
+        }
 
         const queryString = params.toString();
         const url = `${API}/api/products${queryString ? `?${queryString}` : ""}`;
@@ -83,60 +88,62 @@ const Home = () => {
     }, 300);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [selectedCategory, minPrice, maxPrice, sort]);
+  }, [selectedCategory, minPrice, maxPrice, sort, location.search]);
 
   return (
     <main>
-      <Carousel />
+      {!searchQuery && <Carousel />}
 
-      <section
-        id="collections"
-        className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-10"
-      >
-        <div className="mb-10 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-          <div>
-            <h2 className="brand-heading text-3xl font-semibold text-[#1b1b21]">
-              Curated Collections
-            </h2>
-            <p className="mt-2 text-[#474651]">
-              Precision-engineered pieces for every facet of life.
-            </p>
-          </div>
-          <a
-            className="font-semibold text-[#006b5f] hover:underline"
-            href="#products"
-          >
-            Explore all categories
-          </a>
-        </div>
-
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-          {collections.map((collection) => (
-            <article
-              key={collection.title}
-              className="group relative aspect-4/5 overflow-hidden rounded-2xl shadow-md transition-all hover:shadow-xl"
+      {!searchQuery && (
+        <section
+          id="collections"
+          className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-10"
+        >
+          <div className="mb-10 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+            <div>
+              <h2 className="brand-heading text-3xl font-semibold text-[#1b1b21]">
+                Curated Collections
+              </h2>
+              <p className="mt-2 text-[#474651]">
+                Precision-engineered pieces for every facet of life.
+              </p>
+            </div>
+            <a
+              className="font-semibold text-[#006b5f] hover:underline"
+              href="#products"
             >
-              <img
-                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                src={collection.image}
-                alt={collection.title}
-              />
-              <div className="absolute inset-0 bg-linear-to-t from-[#1a146b]/85 via-[#1a146b]/10 to-transparent" />
-              <div className="absolute bottom-0 left-0 p-8 text-white">
-                <h3 className="brand-heading text-2xl font-semibold">
-                  {collection.title}
-                </h3>
-                <p className="mt-2 max-w-xs text-sm text-white/90">
-                  {collection.copy}
-                </p>
-                <span className="mt-6 inline-flex rounded-full bg-[#006b5f] px-4 py-2 text-sm font-bold">
-                  View
-                </span>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
+              Explore all categories
+            </a>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+            {collections.map((collection) => (
+              <article
+                key={collection.title}
+                className="group relative aspect-4/5 overflow-hidden rounded-2xl shadow-md transition-all hover:shadow-xl"
+              >
+                <img
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  src={collection.image}
+                  alt={collection.title}
+                />
+                <div className="absolute inset-0 bg-linear-to-t from-[#1a146b]/85 via-[#1a146b]/10 to-transparent" />
+                <div className="absolute bottom-0 left-0 p-8 text-white">
+                  <h3 className="brand-heading text-2xl font-semibold">
+                    {collection.title}
+                  </h3>
+                  <p className="mt-2 max-w-xs text-sm text-white/90">
+                    {collection.copy}
+                  </p>
+                  <span className="mt-6 inline-flex rounded-full bg-[#006b5f] px-4 py-2 text-sm font-bold">
+                    View
+                  </span>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section id="products" className="bg-[#f6f2fa] py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-10">
@@ -186,7 +193,7 @@ const Home = () => {
               <div className="flex-1">
                 {products.length === 0 ? (
                   <div className="flex min-h-72 items-center justify-center rounded-2xl bg-white text-xl font-bold text-[#777682] shadow-sm border border-[#e5e1e9]">
-                    No products found matching your filters.
+                    No products found matching your search or filters.
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 xl:grid-cols-3">

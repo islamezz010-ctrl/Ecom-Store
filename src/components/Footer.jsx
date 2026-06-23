@@ -7,10 +7,10 @@ import mastercardLogo from "payment-icons/min/flat/mastercard.svg";
 import visaLogo from "payment-icons/min/flat/visa.svg";
 
 const socialLinks = [
-  { label: "Facebook", icon: FaFacebookF },
-  { label: "X", icon: FaXTwitter },
-  { label: "Instagram", icon: FaInstagram },
-  { label: "Email", icon: FaEnvelope },
+  { label: "Facebook", icon: FaFacebookF, url: "https://www.facebook.com" },
+  { label: "X", icon: FaXTwitter, url: "https://www.x.com" },
+  { label: "Instagram", icon: FaInstagram, url: "https://www.instagram.com" },
+  { label: "Email", icon: FaEnvelope, url: "mailto:support@ecomstore.com" },
 ];
 
 const paymentMethods = [
@@ -128,14 +128,16 @@ const Footer = () => {
           <div className="space-y-4">
             <h4 className="font-semibold text-white">Follow Us</h4>
             <div className="flex gap-4">
-              {socialLinks.map(({ label, icon }) => (
+              {socialLinks.map(({ label, icon, url }) => (
                 <a
                   key={label}
-                  href="#"
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   aria-label={label}
                   className="text-gray-300 transition-colors hover:text-white"
                 >
-                  {createElement(icon, { size: 20, ariaHidden: true })}
+                  {createElement(icon, { size: 20, "aria-hidden": true })}
                 </a>
               ))}
             </div>

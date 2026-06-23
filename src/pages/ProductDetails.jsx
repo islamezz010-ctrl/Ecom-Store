@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { API } from "../lib/api";
+import { BASE_API_URL } from "../lib/api";
 import { useCart } from "../context/CartContext";
 import { ChevronLeft, Star, Truck, Shield, RotateCcw } from "lucide-react";
 
@@ -17,7 +17,7 @@ const ProductDetails = () => {
     const fetchProduct = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`${API}/api/products/${id}`);
+        const response = await fetch(`${BASE_API_URL}/api/products/${id}`);
 
         if (!response.ok) {
           throw new Error("Product not found");

@@ -29,6 +29,8 @@ const orderRoutes = require("./routes/orders");
 const addressRoutes = require("./routes/addresses");
 const adminProductRoutes = require("./routes/admin/products");
 const adminOrderRoutes = require("./routes/admin/orders");
+const adminDashboardRoutes = require("./routes/admin/dashboard");
+const adminUserRoutes = require("./routes/admin/users");
 
 // ── Validate required env vars ───────────────
 const required = ["JWT_SECRET", "MONGO_URI", "STRIPE_SECRET_KEY"];
@@ -70,7 +72,14 @@ app.use("/api/webhook", webhookRoutes);
 // ── Common middleware ────────────────────────
 app.use(express.json({ limit: "1mb" }));
 app.use(cookieParser());
-app.use(helmet());
+
+// Configure helmet with proper COOP settings for Google OAuth
+app.use(
+  helmet({
+    crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" },
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+  }),
+);
 app.use(
   rateLimit({
     windowMs: 15 * 60 * 1000,
@@ -119,6 +128,8 @@ app.use("/api/addresses", addressRoutes);
 // ── Admin routes ─────────────────────────────
 app.use("/api/admin/products", adminProductRoutes);
 app.use("/api/admin/orders", adminOrderRoutes);
+app.use("/api/admin/dashboard", adminDashboardRoutes);
+app.use("/api/admin/users", adminUserRoutes);
 
 // ── Backward compatibility (old checkout path) ──
 //    Remove this once the frontend is updated

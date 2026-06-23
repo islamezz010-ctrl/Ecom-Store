@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
-import { API } from "../lib/api";
+import { BASE_API_URL } from "../lib/api";
 import { useNotification } from "../hooks/useNotification";
 import Button from "../components/Button";
 
@@ -36,7 +36,7 @@ const Login = ({ heading = "Welcome Back" }) => {
         picture: details.picture,
       };
 
-      const response = await fetch(`${API}/api/auth/google`, {
+      const response = await fetch(`${BASE_API_URL}/api/auth/google`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(userData),
@@ -64,7 +64,7 @@ const Login = ({ heading = "Welcome Back" }) => {
     e.preventDefault();
 
     try {
-      const response = await fetch(`${API}/api/auth/login`, {
+      const response = await fetch(`${BASE_API_URL}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { ShoppingCart, Package, Heart, LogIn } from "lucide-react";
 import LocationSelector from "./LocationSelector";
@@ -7,6 +7,9 @@ import LocationSelector from "./LocationSelector";
 const Navbar = () => {
   const { cartCount } = useCart();
   const location = useLocation();
+  const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("");
+
   const [user, setUser] = useState(() => {
     const storedUser = localStorage.getItem("userInfo");
     return storedUser ? JSON.parse(storedUser) : null;
@@ -94,6 +97,15 @@ const Navbar = () => {
               aria-label="Search products"
               className="w-full rounded-full border border-transparent bg-[#f6f2fa] py-3 pl-20 pr-4 text-sm outline-none transition shadow-md hover:shadow-[0_4px_12px_rgba(26,20,107,0.2)] focus:shadow-[0_8px_16px_rgba(26,20,107,0.25)] focus:border-[#1a146b] focus:ring-0"
               placeholder="Search products..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  navigate(
+                    `/products?search=${encodeURIComponent(searchQuery)}`,
+                  );
+                }
+              }}
             />
           </div>
         </div>
@@ -135,6 +147,14 @@ const Navbar = () => {
                 >
                   Your Account
                 </Link>
+                {user.isAdmin && (
+                  <Link
+                    to="/admin"
+                    className="block px-4 py-3 text-sm font-semibold text-blue-600 transition-colors hover:bg-blue-50 border-t border-[#e5e1e9]"
+                  >
+                    🔧 Admin Panel
+                  </Link>
+                )}
                 <button
                   onClick={handleLogout}
                   className="w-full cursor-pointer rounded-b-xl px-4 py-3 text-left text-sm font-semibold text-[#ba1a1a] transition-colors hover:bg-[#ffdad6]/40"
