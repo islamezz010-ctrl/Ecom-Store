@@ -39,8 +39,46 @@ html.dark body {
   color: #f9fafb;
 }
 
+html {
+  scrollbar-width: thin;
+  scrollbar-color: #8b86b8 transparent;
+}
+
 ::-webkit-scrollbar {
-  display: none;
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #8b86b8;
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background-clip: content-box;
+}
+
+.horizontal-scroller__viewport {
+  scrollbar-width: thin;
+  scrollbar-color: #8b86b8 #eeeaf4;
+}
+
+.horizontal-scroller__viewport::-webkit-scrollbar {
+  height: 10px;
+}
+
+.horizontal-scroller__viewport::-webkit-scrollbar-track {
+  background: #eeeaf4;
+  border-radius: 999px;
+}
+
+.horizontal-scroller__viewport::-webkit-scrollbar-thumb {
+  background: #8b86b8;
+  border: 2px solid #eeeaf4;
+  border-radius: 999px;
+  background-clip: padding-box;
 }
 
 .ambient-card {

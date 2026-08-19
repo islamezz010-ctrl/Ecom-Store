@@ -1,6 +1,6 @@
-import { ChevronRight } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import HorizontalScroller from "./HorizontalScroller";
 
 const CategoryBar = () => {
   const categories = [
@@ -27,15 +27,9 @@ const CategoryBar = () => {
   return (
     <div className="bg-[#001a4d] border-b border-[#001a4d] sticky top-20 z-40 overflow-visible">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-10 overflow-visible">
-        <div
-          className="flex items-center gap-6 overflow-x-auto py-3"
-          style={{
-            scrollBehavior: "smooth",
-            msOverflowStyle: "none",
-            scrollbarWidth: "none",
-            paddingLeft: "1rem",
-            paddingRight: "0.5rem",
-          }}
+        <HorizontalScroller
+          ariaLabel="Store categories"
+          contentClassName="flex items-center gap-6 px-4 py-3"
         >
           {categories.map((category, index) => (
             <Link
@@ -53,16 +47,8 @@ const CategoryBar = () => {
               {category}
             </Link>
           ))}
-          <button className="ml-2 shrink-0 cursor-pointer p-1 text-white hover:text-yellow-300 transition-transform hover:scale-110">
-            <ChevronRight size={20} />
-          </button>
-        </div>
+        </HorizontalScroller>
       </div>
-      <style>{`
-        .overflow-x-auto::-webkit-scrollbar {
-          display: none;
-        }
-      `}</style>
     </div>
   );
 };

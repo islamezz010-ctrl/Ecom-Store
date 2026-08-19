@@ -12,6 +12,7 @@ import SportsCarousel from "../components/SportsCarousel";
 import GroceryCarousel from "../components/GroceryCarousel";
 import StationaryBooksCarousel from "../components/StationaryBooksCarousel";
 import ProductCard from "../components/ProductCard";
+import HorizontalScroller from "../components/HorizontalScroller";
 
 // Import all mock data
 import {
@@ -66,7 +67,10 @@ import {
 const CategorySubNav = ({ tabs, activeTab, setActiveTab }) => (
   <div className="bg-white border-b border-[#e5e1e9]">
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-10">
-      <div className="flex items-center gap-2 overflow-x-auto py-4 hide-scrollbar">
+      <HorizontalScroller
+        ariaLabel="Category tabs"
+        contentClassName="flex items-center gap-2 py-4"
+      >
         {tabs.map((tab, i) => (
           <button
             key={tab}
@@ -80,7 +84,7 @@ const CategorySubNav = ({ tabs, activeTab, setActiveTab }) => (
             {tab}
           </button>
         ))}
-      </div>
+      </HorizontalScroller>
     </div>
   </div>
 );
@@ -118,13 +122,16 @@ const CategoryProductSections = ({ sections }) => (
         <h3 className="mb-4 text-sm font-semibold text-[#1b1b21]">
           {section.title}
         </h3>
-        <div className="flex gap-4 overflow-x-auto hide-scrollbar py-2">
+        <HorizontalScroller
+          ariaLabel={`${section.title} products`}
+          contentClassName="flex gap-4 py-2"
+        >
           {section.items.map((prod) => (
             <div key={prod.id} className="w-64 shrink-0">
               <ProductCard product={prod} />
             </div>
           ))}
-        </div>
+        </HorizontalScroller>
       </div>
     ))}
   </section>
@@ -368,16 +375,6 @@ const CategoryPage = () => {
           </p>
         </div>
       )}
-
-      <style>{`
-        .hide-scrollbar::-webkit-scrollbar {
-          display: none;
-        }
-        .hide-scrollbar {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-      `}</style>
     </div>
   );
 };

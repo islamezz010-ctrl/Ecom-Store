@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import ProductCard from "./ProductCard";
-import { API } from "../lib/api";
+import HorizontalScroller from "./HorizontalScroller";
+import { BASE_API_URL } from "../lib/api";
 
 const ProductSlider = ({ title, category }) => {
   const [products, setProducts] = useState([]);
@@ -9,13 +10,13 @@ const ProductSlider = ({ title, category }) => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const url = category 
-          ? `${API}/api/products?category=${category}&limit=10`
-          : `${API}/api/products?limit=10`;
-          
+        const params = new URLSearchParams({ limit: "10" });
+        if (category) params.set("category", category);
+        const url = `${BASE_API_URL}/api/products?${params.toString()}`;
+
         const response = await fetch(url);
         const data = await response.json();
-        
+
         let fetchedProducts = [];
         if (Array.isArray(data)) {
           fetchedProducts = data.slice(0, 10);
@@ -26,15 +27,15 @@ const ProductSlider = ({ title, category }) => {
         // If no products found from API, generate beautiful mock data
         if (fetchedProducts.length === 0) {
           fetchedProducts = Array.from({ length: 10 }).map((_, i) => ({
-            _id: `mock-${category || 'item'}-${i}`,
-            name: `Premium ${category ? category.charAt(0).toUpperCase() + category.slice(1) : 'Product'} Series ${i + 1}X`,
+            _id: `mock-${category || "item"}-${i}`,
+            name: `Premium ${category ? category.charAt(0).toUpperCase() + category.slice(1) : "Product"} Series ${i + 1}X`,
             price: Math.floor(Math.random() * 800) + 199,
-            image: `https://placehold.co/400x400/f0ecf4/1b1b21?text=${category ? category.substring(0,3).toUpperCase() : 'ITM'}-${i + 1}`,
+            image: `https://placehold.co/400x400/f0ecf4/1b1b21?text=${category ? category.substring(0, 3).toUpperCase() : "ITM"}-${i + 1}`,
             stock: 10,
-            category: category || 'general',
+            category: category || "general",
           }));
         }
-        
+
         setProducts(fetchedProducts);
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -62,9 +63,15 @@ const ProductSlider = ({ title, category }) => {
           Loading Products...
         </div>
       ) : (
-        <div className="flex overflow-x-auto gap-6 pb-6 pt-2 hide-scrollbar">
+        <HorizontalScroller
+          ariaLabel={`${title} products`}
+          contentClassName="flex gap-6 pt-2"
+        >
           {products.map((item) => (
-            <div key={item._id ?? item.id} className="min-w-[280px] max-w-[280px] shrink-0">
+            <div
+              key={item._id ?? item.id}
+              className="min-w-[280px] max-w-[280px] shrink-0"
+            >
               <ProductCard product={item} />
             </div>
           ))}
@@ -73,17 +80,8 @@ const ProductSlider = ({ title, category }) => {
               No products available in this category.
             </div>
           )}
-        </div>
+        </HorizontalScroller>
       )}
-      <style>{`
-        .hide-scrollbar::-webkit-scrollbar {
-          display: none;
-        }
-        .hide-scrollbar {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-      `}</style>
     </div>
   );
 };

@@ -7,13 +7,16 @@ export const API = {
     const fullEndpoint = endpoint.startsWith("/api")
       ? endpoint
       : `/api${endpoint}`;
-    const url = `${BASE_URL}${fullEndpoint}`;
+    let url = `${BASE_URL}${fullEndpoint}`;
 
     if (options.params) {
       const urlObj = new URL(url);
       Object.entries(options.params).forEach(([key, value]) => {
-        urlObj.searchParams.append(key, value);
+        if (value !== undefined && value !== null && value !== "") {
+          urlObj.searchParams.append(key, value);
+        }
       });
+      url = urlObj.toString();
     }
 
     const response = await fetch(url, {
