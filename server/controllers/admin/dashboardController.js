@@ -70,7 +70,7 @@ exports.getDashboardStats = async (req, res) => {
       cancelled: 0,
     };
     ordersByStatus.forEach((item) => {
-      if (statusBreakdown.hasOwnProperty(item._id)) {
+      if (Object.prototype.hasOwnProperty.call(statusBreakdown, item._id)) {
         statusBreakdown[item._id] = item.count;
       }
     });

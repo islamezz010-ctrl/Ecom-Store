@@ -1,5 +1,11 @@
 // src/components/admin/AdminTable.jsx
-export default function AdminTable({ columns, data, onEdit, onDelete }) {
+export default function AdminTable({
+  columns,
+  data,
+  loading = false,
+  onEdit,
+  onDelete,
+}) {
   return (
     <div className="bg-white rounded-lg shadow overflow-hidden">
       <div className="overflow-x-auto">
@@ -22,7 +28,16 @@ export default function AdminTable({ columns, data, onEdit, onDelete }) {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            {data.length === 0 ? (
+            {loading ? (
+              <tr>
+                <td
+                  colSpan={columns.length + (onEdit || onDelete ? 1 : 0)}
+                  className="px-6 py-8 text-center text-gray-500"
+                >
+                  Loading...
+                </td>
+              </tr>
+            ) : data.length === 0 ? (
               <tr>
                 <td
                   colSpan={columns.length + (onEdit || onDelete ? 1 : 0)}

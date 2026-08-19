@@ -1,4 +1,5 @@
 // src/components/admin/AdminSidebar.jsx
+import { createElement } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   BarChart3,
@@ -51,7 +52,7 @@ export default function AdminSidebar() {
 
       {/* Navigation */}
       <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-        {menuItems.map(({ path, label, icon: Icon }) => (
+        {menuItems.map(({ path, label, icon }) => (
           <Link
             key={path}
             to={path}
@@ -62,7 +63,7 @@ export default function AdminSidebar() {
                 : "text-slate-300 hover:bg-slate-800",
             )}
           >
-            <Icon className="w-5 h-5" />
+            {createElement(icon, { className: "w-5 h-5" })}
             {label}
           </Link>
         ))}

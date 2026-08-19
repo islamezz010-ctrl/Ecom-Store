@@ -1,5 +1,3 @@
-import { useNotification } from "./useNotification";
-
 /**
  * Global notification utility for easy access
  * This helps maintain backward compatibility while using custom notifications

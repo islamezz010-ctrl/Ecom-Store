@@ -11,7 +11,12 @@ export default defineConfig({
   },
 
   optimizeDeps: {
-    include: ["react", "react-dom", "react/jsx-runtime", "react/jsx-dev-runtime"],
+    include: [
+      "react",
+      "react-dom",
+      "react/jsx-runtime",
+      "react/jsx-dev-runtime",
+    ],
   },
 
   // Build optimization
@@ -45,6 +50,9 @@ export default defineConfig({
   },
 
   server: {
+    host: "127.0.0.1",
+    port: 5239,
+    strictPort: false,
     hmr: true,
   },
 

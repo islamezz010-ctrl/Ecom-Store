@@ -76,7 +76,7 @@ exports.updateAddress = async (req, res) => {
 // ──────────────────────────────────────────────
 exports.deleteAddress = async (req, res) => {
   try {
-    const result = await withTransaction(async (session) => {
+    await withTransaction(async (session) => {
       const address = await Address.findOneAndDelete(
         {
           _id: req.params.id,

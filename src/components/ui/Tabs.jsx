@@ -30,6 +30,7 @@ export function TabsTrigger({ value, onClick, active, children, className }) {
       className={cn(
         "px-4 py-2 rounded-lg font-medium transition-colors text-sm",
         active ? "bg-blue-600 text-white" : "text-gray-600 hover:bg-gray-100",
+        className,
       )}
     >
       {children}

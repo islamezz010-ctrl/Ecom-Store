@@ -1,6 +1,8 @@
 // src/components/admin/StatCard.jsx
+import { createElement } from "react";
+
 export default function StatCard({
-  icon: Icon,
+  icon: StatIcon,
   label,
   value,
   trend,
@@ -40,7 +42,7 @@ export default function StatCard({
           )}
         </div>
         <div className={`${iconBg} p-3 rounded-lg`}>
-          <Icon className={`w-6 h-6 ${iconColor}`} />
+          {createElement(StatIcon, { className: `w-6 h-6 ${iconColor}` })}
         </div>
       </div>
     </div>

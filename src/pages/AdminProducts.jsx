@@ -1,5 +1,5 @@
 // src/pages/AdminProducts.jsx
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Plus, Edit, Trash2, Search, X } from "lucide-react";
 import AdminLayout from "../components/admin/AdminLayout";
 import { API } from "../lib/api";
@@ -33,11 +33,7 @@ export default function AdminProducts() {
     image: "",
   });
 
-  useEffect(() => {
-    fetchProducts();
-  }, [currentPage, search]);
-
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     try {
       setLoading(true);
       const response = await API.get("/admin/products", {
@@ -50,7 +46,12 @@ export default function AdminProducts() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPage, search]);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(fetchProducts, 0);
+    return () => clearTimeout(timeoutId);
+  }, [fetchProducts]);
 
   const handleEdit = (product) => {
     setSelectedProduct(product);

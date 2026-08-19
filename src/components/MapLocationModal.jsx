@@ -24,29 +24,16 @@ const MapLocationModal = ({ isOpen, onClose, onConfirm }) => {
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   const [userCoords, setUserCoords] = useState(null);
-  const [distanceKm, setDistanceKm] = useState(null);
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const markersRef = useRef({});
   const pinRef = useRef(null);
 
-  const toRadians = (deg) => (deg * Math.PI) / 180;
-  const haversineKm = (lat1, lng1, lat2, lng2) => {
-    const earthRadius = 6371;
-    const dLat = toRadians(lat2 - lat1);
-    const dLng = toRadians(lng2 - lng1);
-    const a =
-      Math.sin(dLat / 2) ** 2 +
-      Math.cos(toRadians(lat1)) *
-        Math.cos(toRadians(lat2)) *
-        Math.sin(dLng / 2) ** 2;
-    return earthRadius * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  };
-
   const selectedLocation = manualSelection ?? location ?? DELIVERY_LOCATIONS[0];
 
   useEffect(() => {
     if (searchQuery.trim() === "") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSearchResults([]);
       return;
     }
@@ -137,11 +124,6 @@ const MapLocationModal = ({ isOpen, onClose, onConfirm }) => {
         .openPopup();
 
       map.setView([lat, lng], map.getZoom());
-      if (userCoords) {
-        setDistanceKm(
-          haversineKm(userCoords.lat, userCoords.lng, lat, lng).toFixed(1),
-        );
-      }
     };
 
     map.on("click", onMapClick);
@@ -177,12 +159,16 @@ const MapLocationModal = ({ isOpen, onClose, onConfirm }) => {
         );
         try {
           marker.openPopup();
-        } catch {}
+        } catch (error) {
+          console.error(error);
+        }
       } else {
         marker.setIcon(new L.Icon.Default());
         try {
           marker.closePopup();
-        } catch {}
+        } catch (error) {
+          console.error(error);
+        }
       }
     });
 
@@ -202,19 +188,6 @@ const MapLocationModal = ({ isOpen, onClose, onConfirm }) => {
             "<div class='p-2'><strong>Your order will be delivered here</strong></div>",
           );
       }
-    }
-
-    if (userCoords && selectedLocation) {
-      setDistanceKm(
-        haversineKm(
-          userCoords.lat,
-          userCoords.lng,
-          selectedLocation.lat,
-          selectedLocation.lng,
-        ).toFixed(1),
-      );
-    } else {
-      setDistanceKm(null);
     }
   }, [selectedLocation, userCoords]);
 
@@ -296,7 +269,14 @@ const MapLocationModal = ({ isOpen, onClose, onConfirm }) => {
                   type="text"
                   placeholder="Search locations..."
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(e) => {
+                    const nextValue = e.target.value;
+                    setSearchQuery(nextValue);
+                    if (nextValue.trim() === "") {
+                      setSearchResults([]);
+                      setIsSearching(false);
+                    }
+                  }}
                   className="w-full pl-12 pr-4 py-2 md:py-3 rounded-full border border-[#e5e1e9] bg-[#f6f2fa] text-sm md:text-base focus:border-[#1a146b] focus:ring-2 focus:ring-[#1a146b]/10 outline-none transition"
                 />
               </div>

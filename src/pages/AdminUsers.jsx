@@ -1,5 +1,5 @@
 // src/pages/AdminUsers.jsx
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Search, Eye, Shield, ShieldOff } from "lucide-react";
 import AdminLayout from "../components/admin/AdminLayout";
 import AdminTable from "../components/admin/AdminTable";
@@ -15,11 +15,7 @@ export default function AdminUsers() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
 
-  useEffect(() => {
-    fetchUsers();
-  }, [currentPage, search, roleFilter]);
-
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
       setLoading(true);
       const response = await API.get("/admin/users", {
@@ -37,7 +33,12 @@ export default function AdminUsers() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPage, roleFilter, search]);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(fetchUsers, 0);
+    return () => clearTimeout(timeoutId);
+  }, [fetchUsers]);
 
   const handleViewDetails = async (user) => {
     try {
@@ -149,6 +150,7 @@ export default function AdminUsers() {
           },
         ]}
         data={users}
+        loading={loading}
         onEdit={handleViewDetails}
       />
 

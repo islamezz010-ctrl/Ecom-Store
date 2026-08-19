@@ -98,7 +98,14 @@ const Home = () => {
       clearTimeout(delayDebounceFn);
       window.removeEventListener("products:updated", handleProductsUpdated);
     };
-  }, [selectedCategory, minPrice, maxPrice, sort, location.search]);
+  }, [
+    selectedCategory,
+    minPrice,
+    maxPrice,
+    sort,
+    searchQuery,
+    location.search,
+  ]);
 
   return (
     <main>

@@ -1,5 +1,5 @@
 // src/components/admin/AdminNavigation.jsx
-import { useState } from "react";
+import { createElement, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   Menu,
@@ -48,7 +48,7 @@ export default function AdminNavigation() {
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center gap-1">
-            {menuItems.map(({ path, label, icon: Icon }) => (
+            {menuItems.map(({ path, label, icon }) => (
               <Link
                 key={path}
                 to={path}
@@ -58,7 +58,7 @@ export default function AdminNavigation() {
                     : "text-gray-300 hover:bg-gray-800"
                 }`}
               >
-                <Icon className="w-4 h-4" />
+                {createElement(icon, { className: "w-4 h-4" })}
                 <span className="text-sm">{label}</span>
               </Link>
             ))}
@@ -91,7 +91,7 @@ export default function AdminNavigation() {
         {/* Mobile Menu */}
         {isOpen && (
           <div className="md:hidden pb-4 space-y-2">
-            {menuItems.map(({ path, label, icon: Icon }) => (
+            {menuItems.map(({ path, label, icon }) => (
               <Link
                 key={path}
                 to={path}
@@ -102,7 +102,7 @@ export default function AdminNavigation() {
                     : "text-gray-300 hover:bg-gray-800"
                 }`}
               >
-                <Icon className="w-4 h-4" />
+                {createElement(icon, { className: "w-4 h-4" })}
                 <span className="text-sm">{label}</span>
               </Link>
             ))}

@@ -16,11 +16,6 @@ import { API } from "../lib/api";
 export default function AdminDashboard() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [period, setPeriod] = useState("30days");
-
-  useEffect(() => {
-    fetchDashboardStats();
-  }, []);
 
   const fetchDashboardStats = async () => {
     try {
@@ -33,6 +28,11 @@ export default function AdminDashboard() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const timeoutId = setTimeout(fetchDashboardStats, 0);
+    return () => clearTimeout(timeoutId);
+  }, []);
 
   if (loading || !stats) {
     return (

@@ -1,6 +1,5 @@
 // src/pages/AdminOrders.jsx
-import { useEffect, useState } from "react";
-import { Search, Eye, Trash2 } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 import AdminLayout from "../components/admin/AdminLayout";
 import AdminTable from "../components/admin/AdminTable";
 import { API } from "../lib/api";
@@ -15,11 +14,7 @@ export default function AdminOrders() {
   const [showDetails, setShowDetails] = useState(false);
   const [newStatus, setNewStatus] = useState("");
 
-  useEffect(() => {
-    fetchOrders();
-  }, [currentPage, statusFilter]);
-
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     try {
       setLoading(true);
       const response = await API.get("/admin/orders", {
@@ -36,7 +31,12 @@ export default function AdminOrders() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPage, statusFilter]);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(fetchOrders, 0);
+    return () => clearTimeout(timeoutId);
+  }, [fetchOrders]);
 
   const handleViewDetails = async (order) => {
     try {
@@ -163,6 +163,7 @@ export default function AdminOrders() {
           },
         ]}
         data={orders}
+        loading={loading}
         onEdit={handleViewDetails}
       />
 
